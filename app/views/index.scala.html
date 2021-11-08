@@ -1,5 +1,27 @@
 @()
 
-@main("Welcome to Play") {
-  <h1>Welcome to Play!</h1>
-}
+<html>
+  <body>
+  <head>
+    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/search.css")'>
+  </head>
+<div class="main-search-input-wrap">
+  <div class="main-search-input fl-wrap">
+    <div class="main-search-input-item">
+      <input id="searchInput" type="text" value="" placeholder="Search Repositories...">
+    </div>
+    <button class="main-search-button" onclick="search()">Search</button>
+  </div>
+</div>
+    <script>
+            var input = document.getElementById("searchInput");
+            function search(){
+              if(input.value.trim() !== '')
+              {
+                window.location.replace("repSearch/"+input.value);
+
+              }
+            }
+    </script>
+  </body>
+</html>

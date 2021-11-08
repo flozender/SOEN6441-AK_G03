@@ -1,0 +1,55 @@
+@import java.util
+@(resultList: util.List[Item])
+
+<html>
+    <body>
+        <head>
+            <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/results.css")'>
+            <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/bootstrap.css")'>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        </head>
+        <div class="main-search-input-wrap">
+            <div class="main-search-input fl-wrap">
+                <div class="main-search-input-item">
+                    <input id="searchInput" type="text" value="" placeholder="Search Repositories...">
+                </div>
+                <button class="main-search-button" onclick="search()">Search</button>
+            </div>
+        </div>
+
+
+        <div class="result-wrapper">
+            <div class="result-inside-wrapper">
+        @for(i <- 0 until resultList.size()) {
+            <b>@(i + 1)</b><div class="main-result" onclick="search()"><b>@resultList.get(i).getName</b></div>
+            <br>
+            }
+            </div>
+        </div>
+
+        <script>
+
+        let input = document.getElementById('searchInput');
+      function search(){
+          // event.stopPropagation();
+          // event.preventDefault();
+
+          if(input.value.trim() !== '')
+          {
+              $.ajax({
+                  url: '/repSearch/'+input.value,
+                  type: "GET",
+                  success: function (data) {
+                      console.log(data);
+                      let result = $(data).find('.result-inside-wrapper');
+                      // console.log(result);
+
+                      // result.find('.search-text').html($('#search-terms').val());
+                      $('.result-wrapper').prepend(result);
+                  }
+              });
+          }
+      }
+        </script>
+    </body>
+</html>
