@@ -1,10 +1,11 @@
-@()
-
+@import java.util 
+@(resultList: util.List[Repository])
 <html>
-  <body>
   <head>
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/search.css")'>
   </head>
+  <body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="main-search-input-wrap">
   <div class="main-search-input fl-wrap">
     <div class="main-search-input-item">
@@ -13,14 +14,35 @@
     <button class="main-search-button" onclick="search()">Search</button>
   </div>
 </div>
-    <script>
-            var input = document.getElementById("searchInput");
-            function search(){
-              if(input.value.trim() !== '')
-              {
-                window.location.replace("repSearch/"+input.value);
-              }
-            }
-    </script>
+<div class="result-wrapper" id="infoList"></div>
+<script>
+  let input = document.getElementById("searchInput");
+  function search() {
+    console.log("Hitting with " + input.value);
+    if (input.value.trim() !== "") {
+      $.ajax({
+        url: "/search/repositories",
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+          "keywords": input.value
+        }),
+        success: function (data) {
+          let infoList = document.getElementById("infoList");
+          let resultString = "";
+          console.log(data.items.slice(0, 10));
+          for (repository of data.items.slice(0, 10)){
+            resultString += `
+            <div class="result-wrapper">
+              <b>${repository.name}</b>
+            </div>`
+          }
+          infoList.innerHTML = resultString;
+        },
+      });
+    }
+  }
+</script>
   </body>
 </html>
