@@ -1,5 +1,5 @@
-name := """Pedram"""
-organization := "Pedram"
+name := """Gitterific"""
+organization := "AK_G03"
 
 version := "1.0-SNAPSHOT"
 
