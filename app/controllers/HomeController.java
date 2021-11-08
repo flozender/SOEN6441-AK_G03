@@ -42,7 +42,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 .get()
                 .thenApply((WSResponse r) -> {
                     Resp resp = Json.fromJson(r.asJson(), Resp.class);
-//                    resp.getItems().stream().map(Item::getOwner).map(Owner::getLogin).limit(10).forEach(System.out::println);
                     return ok(views.html.repResult.render(resp.getItems().subList(0, Math.min(10, resp.getItems().size()))));
                 });
     }
