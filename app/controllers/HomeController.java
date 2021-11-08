@@ -54,12 +54,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request) {
         java.util.Optional<String> contentType = request.contentType();
         JsonNode body = request.body().asJson();
-        System.out.println("ENDPOINT HIT  "+ body);
         String keywords = body.get("keywords").toString();
         String url = "https://api.github.com/search/repositories?q="+keywords;
         CompletionStage<WSResponse> repositories = ws.url(url).get();
         return repositories.thenApplyAsync(response -> ok(response.asJson()));
-
     }
 
 }
