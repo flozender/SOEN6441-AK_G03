@@ -2,7 +2,7 @@ package models;
 
 import java.util.List;
 
-public class Item {
+public class Repository {
     public String name;
     public Owner owner;
     public String html_url;
@@ -20,7 +20,7 @@ public class Item {
         return topics;
     }
 
-    public String getHtml_url() {
+    public String getHtmlUrl() {
         return html_url;
     }
 }

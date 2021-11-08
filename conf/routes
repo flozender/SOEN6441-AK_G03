@@ -3,8 +3,10 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index()
-GET /repSearch/:keywords controllers.HomeController.repSearch(keywords:String)
+GET         /                           controllers.HomeController.index()
++ nocsrf
+POST        /search/repositories        controllers.HomeController.searchRepositories(request: play.mvc.Http.Request)
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
