@@ -53,27 +53,33 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
 
     public Result index(Http.Request request) {
-        String userSession = request.cookie("PLAY_SESSION").value();
-        this.storage.put(userSession, new ArrayList<JsonNode>());
-        System.out.println("Cleared storage " + this.storage.get(userSession));
-        return ok(views.html.index.render(Arrays.asList()));
+        if (request.cookie("GITTERIFIC") != null){
+            String userSession = request.cookie("GITTERIFIC").value();
+            this.storage.put(userSession, new ArrayList<JsonNode>());
+            System.out.println("Cleared storage " + this.storage.get(userSession));
+        }
+        return ok(views.html.index.render(Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
-        String userSession = request.cookie("PLAY_SESSION").value();
+        String userSession = request.cookie("GITTERIFIC").value();
         String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10";
-        CompletionStage<WSResponse> repositories = ws.url(url).get();
-        return repositories.thenApplyAsync(response -> {
-            JsonNode tempResponse = response.asJson().get("items");
-            ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
-            collectRepos.add(tempResponse);
-            if (this.storage.containsKey(userSession)){
-                ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
-                tempStorage.stream().forEach(e->collectRepos.add(e));
+        return ws.url(url).get().thenApplyAsync(response -> {
+            try {
+                JsonNode tempResponse = response.asJson().get("items");
+                ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
+                collectRepos.add(tempResponse);
+                if (this.storage.containsKey(userSession)){
+                    ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                    tempStorage.stream().forEach(e->collectRepos.add(e));
+                }
+                this.storage.put(userSession, collectRepos);
+                return ok(views.html.index.render(this.storage.get(userSession)));
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
             }
-            this.storage.put(userSession, collectRepos);
-            return ok(views.html.index.render(this.storage.get(userSession)));
         });
     }
 }
