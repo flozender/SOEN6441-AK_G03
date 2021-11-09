@@ -1,5 +1,6 @@
 @import java.util 
-@(resultList: util.List[Repository])
+@import com.fasterxml.jackson.databind.JsonNode;
+@(repositories: util.List[JsonNode])
 <html>
   <head>
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/search.css")'>
@@ -14,33 +15,40 @@
     <button class="main-search-button" onclick="search()">Search</button>
   </div>
 </div>
-<div class="result-wrapper" id="infoList"></div>
+<div class="result-wrapper" id="infoList">
+@for(i <- 0 until repositories.size()){
+  <div>
+      <b>@(i+1)</b>
+      @for(j <- 0 until repositories.get(i).size()){
+        <b>@repositories.get(i).get(j).get("name")</b>
+      }
+  </div>
+}
+</div>
 <script>
   let input = document.getElementById("searchInput");
   function search() {
-    console.log("Hitting with " + input.value);
+    console.log("Hitting with " + input.value +"to " + "/search/repositories/"+input.value);
     if (input.value.trim() !== "") {
-      $.ajax({
-        url: "/search/repositories",
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify({
-          "keywords": input.value
-        }),
-        success: function (data) {
-          let infoList = document.getElementById("infoList");
-          let resultString = "";
-          console.log(data.items.slice(0, 10));
-          for (repository of data.items.slice(0, 10)){
-            resultString += `
-            <div class="result-wrapper">
-              <b>${repository.name}</b>
-            </div>`
-          }
-          infoList.innerHTML = resultString;
-        },
-      });
+      // $.ajax({
+      //   url: "/search/repositories/"+input.value,
+      //   type: "GET",
+      //   contentType: "application/json",
+      //   dataType: "json",
+      //   success: function (data) {
+      //     let infoList = document.getElementById("infoList");
+      //     let resultString = "";
+      //     console.log(data.items.slice(0, 10));
+      //     for (repository of data.items.slice(0, 10)){
+      //       resultString += `
+      //       <div class="result-wrapper">
+      //         <b>${repository.name}</b>
+      //       </div>`
+      //     }
+      //     infoList.innerHTML = resultString;
+      //   },
+      // });
+      window.location = "/search/repositories/"+input.value;
     }
   }
 </script>

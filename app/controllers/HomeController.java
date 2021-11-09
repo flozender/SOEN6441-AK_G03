@@ -12,8 +12,8 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Http.Cookie;
 import scala.util.parsing.combinator.token.StdTokens.Keyword;
-import scala.util.parsing.json.JSON;
 
 import javax.inject.Inject;
 
@@ -27,7 +27,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
+import java.util.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -35,10 +37,12 @@ import java.util.concurrent.CompletionStage;
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
+    private Hashtable<String, ArrayList<JsonNode>> storage;
 
     @Inject
     public HomeController(WSClient ws) {
         this.ws = ws;
+        this.storage = new Hashtable<String, ArrayList<JsonNode>>();
     }
 
     /**
@@ -47,17 +51,29 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * this method will be called when the application receives a
      * <code>GET</code> request with a path of <code>/</code>.
      */
-    public Result index() {
+
+    public Result index(Http.Request request) {
+        String userSession = request.cookie("PLAY_SESSION").value();
+        this.storage.put(userSession, new ArrayList<JsonNode>());
+        System.out.println("Cleared storage " + this.storage.get(userSession));
         return ok(views.html.index.render(Arrays.asList()));
     }
 
-    public CompletionStage<Result> searchRepositories(Http.Request request) {
-        java.util.Optional<String> contentType = request.contentType();
+    public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
-        String keywords = body.get("keywords").toString();
-        String url = "https://api.github.com/search/repositories?q="+keywords;
+        String userSession = request.cookie("PLAY_SESSION").value();
+        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10";
         CompletionStage<WSResponse> repositories = ws.url(url).get();
-        return repositories.thenApplyAsync(response -> ok(response.asJson()));
+        return repositories.thenApplyAsync(response -> {
+            JsonNode tempResponse = response.asJson().get("items");
+            ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
+            collectRepos.add(tempResponse);
+            if (this.storage.containsKey(userSession)){
+                ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                tempStorage.stream().forEach(e->collectRepos.add(e));
+            }
+            this.storage.put(userSession, collectRepos);
+            return ok(views.html.index.render(this.storage.get(userSession)));
+        });
     }
-
 }
