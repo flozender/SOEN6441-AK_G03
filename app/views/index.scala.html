@@ -1,56 +1,78 @@
 @import java.util 
 @import com.fasterxml.jackson.databind.JsonNode;
-@(repositories: util.List[JsonNode])
-<html>
-  <head>
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/search.css")'>
-  </head>
-  <body>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<div class="main-search-input-wrap">
-  <div class="main-search-input fl-wrap">
-    <div class="main-search-input-item">
-      <input id="searchInput" type="text" value="" placeholder="Search Repositories...">
+@(repositories: util.List[JsonNode], searchTerms: util.List[String])
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gitterific!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>        
+        html,
+        body {
+        height: 100%;
+        }
+        body {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+        }
+        .form-signin {
+        width: 100%;
+        max-width: 500px;
+        padding: 15px;
+        margin: auto;
+        }
+        .form-signin .form-control {
+        position: relative;
+        box-sizing: border-box;
+        height: auto;
+        padding: 10px;
+        font-size: 16px;
+        }
+        .form-signin .form-control:focus {
+        z-index: 2;
+        }
+        .search-data{
+            margin-top: 4rem;
+            text-align: start;
+        }
+    </style>
+</head>
+<body class="text-center">
+    <div class="form-signin">
+        <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
+        <div class="d-flex flex-row">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search repositories..." required autofocus>
+            <br/>
+            <button class="btn btn-md btn-primary btn-block" type="submit" onclick="search()">Search</button>
+        </div>
+        @for(i <- 0 until repositories.size()){
+            <div class="search-data">
+                <b>Search terms: @searchTerms.get(i)</b><br/><br/>
+                @for(j <- 0 until repositories.get(i).size()){
+                    <div class="repository">
+                        @(j+1). @repositories.get(i).get(j).get("owner").get("login") / @repositories.get(i).get(j).get("name") 
+                    </div>
+                }
+            </div>
+          }
     </div>
-    <button class="main-search-button" onclick="search()">Search</button>
-  </div>
-</div>
-<div class="result-wrapper" id="infoList">
-@for(i <- 0 until repositories.size()){
-  <div>
-      <b>@(i+1)</b>
-      @for(j <- 0 until repositories.get(i).size()){
-        <b>@repositories.get(i).get(j).get("name")</b>
-      }
-  </div>
-}
-</div>
+</body>
 <script>
-  let input = document.getElementById("searchInput");
-  function search() {
-    console.log("Hitting with " + input.value +"to " + "/search/repositories/"+input.value);
-    if (input.value.trim() !== "") {
-      // $.ajax({
-      //   url: "/search/repositories/"+input.value,
-      //   type: "GET",
-      //   contentType: "application/json",
-      //   dataType: "json",
-      //   success: function (data) {
-      //     let infoList = document.getElementById("infoList");
-      //     let resultString = "";
-      //     console.log(data.items.slice(0, 10));
-      //     for (repository of data.items.slice(0, 10)){
-      //       resultString += `
-      //       <div class="result-wrapper">
-      //         <b>${repository.name}</b>
-      //       </div>`
-      //     }
-      //     infoList.innerHTML = resultString;
-      //   },
-      // });
-      window.location = "/search/repositories/"+input.value;
+    let input = document.getElementById("searchInput");
+    function search() {
+      console.log("Hitting with " + input.value +"to " + "/search/repositories/"+input.value);
+      if (input.value.trim() !== "") {
+        window.location = "/search/repositories/"+input.value;
+      }
     }
-  }
-</script>
-  </body>
+  </script>
 </html>

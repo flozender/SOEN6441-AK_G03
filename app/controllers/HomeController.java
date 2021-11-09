@@ -38,11 +38,13 @@ import java.util.*;
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
     private Hashtable<String, ArrayList<JsonNode>> storage;
+    private Hashtable<String, ArrayList<String>> searchTerms;
 
     @Inject
     public HomeController(WSClient ws) {
         this.ws = ws;
         this.storage = new Hashtable<String, ArrayList<JsonNode>>();
+        this.searchTerms = new Hashtable<String, ArrayList<String>>();
     }
 
     /**
@@ -56,9 +58,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         if (request.cookie("GITTERIFIC") != null){
             String userSession = request.cookie("GITTERIFIC").value();
             this.storage.put(userSession, new ArrayList<JsonNode>());
+            this.searchTerms.put(userSession, new ArrayList<String>());
             System.out.println("Cleared storage " + this.storage.get(userSession));
         }
-        return ok(views.html.index.render(Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
+        return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
@@ -69,13 +72,18 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             try {
                 JsonNode tempResponse = response.asJson().get("items");
                 ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
+                ArrayList<String> collectSearchTerms = new ArrayList<String>();
                 collectRepos.add(tempResponse);
+                collectSearchTerms.add(keywords);
                 if (this.storage.containsKey(userSession)){
                     ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                    ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
                     tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
+                    tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
                 }
                 this.storage.put(userSession, collectRepos);
-                return ok(views.html.index.render(this.storage.get(userSession)));
+                this.searchTerms.put(userSession, collectSearchTerms);
+                return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
                 return ok(views.html.error.render());
