@@ -12,8 +12,8 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Http.Cookie;
 import scala.util.parsing.combinator.token.StdTokens.Keyword;
-import scala.util.parsing.json.JSON;
 
 import javax.inject.Inject;
 
@@ -27,7 +27,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
+import java.util.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -35,10 +37,14 @@ import java.util.concurrent.CompletionStage;
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
+    private Hashtable<String, ArrayList<JsonNode>> storage;
+    private Hashtable<String, ArrayList<String>> searchTerms;
 
     @Inject
     public HomeController(WSClient ws) {
         this.ws = ws;
+        this.storage = new Hashtable<String, ArrayList<JsonNode>>();
+        this.searchTerms = new Hashtable<String, ArrayList<String>>();
     }
 
     /**
@@ -47,17 +53,41 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * this method will be called when the application receives a
      * <code>GET</code> request with a path of <code>/</code>.
      */
-    public Result index() {
-        return ok(views.html.index.render(Arrays.asList()));
+
+    public Result index(Http.Request request) {
+        if (request.cookie("GITTERIFIC") != null){
+            String userSession = request.cookie("GITTERIFIC").value();
+            this.storage.put(userSession, new ArrayList<JsonNode>());
+            this.searchTerms.put(userSession, new ArrayList<String>());
+            System.out.println("Cleared storage " + this.storage.get(userSession));
+        }
+        return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
-    public CompletionStage<Result> searchRepositories(Http.Request request) {
-        java.util.Optional<String> contentType = request.contentType();
+    public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
-        String keywords = body.get("keywords").toString();
-        String url = "https://api.github.com/search/repositories?q="+keywords;
-        CompletionStage<WSResponse> repositories = ws.url(url).get();
-        return repositories.thenApplyAsync(response -> ok(response.asJson()));
+        String userSession = request.cookie("GITTERIFIC").value();
+        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10";
+        return ws.url(url).get().thenApplyAsync(response -> {
+            try {
+                JsonNode tempResponse = response.asJson().get("items");
+                ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
+                ArrayList<String> collectSearchTerms = new ArrayList<String>();
+                collectRepos.add(tempResponse);
+                collectSearchTerms.add(keywords);
+                if (this.storage.containsKey(userSession)){
+                    ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                    ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
+                    tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
+                    tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
+                }
+                this.storage.put(userSession, collectRepos);
+                this.searchTerms.put(userSession, collectSearchTerms);
+                return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
     }
-
 }
