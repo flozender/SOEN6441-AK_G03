@@ -72,7 +72,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 collectRepos.add(tempResponse);
                 if (this.storage.containsKey(userSession)){
                     ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
-                    tempStorage.stream().forEach(e->collectRepos.add(e));
+                    tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
                 }
                 this.storage.put(userSession, collectRepos);
                 return ok(views.html.index.render(this.storage.get(userSession)));
