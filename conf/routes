@@ -6,6 +6,8 @@
 GET    /                               controllers.HomeController.index(request: play.mvc.Http.Request)
 + nocsrf
 GET    /search/repositories/:keywords  controllers.HomeController.searchRepositories(request: play.mvc.Http.Request, keywords: String)
+GET    /users/:username  controllers.HomeController.userProfile(username: String)
+GET    /users/repos/:username  controllers.HomeController.userRepository(username: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
