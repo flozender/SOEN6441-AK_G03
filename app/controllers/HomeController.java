@@ -1,6 +1,9 @@
 package controllers;
 
 import models.Owner;
+import models.Repository;
+import models.Response;
+import okhttp3.internal.connection.RouteSelector;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -10,6 +13,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Http.Cookie;
+import scala.util.parsing.combinator.token.StdTokens.Keyword;
 
 import javax.inject.Inject;
 
@@ -76,6 +80,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
+               
                 return ok(views.html.error.render());
             }
         });
