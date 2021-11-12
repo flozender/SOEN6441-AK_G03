@@ -8,6 +8,8 @@ import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.test.WithApplication;
+import play.twirl.api.Content;
+import views.*;
 
 import static org.junit.Assert.assertEquals;
 import static play.test.Helpers.fakeApplication;
@@ -18,10 +20,14 @@ import play.data.FormFactory;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
+import static play.test.Helpers.*;
+
 
 public class HomeControllerTest extends WithApplication {
 
-	
+	Application fakeApp = fakeApplication();
+
+	Application fakeAppWithMemoryDb = fakeApplication(inMemoryDatabase("test"));
 
   
     @Test
@@ -56,5 +62,13 @@ public class HomeControllerTest extends WithApplication {
 	 Result result = route(app, search1);
      assertEquals(OK, result.status());
   }*/
+    
+    @Test
+    public void renderTemplate() {
+        Content html = views.html.index.render("Welcome to Play!");
+      assertEquals("text/html", html.contentType());
+      assertTrue(contentAsString(html).contains("Welcome to Play!"));
+    }
+    
 
 }
