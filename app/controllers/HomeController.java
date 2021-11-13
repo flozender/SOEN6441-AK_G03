@@ -1,38 +1,28 @@
 package controllers;
 
-import models.Repository;
-import models.Response;
+import models.Owner;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSResponse;
-import play.libs.ws.WSRequest;
-import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Http.Cookie;
-import scala.util.parsing.combinator.token.StdTokens.Keyword;
 
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import akka.actor.typed.delivery.internal.ProducerControllerImpl.Request;
-import akka.japi.Option;
-import akka.parboiled2.support.OpTreeContext.Optional;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
-import java.util.*;
 
 /**
- * This controller contains an action to handle HTTP requests
+ * This controller contains several actions to handle HTTP requests
  * to the application's home page.
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
@@ -43,8 +33,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     @Inject
     public HomeController(WSClient ws) {
         this.ws = ws;
-        this.storage = new Hashtable<String, ArrayList<JsonNode>>();
-        this.searchTerms = new Hashtable<String, ArrayList<String>>();
+        this.storage = new Hashtable<>();
+        this.searchTerms = new Hashtable<>();
     }
 
     /**
@@ -57,8 +47,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public Result index(Http.Request request) {
         if (request.cookie("GITTERIFIC") != null){
             String userSession = request.cookie("GITTERIFIC").value();
-            this.storage.put(userSession, new ArrayList<JsonNode>());
-            this.searchTerms.put(userSession, new ArrayList<String>());
+            this.storage.put(userSession, new ArrayList<>());
+            this.searchTerms.put(userSession, new ArrayList<>());
             System.out.println("Cleared storage " + this.storage.get(userSession));
         }
         return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
@@ -67,7 +57,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10";
+        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10&sort=updated";
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response.asJson().get("items");
@@ -90,4 +80,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             }
         });
     }
-}
+
+    public CompletionStage<Result> userProfile(String username) {
+        String url = "https://api.github.com/users/" + username;
+        return ws.url(url).get().thenApplyAsync(response -> {
+            Owner user = Json.fromJson(response.asJson(), Owner.class);
+            return ok(views.html.user.render(user));
+        });
+    }
+
+    public CompletionStage<Result> userRepository(String username) {
+        String url = "https://api.github.com/users/" + username + "/repos";
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+
+
+
+
+    }

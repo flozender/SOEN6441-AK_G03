@@ -44,6 +44,10 @@
             margin-top: 4rem;
             text-align: start;
         }
+
+        .cursoring-userProfile {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="text-center">
@@ -59,7 +63,10 @@
                 <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                 @for(j <- 0 until repositories.get(i).size()){
                     <div class="repository">
-                        @(j+1). @repositories.get(i).get(j).get("owner").get("login") / @repositories.get(i).get(j).get("name") 
+                        @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile(@repositories.get(i).get(j).get("owner").get("login"))">@repositories.get(i).get(j).get("owner").get("login")</b> / @repositories.get(i).get(j).get("name")
+                        @for(k <- 0 until repositories.get(i).get(j).get("topics").size()){
+                            <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).get("topics").get(k))</b>
+                        }
                     </div>
                 }
             </div>
@@ -73,6 +80,9 @@
       if (input.value.trim() !== "") {
         window.location = "/search/repositories/"+input.value;
       }
+    }
+    function getUserProfile(username) {
+        window.location = "/users/"+username;
     }
   </script>
 </html>
