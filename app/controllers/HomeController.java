@@ -1,5 +1,14 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.concurrent.CompletionStage;
+
+import javax.inject.Inject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import models.Owner;
 import models.Repository;
 import models.Response;
@@ -7,10 +16,8 @@ import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
 import play.libs.ws.WSClient;
-import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Http;
-import play.mvc.Result;
 import play.mvc.Http.Cookie;
 import scala.util.parsing.combinator.token.StdTokens.Keyword;
 
@@ -23,10 +30,17 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
+import play.mvc.Result;
 
 /**
  * This controller contains several actions to handle HTTP requests
  * to the application's home page.
+ */
+/**
+ * @author 
+ * @since 1.1.0
+ * @version 1.1.3
+ * 
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
@@ -47,6 +61,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * <code>GET</code> request with a path of <code>/</code>.
      */
 
+    /**
+     * @param request
+     * @return
+     * 
+     * @version 1.1.2
+     * @since 1.1.0
+     */
+    
+    
     public Result index(Http.Request request) {
         if (request.cookie("GITTERIFIC") != null){
             String userSession = request.cookie("GITTERIFIC").value();
@@ -57,6 +80,25 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
+
+    /**
+     * @author {FN}
+     * @version 1.1.2
+     * @since 1.1.0
+     *
+     * @param request
+     * @param keywords
+     * @return
+     * 
+     * It search for the repositories matching the string passed by the user in the search bar.
+     * <p>
+     * It will generate the results related to the search string and render on the page.
+     * The result will include username and the repository name.
+     * </p>
+     * 
+     * 
+     */
+  
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
@@ -64,8 +106,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response.asJson().get("items");
-                ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
-                ArrayList<String> collectSearchTerms = new ArrayList<String>();
+                ArrayList<JsonNode> collectRepos = new ArrayList<>();
+                ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
                 collectSearchTerms.add(keywords);
                 if (this.storage.containsKey(userSession)){
@@ -84,6 +126,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * @author {FN}
+     * @since 1.1.3
+     * @version 1.1.3
+     * {@summary} returns the user profile information.
+     *
+     * @param username
+     * @return
+     */
     public CompletionStage<Result> userProfile(String username) {
         String url = "https://api.github.com/users/" + username;
         return ws.url(url).get().thenApplyAsync(response -> {
@@ -92,9 +143,46 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * @author 
+     * @apiNote gets information related to user's repository
+     * @version 1.1.3
+     * @since 1.1.3
+     * @param username
+     * @return
+     * 
+     * Method userRepository returns the results based on the username passed 
+     * to it. It is a Async call.
+     * 
+     * The response contains all the public information of the user. Also, returns
+     * repositories of the current user.
+     *
+     */
     public CompletionStage<Result> userRepository(String username) {
         String url = "https://api.github.com/users/" + username + "/repos";
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+
+
+
+    /**
+     * @author Nazanin
+     * @version 1.1.3
+     * @since 1.1.3
+     * @param username
+     * @return
+     * @see API https://docs.github.com/en/rest/reference/issues#list-repository-issue
+     * 
+     * Method returns all the repository issues of the parsed user and repository.
+     * It is an Aysnc call. 
+     * 
+     * example https://api.github.com/repos/octocat/hello-world/issues
+     * 
+     */
+    public CompletionStage<Result> userRepositoryIssues(String username, String repository) {
+        String url = "https://api.github.com/repos/" + username +"/"+ repository +"/issues";
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+
     }
 
 
