@@ -47,7 +47,6 @@
 
         .cursoring-userProfile {
             cursor: pointer;
-            font-size: 25px;
         }
     </style>
 </head>
@@ -65,6 +64,9 @@
                 @for(j <- 0 until repositories.get(i).size()){
                     <div class="repository">
                         @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile(@repositories.get(i).get(j).get("owner").get("login"))">@repositories.get(i).get(j).get("owner").get("login")</b> / @repositories.get(i).get(j).get("name")
+                        @for(k <- 0 until repositories.get(i).get(j).get("topics").size()){
+                            <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).get("topics").get(k))</b>
+                        }
                     </div>
                 }
             </div>

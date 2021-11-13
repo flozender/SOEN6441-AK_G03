@@ -1,12 +1,17 @@
 package models;
 
 public class Owner {
-    public String login;
-    public String html_url;
-    public String name;
+    private String login;
+    private String html_url;
+    private String name;
+    private String company;
 
     public String getLogin() {
         return login;
+    }
+
+    public String getCompany() {
+        return company;
     }
 
     public String getHtml_url() {
