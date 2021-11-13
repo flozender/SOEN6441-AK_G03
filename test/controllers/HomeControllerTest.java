@@ -27,10 +27,11 @@ import static play.test.Helpers.*;
 
 public class HomeControllerTest extends WithApplication {
 
+	/* Commenting this out; Will delete it once we have google guice
 	Application fakeApp = fakeApplication();
 
 	Application fakeAppWithMemoryDb = fakeApplication(inMemoryDatabase("test"));
-
+	*/
   
     @Test
     public void testIndex() throws Exception{
