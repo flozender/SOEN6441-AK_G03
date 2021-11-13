@@ -50,12 +50,12 @@
     </body>
     <script>
 
-            let keyWord = window.location.pathname.split("/").pop();
+            let username = window.location.pathname.split("/").pop();
 
             function repositoryButton() {
                 $.ajax({
                     type: "GET",
-                    url: "/users/repos/"+keyWord,
+                    url: "/users/repos/"+username,
                     success: function (result) {
                         var table = $("<table><tr><th>Repositories Information</th></tr>");
                         for (let i = 0; i < result.length; i++) {
