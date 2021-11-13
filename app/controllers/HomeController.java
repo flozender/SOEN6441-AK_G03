@@ -3,7 +3,9 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -18,6 +20,18 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
+
+import views.html.*;
+
+/*
+ * Imports for counting and reverse the order
+ */
+import static java.util.Comparator.reverseOrder;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import java.util.Map;
 
 /**
  * This controller contains several actions to handle HTTP requests
@@ -173,6 +187,39 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
 
+    /**
+     * @author Nazanin
+     * @version 1.1.5
+     * @since 1.1.3
+     * @param tittles
+     * @return
+     * 
+     * Method computes a word level statistics of the issues titles.
+     * It takes input of the titles. All titles are compared and collected into a list in a reverse order.
+     * 
+     * example https://api.github.com/repos/octocat/hello-world/issues
+     * 
+     */
+    public void repoIssuesStats (List<String> titles) {
+    	
+    	List<String> words = titles.stream()
+                .map(String::toLowerCase)
+                .collect(groupingBy(identity(), counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
+                .limit(100)
+                .map(Map.Entry::getKey)
+                .collect(toList());
+    	
+    	Map<String, Integer> counts = words.parallelStream().
+                collect(Collectors.toConcurrentMap(
+                    w -> w, w -> 1, Integer::sum));
+    	
+    	System.out.println(words);
+    	System.out.println(counts);
+    	
+    	
+    }
 
 
     }
