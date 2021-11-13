@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
 
@@ -56,7 +57,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10";
+        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10&sort=updated";
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response.asJson().get("items");
@@ -81,7 +82,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     public CompletionStage<Result> userProfile(String username) {
-        System.out.println("In userProfile");
         String url = "https://api.github.com/users/" + username;
         return ws.url(url).get().thenApplyAsync(response -> {
             Owner user = Json.fromJson(response.asJson(), Owner.class);
@@ -90,9 +90,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     public CompletionStage<Result> userRepository(String username) {
-        System.out.println("User");
         String url = "https://api.github.com/users/" + username + "/repos";
-        System.out.println(url);
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
 

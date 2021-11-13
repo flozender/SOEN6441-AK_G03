@@ -15,7 +15,6 @@
         <style>
         html,
         body {
-            height: 100%;
         }
         body {
             display: -ms-flexbox;
@@ -38,7 +37,9 @@
         <br/>
         Name: <b>@owner.getName</b>
         <br/>
-        <button onclick="repositoryButton()"> repButon </button>
+        Company: <b>@owner.getCompany</b>
+        <br/>
+        <button onclick="repositoryButton()"> Show Repositories </button>
 
         <div id="repositories" class="repository-results"></div>
 
@@ -52,7 +53,6 @@
             let keyWord = window.location.pathname.split("/").pop();
 
             function repositoryButton() {
-                console.log("Ghable ajax");
                 $.ajax({
                     type: "GET",
                     url: "/users/repos/"+keyWord,
@@ -60,7 +60,9 @@
                         var table = $("<table><tr><th>Repositories Information</th></tr>");
                         for (let i = 0; i < result.length; i++) {
                             table.append("<tr><td>Name:</td><td>" + result[i]["name"] + "</td></tr>")
+                            table.append("<tr><td>Dec:</td><td>" + result[i]["description"] + "</td></tr>")
                         }
+                        table.append("</table>")
 
                         $("#repositories").html(table);
                     }
