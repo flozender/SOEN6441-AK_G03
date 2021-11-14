@@ -219,11 +219,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public CompletionStage<Result> userRepositoryIssues(String username, String repository) {
-        String url = "https://api.github.com/repos/" + username +"/"+ repository +"/issues";
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
-
-    }
 
 
     /**
