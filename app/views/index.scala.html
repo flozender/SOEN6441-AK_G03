@@ -51,7 +51,7 @@
     </style>
 </head>
 <body class="text-center">
-    <div class="form-signin">
+    <div class="form-signin" style="background-color: #eee;">
         <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
         <div class="d-flex flex-row">
             <input type="text" id="searchInput" class="form-control" placeholder="Search repositories..." required autofocus>
@@ -62,7 +62,7 @@
             <div class="search-data">
                 <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                 @for(j <- 0 until repositories.get(i).size()){
-                    <div class="repository">
+                    <div class="data">
                         @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile(@repositories.get(i).get(j).get("owner").get("login"))">@repositories.get(i).get(j).get("owner").get("login")</b> / @repositories.get(i).get(j).get("name")
                         @for(k <- 0 until repositories.get(i).get(j).get("topics").size()){
                             <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).get("topics").get(k))</b>
@@ -75,12 +75,13 @@
 </body>
 <script>
     let input = document.getElementById("searchInput");
+
     function search() {
-      console.log("Hitting with " + input.value +"to " + "/search/repositories/"+input.value);
       if (input.value.trim() !== "") {
         window.location = "/search/repositories/"+input.value;
       }
     }
+    
     function getUserProfile(username) {
         window.location = "/users/"+username;
     }

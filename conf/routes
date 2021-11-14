@@ -3,12 +3,15 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET    /                               controllers.HomeController.index(request: play.mvc.Http.Request)
-+ nocsrf
-GET    /search/repositories/:keywords  controllers.HomeController.searchRepositories(request: play.mvc.Http.Request, keywords: String)
-GET    /users/:username  controllers.HomeController.userProfile(username: String)
-GET    /users/repos/:username  controllers.HomeController.userRepository(username: String)
-
+GET    /                                      controllers.HomeController.index(request: play.mvc.Http.Request)
+GET    /search/repositories/:keywords         controllers.HomeController.searchRepositories(request: play.mvc.Http.Request, keywords: String)
+GET    /users/:username                       controllers.HomeController.userProfile(username: String)
+GET    /users/repos/:username                 controllers.HomeController.userRepository(username: String)
+GET    /repos/:username/:repository           controllers.HomeController.repositoryProfile(username: String, repository: String)
+# GET    /repos/:username/:repository/issues    controllers.HomeController.repositoryIssues(username: String, repository: String)
+GET    /issues/:username/:repository          controllers.HomeController.getRepositoryIssues(username: String, repository: String)
+GET    /contributors/:username/:repository    controllers.HomeController.getRepositoryContributors(username: String, repository: String)
+GET    /commits/:username/:repository    controllers.HomeController.getRepositoryCommits(username: String, repository: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
