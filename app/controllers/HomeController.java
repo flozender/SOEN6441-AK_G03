@@ -11,8 +11,10 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
 import models.Repository;
+import models.RepositoryIssues;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -184,11 +186,33 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * @author Nazanin
+     * @version 1.1.5
+     * @since 1.1.3
+     * @param username
+     * @return
+     * @see API https://docs.github.com/en/rest/reference/issues#list-repository-issue
+     * 
+     * Method returns all the repository issues of the parsed user and repository.
+     * It is an Aysnc call. 
+     * 
+     * example https://api.github.com/repos/octocat/hello-world/issues
+     * 
+     */
+    
     public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
         String clientSecret = application.config().getString("CLIENT_SECRET");
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?per_page=20&sort=updated";
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";
 
+       /* return ws.url(url).get().thenApplyAsync(response -> {
+            RepositoryIssues repoissues = Json.fromJson(response.asJson(), RepositoryIssues.class);
+            return ok(views.html.repo.render(username,repoissues));
+        
+        });*/
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+            
+        
     }
 
     public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
@@ -205,20 +229,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
 
-    /**
-     * @author Nazanin
-     * @version 1.1.3
-     * @since 1.1.3
-     * @param username
-     * @return
-     * @see API https://docs.github.com/en/rest/reference/issues#list-repository-issue
-     * 
-     * Method returns all the repository issues of the parsed user and repository.
-     * It is an Aysnc call. 
-     * 
-     * example https://api.github.com/repos/octocat/hello-world/issues
-     * 
-     */
+    
 
 
     /**

@@ -22,17 +22,56 @@ package models;
  */
 public class RepositoryIssues {
 	
-	int count;
+	String owner;
 	
-	// Passing a fixed repo name as of now. I need to map it to the Repository once we have the page build.
+	String repo;
 	
+	String state;
 	
-	// example repo wesbos/JavaScript30
+	int page;
 	
+	String title;
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public String getRepo() {
+		return repo;
+	}
+
+	public void setRepo(String repo) {
+		this.repo = repo;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	
-	String RepoName;
-	
-	String tittle;
 	
 	
 
