@@ -3,6 +3,10 @@ package models;
 import java.util.List;
 import java.util.Date;
 
+/**
+ * @author 
+ *
+ */
 public class Repository {
     public String name;
     public String description;
@@ -16,6 +20,9 @@ public class Repository {
     public int open_issues_count;
     public int forks_count;
 
+    /**
+     * @return name as string
+     */
     public String getName() {
         return name;
     }
@@ -28,18 +35,28 @@ public class Repository {
         return created_at;
     }
 
+    /**
+     * @return owner as Owner Object
+     */
     public Owner getOwner() {
         return owner;
     }
+
 
     public License getLicense() {
         return license;
     }
 
+    /**
+     * @return topics List
+     */
     public List<String> getTopics() {
         return topics;
     }
 
+    /**
+     * @return html_url as String
+     */
     public String getHtmlUrl() {
         return html_url;
     }

@@ -1,31 +1,49 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
 import play.libs.ws.WSClient;
-import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Http;
-import play.mvc.Result;
 import play.mvc.Http.Cookie;
+import play.mvc.Result;
 import play.Application;
 
-import javax.inject.Inject;
+import views.html.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.concurrent.CompletionStage;
+/*
+ * Imports for counting and reverse the order
+ */
+import static java.util.Comparator.reverseOrder;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import java.util.Map;
 
 /**
  * This controller contains several actions to handle HTTP requests
  * to the application's home page.
+ */
+/**
+ * @author 
+ * @since 1.1.0
+ * @version 1.1.3
+ * 
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
@@ -49,6 +67,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * <code>GET</code> request with a path of <code>/</code>.
      */
 
+    /**
+     * @param request
+     * @return
+     * 
+     * @version 1.1.2
+     * @since 1.1.0
+     */
+    
+    
     public Result index(Http.Request request) {
         if (request.cookie("GITTERIFIC") != null){
             String userSession = request.cookie("GITTERIFIC").value();
@@ -59,6 +86,25 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
+
+    /**
+     * @author {FN}
+     * @version 1.1.2
+     * @since 1.1.0
+     *
+     * @param request
+     * @param keywords
+     * @return
+     * 
+     * It search for the repositories matching the string passed by the user in the search bar.
+     * <p>
+     * It will generate the results related to the search string and render on the page.
+     * The result will include username and the repository name.
+     * </p>
+     * 
+     * 
+     */
+  
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
@@ -68,8 +114,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response.asJson().get("items");
-                ArrayList<JsonNode> collectRepos = new ArrayList<JsonNode>();
-                ArrayList<String> collectSearchTerms = new ArrayList<String>();
+                ArrayList<JsonNode> collectRepos = new ArrayList<>();
+                ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
                 collectSearchTerms.add(keywords);
                 if (this.storage.containsKey(userSession)){
@@ -88,6 +134,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * @author {FN}
+     * @since 1.1.3
+     * @version 1.1.3
+     * {@summary} returns the user profile information.
+     *
+     * @param username
+     * @return
+     */
     public CompletionStage<Result> userProfile(String username) {
         String clientSecret = application.config().getString("CLIENT_SECRET");
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
@@ -98,6 +153,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * @author 
+     * @apiNote gets information related to user's repository
+     * @version 1.1.3
+     * @since 1.1.3
+     * @param username
+     * @return
+     * 
+     * Method userRepository returns the results based on the username passed 
+     * to it. It is a Async call.
+     * 
+     * The response contains all the public information of the user. Also, returns
+     * repositories of the current user.
+     *
+     */
     public CompletionStage<Result> userRepository(String username) {
         String clientSecret = application.config().getString("CLIENT_SECRET");
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
@@ -134,4 +204,55 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
 
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
+
+    /**
+     * @author Nazanin
+     * @version 1.1.3
+     * @since 1.1.3
+     * @param username
+     * @return
+     * @see API https://docs.github.com/en/rest/reference/issues#list-repository-issue
+     * 
+     * Method returns all the repository issues of the parsed user and repository.
+     * It is an Aysnc call. 
+     * 
+     * example https://api.github.com/repos/octocat/hello-world/issues
+     * 
+     */
+
+
+    /**
+     * @author Nazanin
+     * @version 1.1.5
+     * @since 1.1.3
+     * @param tittles
+     * @return
+     * 
+     * Method computes a word level statistics of the issues titles.
+     * It takes input of the titles. All titles are compared and collected into a list in a reverse order.
+     * 
+     * example https://api.github.com/repos/octocat/hello-world/issues
+     * 
+     */
+    public void repoIssuesStats (List<String> titles) {
+    	
+    	List<String> words = titles.stream()
+                .map(String::toLowerCase)
+                .collect(groupingBy(identity(), counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
+                .limit(100)
+                .map(Map.Entry::getKey)
+                .collect(toList());
+    	
+    	Map<String, Integer> counts = words.parallelStream().
+                collect(Collectors.toConcurrentMap(
+                    w -> w, w -> 1, Integer::sum));
+    	
+    	System.out.println(words);
+    	System.out.println(counts);
+    	
+    	
+    }
+
 }
