@@ -85,7 +85,7 @@
     function getIssues() {
         $.ajax({
             type: "GET",
-            url: `/issues/${username}/${repository}`,
+            url: `/${username}/${repository}/issues`,
             success: function (result) {
                 var table = $("<div>");
                 for (let i = 0; i < result.length; i++) {
@@ -128,7 +128,7 @@
     getIssues();
     getContributors();
     getCommits();
-    getTitles();
+   
     
     
 </script>

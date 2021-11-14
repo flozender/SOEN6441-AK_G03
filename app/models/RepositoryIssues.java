@@ -3,6 +3,9 @@
  */
 package models;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author Nazanin
  *
@@ -22,22 +25,16 @@ package models;
  */
 public class RepositoryIssues {
 	
-	String owner;
+	public String title;
 	
-	String repo;
-	
-	String state;
-	
-	int page;
-	
-	String title;
+	public String repo;
 
-	public String getOwner() {
-		return owner;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getRepo() {
@@ -47,31 +44,6 @@ public class RepositoryIssues {
 	public void setRepo(String repo) {
 		this.repo = repo;
 	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
 	
 	
 

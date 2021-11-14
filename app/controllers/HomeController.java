@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
 import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
@@ -23,8 +26,9 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
+import scala.util.parsing.json.JSONArray;
+import scala.util.parsing.json.JSONObject;
 import play.Application;
-
 import views.html.*;
 
 /*
@@ -154,7 +158,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             return ok(views.html.user.render(user));
         });
     }
+    
+    
+    /*public CompletionStage<Result> getUserRepositories(String username) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
 
+        return ws.url(url).get().thenApplyAsync(response -> {
+        	Owner user = Json.fromJson(response.asJson(), Owner.class);
+            return ok(views.html.repoissues.render(user));
+        });
+    }*/
+    
+    
     /**
      * @author 
      * @apiNote gets information related to user's repository
@@ -186,6 +202,13 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?per_page=20&sort=updated";
+
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+    
     /**
      * @author Nazanin
      * @version 1.1.5
@@ -200,18 +223,35 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
+
     
-    public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
+    public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
         String clientSecret = application.config().getString("CLIENT_SECRET");
+        //hardcode
+      //  String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/octocat/hello-world/issues";
+
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";
 
-       /* return ws.url(url).get().thenApplyAsync(response -> {
-            RepositoryIssues repoissues = Json.fromJson(response.asJson(), RepositoryIssues.class);
-            return ok(views.html.repo.render(username,repoissues));
+        // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+     /*   return ws.url(url).get().thenApplyAsync(response -> {
+            return ok(views.html.repoissues.render(response.asJson().toString()));
+        });
+        */
         
-        });*/
+        String message = ws.url(url).get().thenApplyAsync(response -> ok((response.asJson()))).toString();
+        Pattern pattern = Pattern.compile("\"title\":\"(.*?)\"");
+        
+        Matcher m = pattern.matcher(message);
+        int lastpos = 0;
+        ArrayList<String> tittleslist = new ArrayList<>();
+        int i = 0;
+        while(m.find()) {
+        	tittleslist.add(m.group(i));
+        	i++;
+        }
+        repoIssuesStats(tittleslist);
+       
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
-            
         
     }
 
@@ -259,7 +299,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     	Map<String, Integer> counts = words.parallelStream().
                 collect(Collectors.toConcurrentMap(
                     w -> w, w -> 1, Integer::sum));
-    	
     	System.out.println(words);
     	System.out.println(counts);
     	
