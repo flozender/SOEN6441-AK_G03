@@ -5,15 +5,20 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
 import models.Repository;
 import models.Response;
+import models.RepositoryIssues;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -35,6 +40,10 @@ import java.util.Hashtable;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Result;
 
+import play.mvc.Result;
+import java.lang.Object;
+import play.Application;
+import play.api.libs.json.JsObject;
 import views.html.*;
 
 /*
@@ -164,7 +173,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             return ok(views.html.user.render(user));
         });
     }
+    
+    
+    /*public CompletionStage<Result> getUserRepositories(String username) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
 
+        return ws.url(url).get().thenApplyAsync(response -> {
+        	Owner user = Json.fromJson(response.asJson(), Owner.class);
+            return ok(views.html.repoissues.render(user));
+        });
+    }*/
+    
+    
     /**
      * @author 
      * @apiNote gets information related to user's repository
@@ -202,10 +223,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
 
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
-
+    
     /**
      * @author Nazanin
-     * @version 1.1.3
+     * @version 1.1.5
      * @since 1.1.3
      * @param username
      * @return
@@ -217,12 +238,44 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public CompletionStage<Result> userRepositoryIssues(String username, String repository) {
-        String url = "https://api.github.com/repos/" + username +"/"+ repository +"/issues";
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
 
-    }
+    
+    public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        //hardcode
+      //  String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/octocat/hello-world/issues";
 
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";
+
+        // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+     /*   return ws.url(url).get().thenApplyAsync(response -> {
+            return ok(views.html.repoissues.render(response.asJson().toString()));
+        });
+        */
+       
+     // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        
+        return ws.url(url).get().thenApplyAsync(response -> {
+            try {
+            	
+                JsonNode tempResponse = response.asJson();
+//                System.out.println("issues: "+ tempResponse);
+                ArrayList<String> issuetitles = new ArrayList<>();
+                // collectRepos.add(tempResponse);
+                tempResponse.forEach(item -> {
+                	issuetitles.add(item.get("title").textValue());
+                });
+                System.out.println("issues: "+ issuetitles);
+                return ok(this.repoIssuesStats(issuetitles).toString());
+                
+//                return ok(response.asJson());
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
+        
+    } 
 
     /**
      * @author Nazanin
@@ -237,9 +290,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public void repoIssuesStats (List<String> titles) {
-    	
-    	List<String> words = titles.stream()
+    public Map<String, Integer> repoIssuesStats (List<String> titles) {
+    	ArrayList<String> strValues = new ArrayList<>();
+    	titles.forEach(item -> {
+    		String[] val = item.split(" ");
+    		for(int count=0; count < val.length; count++) {
+    			strValues.add(val[count]);
+    		}
+    	});
+    	List<String> words = strValues.stream()
                 .map(String::toLowerCase)
                 .collect(groupingBy(identity(), counting()))
                 .entrySet().stream()
@@ -252,9 +311,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 collect(Collectors.toConcurrentMap(
                     w -> w, w -> 1, Integer::sum));
     	
-    	System.out.println(words);
-    	System.out.println(counts);
-    	
+    	counts.entrySet().stream().sorted(Map.Entry.<String, Integer> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
+    	//System.out.println(words);
+    	//System.out.println(counts);
+    	return counts;
     	
     }
 

@@ -3,6 +3,9 @@
  */
 package models;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author Nazanin
  *
@@ -22,17 +25,25 @@ package models;
  */
 public class RepositoryIssues {
 	
-	int count;
+	public String title;
 	
-	// Passing a fixed repo name as of now. I need to map it to the Repository once we have the page build.
-	
-	
-	// example repo wesbos/JavaScript30
-	
-	
-	String RepoName;
-	
-	String tittle;
+	public String repo;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getRepo() {
+		return repo;
+	}
+
+	public void setRepo(String repo) {
+		this.repo = repo;
+	}
 	
 	
 
