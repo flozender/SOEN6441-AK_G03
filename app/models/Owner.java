@@ -14,7 +14,6 @@ public class Owner {
     /**
      * @return login
      */
-    
     public String getLogin() {
         return login;
     }
