@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
 import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
