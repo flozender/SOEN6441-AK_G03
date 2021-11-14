@@ -1,6 +1,7 @@
 package controllers;
 
 import models.Owner;
+import models.Repository;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -10,6 +11,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Http.Cookie;
+import play.Application;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     private final WSClient ws;
     private Hashtable<String, ArrayList<JsonNode>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
+
+    @Inject
+    private Application application;
 
     @Inject
     public HomeController(WSClient ws) {
@@ -57,7 +62,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        String url = "https://api.github.com/search/repositories?q="+keywords+"&per_page=10&sort=updated";
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/search/repositories?q="+keywords+"&per_page=10&sort=updated";
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response.asJson().get("items");
@@ -82,7 +89,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     public CompletionStage<Result> userProfile(String username) {
-        String url = "https://api.github.com/users/" + username;
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
+
         return ws.url(url).get().thenApplyAsync(response -> {
             Owner user = Json.fromJson(response.asJson(), Owner.class);
             return ok(views.html.user.render(user));
@@ -90,11 +99,39 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     public CompletionStage<Result> userRepository(String username) {
-        String url = "https://api.github.com/users/" + username + "/repos";
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
+        
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
 
-
-
-
+    public CompletionStage<Result> repositoryProfile(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository;
+        return ws.url(url).get().thenApplyAsync(response -> {
+            Repository repo = Json.fromJson(response.asJson(), Repository.class);
+            return ok(views.html.repo.render(username, repo));
+        });
     }
+
+    public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?per_page=20&sort=updated";
+
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+
+    public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/contributors";
+
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+    
+    public CompletionStage<Result> getRepositoryCommits(String username, String repository) {
+        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/commits";
+
+        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+    }
+}

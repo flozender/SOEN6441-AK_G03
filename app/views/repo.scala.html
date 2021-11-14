@@ -1,0 +1,131 @@
+@import java.util 
+@import models.Repository 
+@import com.fasterxml.jackson.databind.JsonNode;
+@(username: String, repository: Repository)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gitterific: @username/@repository.getName()</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>        
+        html,
+        body {
+            height: 100%;
+        }
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+        .form-signin {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px;
+            margin: auto;
+        }
+        .search-data{
+            margin-top: 4rem;
+            text-align: start;
+        }
+        .cursoring-userProfile {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="text-center">
+    <div class="form-signin" style="background-color: #eee;">
+        <a href="@repository.getHtmlUrl()" class="h2 font-weight-normal">@username/@repository.getName()</a>
+        <h1 class="h4 mb-1 font-weight-normal">@repository.getDescription()</h1>
+        <div class="d-flex flex-row">
+            <div class="search-data">
+                <h1 class="h4">Name: @repository.getName()</h1>
+                <h1 class="h4">Owner: @repository.getOwner().getLogin()</h1>
+                <h1 class="h4">Created: @repository.getCreatedAt()</h1>
+                <h1 class="h4">Language: @repository.getLanguage()</h1>
+                <h1 class="h4">License: @repository.getLicense().getName()</h1>
+                <h1 class="h4">Stargazers Count: @repository.getStarGazersCount()</h1>
+                <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
+                <h1 class="h4">Open Issues: <a>@repository.getOpenIssuesCount() (view statistics)</a></h1>
+                <h1 class="h4">Commits: <a id="commits">...</a></h1>
+                <h1 class="h4">Contributors: </h1>
+                <div class="h5" id="contributors"></div>
+                <div class="h4 mb-3 font-weight-normal">Topics: </div>
+                <div class="h5">
+                    @for(i <- 0 until repository.getTopics().size()){
+                        <a>@repository.getTopics().get(i)</a>, 
+                    }
+                    @if(repository.getTopics().size() == 0){
+                        <p>N/A</p>
+                    }
+                </div>
+                <div class="h4" style="margin-top: 2rem;">Issues: </div>
+                <div id="issues">
+                    <img src="/assets/images/loading.gif" style="height: 40px;"/> 
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    let address = window.location.pathname.split("/");
+    let repository = address.pop();
+    let username = address.pop();
+
+    function getIssues() {
+        $.ajax({
+            type: "GET",
+            url: `/issues/${username}/${repository}`,
+            success: function (result) {
+                var table = $("<div>");
+                for (let i = 0; i < result.length; i++) {
+                    table.append("<div class='h5'><b>#" + result[i]["number"] + "</b>&emsp;<a href=" + result[i]["html_url"] + ">" + result[i]["title"] + "</a></div>")
+                }
+                table.append("</div>")
+
+                $("#issues").html(table);
+            }
+        })
+    }
+
+    function getContributors() {
+        $.ajax({
+            type: "GET",
+            url: `/contributors/${username}/${repository}`,
+            success: function (result) {
+                var table = $("<div>");
+                for (let i = 0; i < result.length; i++) {
+                    table.append("<a href='/users/"+ result[i]["login"] +"'>" + result[i]["login"] + "</a>, ");
+                }
+                
+                table.append("</div>")
+
+                $("#contributors").html(table);
+            }
+        })
+    }
+
+    function getCommits() {
+        $.ajax({
+            type: "GET",
+            url: `/commits/${username}/${repository}`,
+            success: function (result) {
+                $("a#commits").text(`${result.length} (view commits)`);
+            }
+        })
+    }
+
+    getIssues();
+    getContributors();
+    getCommits();
+</script>
+</html>
