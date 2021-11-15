@@ -59,7 +59,7 @@
                     success: function (result) {
                         var table = $("<table><tr><th>Repositories Information</th></tr>");
                         for (let i = 0; i < result.length; i++) {
-                            table.append("<tr><td>Name:</td><td><a href='/reposissues/" + username + "/" + result[i]["name"] +"/issues'>" + result[i]["name"] + "</a></td></tr>")
+                            table.append("<tr><td>Name:</td><td>" + result[i]["name"] + "</td></tr>")
                             table.append("<tr><td>Dec:</td><td>" + result[i]["description"] + "</td></tr>")
                         }
                         table.append("</table>")

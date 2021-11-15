@@ -85,7 +85,7 @@
     function getIssues() {
         $.ajax({
             type: "GET",
-            url: `/${username}/${repository}/issues`,
+            url: `/issues/${username}/${repository}`,
             success: function (result) {
                 var table = $("<div>");
                 for (let i = 0; i < result.length; i++) {
