@@ -15,6 +15,7 @@
         <style>
         html,
         body {
+            height: 100%;
         }
         body {
             display: -ms-flexbox;
@@ -25,29 +26,43 @@
             padding-bottom: 40px;
             background-color: #f5f5f5;
         }
-
-
+        .form-signin {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px;
+            margin: auto;
+        }
+        .search-data{
+            margin-top: 4rem;
+            text-align: start;
+        }
+        .cursoring-userProfile {
+            cursor: pointer;
+        }
 
         </style>
     </head>
 
-    <body>
-    <div class="main-result">
-        Username: <b>@owner.getLogin</b>
-        <br/>
-        Name: <b>@owner.getName</b>
-        <br/>
-        Company: <b>@owner.getCompany</b>
-        <br/>
+    <body class="text-center">
+        <div class="form-signin" style="background-color: #eee;">
+            <a href="@owner.getHtml_url()" class="h2 font-weight-normal">@owner.getLogin()</a>
+            <h1 class="h4 mb-1 font-weight-normal">@owner.getCompany()</h1>
+            <div class="d-flex flex-row">
+                <div class="search-data">
+                    <h1 class="h4">Name: @owner.getName()</h1>
+                    <h1 class="h4">Created: @owner.getCreated_at()</h1>
+                    <h1 class="h4">Following: @owner.getFollowing()</h1>
+                    <h1 class="h4">Followers: @owner.getFollowers()</h1>
+                    <h1 class="h4">Email: @owner.getEmail()</h1>
+                    <h1 class="h4">Public Repos Count: @owner.getPublic_repos()</h1>
+                    <div class="h5" id="repositories"></div>
 
-        <div id="repositories" class="repository-results"></div>
-
-    </div>
-
-
+                </div>
+            </div>
+        </div>
     </body>
-    <script>
 
+    <script>
             let username = window.location.pathname.split("/").pop();
 
             function repositoryButton() {
@@ -71,12 +86,5 @@
             //     window.location = "/repos/"+username+"/"+repName;
             // }
             repositoryButton();
-            
-       
-    
-   
-    
-
     </script>
-
 </html>

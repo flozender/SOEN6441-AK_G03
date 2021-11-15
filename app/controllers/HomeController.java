@@ -175,7 +175,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
     
     
-    
     /**
      * @author 
      * @apiNote gets information related to user's repository
