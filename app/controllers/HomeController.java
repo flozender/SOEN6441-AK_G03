@@ -175,16 +175,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
     
     
-    /*public CompletionStage<Result> getUserRepositories(String username) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
-
-        return ws.url(url).get().thenApplyAsync(response -> {
-        	Owner user = Json.fromJson(response.asJson(), Owner.class);
-            return ok(views.html.repoissues.render(user));
-        });
-    }*/
-    
     
     /**
      * @author 
