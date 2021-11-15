@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
@@ -25,9 +26,9 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
-import scala.util.parsing.json.JSONArray;
-import scala.util.parsing.json.JSONObject;
+import java.lang.Object;
 import play.Application;
+import play.api.libs.json.JsObject;
 import views.html.*;
 
 /*
@@ -236,21 +237,28 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             return ok(views.html.repoissues.render(response.asJson().toString()));
         });
         */
-        
-        String message = ws.url(url).get().thenApplyAsync(response -> ok((response.asJson()))).toString();
-        Pattern pattern = Pattern.compile("\"title\":\"(.*?)\"");
-        
-        Matcher m = pattern.matcher(message);
-        int lastpos = 0;
-        ArrayList<String> tittleslist = new ArrayList<>();
-        int i = 0;
-        while(m.find()) {
-        	tittleslist.add(m.group(i));
-        	i++;
-        }
-        repoIssuesStats(tittleslist);
        
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+     // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        
+        return ws.url(url).get().thenApplyAsync(response -> {
+            try {
+            	
+                JsonNode tempResponse = response.asJson();
+//                System.out.println("issues: "+ tempResponse);
+                ArrayList<String> issuetitles = new ArrayList<>();
+                // collectRepos.add(tempResponse);
+                tempResponse.forEach(item -> {
+                	issuetitles.add(item.get("title").textValue());
+                });
+                System.out.println("issues: "+ issuetitles);
+                return ok(this.repoIssuesStats(issuetitles).toString());
+                
+//                return ok(response.asJson());
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
         
     }
 
@@ -284,9 +292,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public void repoIssuesStats (List<String> titles) {
-    	
-    	List<String> words = titles.stream()
+    public Map<String, Integer> repoIssuesStats (List<String> titles) {
+    	ArrayList<String> strValues = new ArrayList<>();
+    	titles.forEach(item -> {
+    		String[] val = item.split(" ");
+    		for(int count=0; count < val.length; count++) {
+    			strValues.add(val[count]);
+    		}
+    	});
+    	List<String> words = strValues.stream()
                 .map(String::toLowerCase)
                 .collect(groupingBy(identity(), counting()))
                 .entrySet().stream()
@@ -298,9 +312,11 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     	Map<String, Integer> counts = words.parallelStream().
                 collect(Collectors.toConcurrentMap(
                     w -> w, w -> 1, Integer::sum));
-    	System.out.println(words);
-    	System.out.println(counts);
     	
+    	counts.entrySet().stream().sorted(Map.Entry.<String, Integer> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
+    	//System.out.println(words);
+    	//System.out.println(counts);
+    	return counts;
     	
     }
 
