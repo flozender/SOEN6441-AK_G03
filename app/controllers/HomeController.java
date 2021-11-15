@@ -1,24 +1,9 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.concurrent.CompletionStage;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import akka.http.scaladsl.model.headers.LinkParams.title;
 import models.Owner;
 import models.Repository;
-import models.Response;
-import models.RepositoryIssues;
+import play.Application;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -26,42 +11,23 @@ import play.libs.ws.WSClient;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
-import scala.util.parsing.combinator.token.StdTokens.Keyword;
-import play.Application;
+import play.mvc.Result;
 
 import javax.inject.Inject;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.concurrent.CompletionStage;
-import play.mvc.Result;
+import java.util.stream.Collectors;
 
-import play.mvc.Result;
-import java.lang.Object;
-import play.Application;
-import play.api.libs.json.JsObject;
-import views.html.*;
-
-/*
- * Imports for counting and reverse the order
- */
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import java.util.Map;
+import static java.util.stream.Collectors.*;
 
 /**
  * This controller contains several actions to handle HTTP requests
  * to the application's home page.
  */
 /**
- * @author 
+ * @author Pedram & Tayeeb
  * @since 1.1.0
  * @version 1.1.3
  * 
@@ -74,13 +40,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     @Inject
     private Application application;
 
-    @Inject
-    public HomeController(WSClient ws) {
-        this.ws = ws;
-        this.storage = new Hashtable<>();
-        this.searchTerms = new Hashtable<>();
-    }
-
     /**
      * An action that renders an HTML page with a welcome message.
      * The configuration in the <code>routes</code> file means that
@@ -89,8 +48,27 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
 
     /**
-     * @param request
-     * @return
+     * @param ws Handles the ws dependency for sending HTTP requests
+     *
+     *
+     */
+    @Inject
+    public HomeController(WSClient ws) {
+        this.ws = ws;
+        this.storage = new Hashtable<>();
+        this.searchTerms = new Hashtable<>();
+    }
+    /**
+     * An action that renders an HTML page with a welcome message.
+     * The configuration in the <code>routes</code> file means that
+     * this method will be called when the application receives a
+     * <code>GET</code> request with a path of <code>/</code>.
+     */
+
+    /**
+     * @param request Contains the HTTP request
+     * @return Empty index page that contains the search bar
+     * @author Pedram & Tayeeb
      * 
      * @version 1.1.2
      * @since 1.1.0
@@ -109,18 +87,16 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
 
 
     /**
-     * @author {FN}
-     * @version 1.1.2
-     * @since 1.1.0
+     * @author Pedram & Tayeeb
      *
-     * @param request
-     * @param keywords
-     * @return
+     * @param request Contains the HTTP request
+     * @param keywords Contains the keywords which user entered in the search bar
+     * @return index page that contains search results (repositories)
      * 
-     * It search for the repositories matching the string passed by the user in the search bar.
+     * It searches for the repositories matching the string passed by the user in the search bar.
      * <p>
      * It will generate the results related to the search string and render on the page.
-     * The result will include username and the repository name.
+     * The result will include username and the repository name and topics related to each repository.
      * </p>
      * 
      * 
@@ -156,13 +132,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     /**
-     * @author {FN}
-     * @since 1.1.3
-     * @version 1.1.3
-     * {@summary} returns the user profile information.
+     * @author Pedram
      *
-     * @param username
-     * @return
+     * @param username Contains the github username of the user
+     * @return The user page containing all the information about the requested user
      */
     public CompletionStage<Result> userProfile(String username) {
         String clientSecret = application.config().getString("CLIENT_SECRET");
@@ -176,15 +149,12 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     
     
     /**
-     * @author 
-     * @apiNote gets information related to user's repository
-     * @version 1.1.3
-     * @since 1.1.3
-     * @param username
-     * @return
+     * @author Pedram Nouri
+     * @param username Contains the github username of the user
+     * @return A Json file that consume by the user page in order to show all the repositories of the user
      * 
      * Method userRepository returns the results based on the username passed 
-     * to it. It is a Async call.
+     * to it. It is an Async call.
      * 
      * The response contains all the public information of the user. Also, returns
      * repositories of the current user.
