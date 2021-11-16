@@ -50,7 +50,7 @@
                 <h1 class="h4">Owner: @repository.getOwner().getLogin()</h1>
                 <h1 class="h4">Created: @repository.getCreatedAt()</h1>
                 <h1 class="h4">Language: @repository.getLanguage()</h1>
-                <h1 class="h4">License: @repository.getLicense().getName()</h1>
+                <h1 class="h4">License: @if(repository.getLicense() != null){repository.getLicense().getName();}else{No license found}</h1>
                 <h1 class="h4">Stargazers Count: @repository.getStarGazersCount()</h1>
                 <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
                 <h1 class="h4">Open Issues: <a>@repository.getOpenIssuesCount() (view statistics)</a></h1>
@@ -92,6 +92,9 @@
                     table.append("<div class='h5'><b>#" + result[i]["number"] + "</b>&emsp;<a href=" + result[i]["html_url"] + ">" + result[i]["title"] + "</a></div>")
                 }
                 table.append("</div>")
+                if (result.length == 0){
+                    table = $("<p>N/A</p>");
+                }
 
                 $("#issues").html(table);
             }
