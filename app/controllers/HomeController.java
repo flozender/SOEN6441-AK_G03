@@ -8,8 +8,6 @@ import models.Owner;
 import models.Repository;
 import play.Application;
 import play.libs.Json;
-import play.libs.ws.WSBodyReadables;
-import play.libs.ws.WSBodyWritables;
 import play.libs.ws.*;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -18,7 +16,7 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
@@ -112,11 +110,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        CompletionStage<WSResponse> res = ghImpl.searchRepositories(keywords, ws);
-        
-        return res.thenApplyAsync(response -> {
+        CompletableFuture<JsonNode> res = ghImpl.searchRepositories(keywords, ws);
+        return res.thenApplyAsync((JsonNode tempResponse) -> {
             try {
-                JsonNode tempResponse = response.asJson().get("items");
                 ArrayList<JsonNode> collectRepos = new ArrayList<>();
                 ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
@@ -135,6 +131,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.error.render());
             }
         });
+
     }
 
     /**
