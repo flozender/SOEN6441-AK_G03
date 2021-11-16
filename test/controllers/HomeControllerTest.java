@@ -43,7 +43,7 @@ public class HomeControllerTest extends WithApplication {
     }
 
     @Test
-      public final void testEmptySearch() {
+      public final void testSearchRepositories() {
         GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
         CompletableFuture<JsonNode> res = testGitHub.searchRepositories("facebook", ws);
         try{
