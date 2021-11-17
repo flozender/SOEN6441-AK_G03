@@ -1,79 +1,58 @@
 package controllers;
 
-import org.hibernate.validator.internal.util.logging.Log_.logger;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
 import play.Application;
-import play.api.test.Helpers;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.test.TestServer;
 import play.test.WithApplication;
-import play.twirl.api.Content;
-import views.*;
+import play.test.Helpers;
+import play.libs.ws.*;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.running;
-import play.libs.oauth.OAuth.RequestToken;
-import play.mvc.Http.Session;
-import play.data.FormFactory;
+
+import static play.inject.Bindings.bind;
+import static org.junit.Assert.*;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
-import static play.test.Helpers.*;
 
+import java.util.concurrent.CompletableFuture;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
+
+import services.github.GitHubApi;
+import services.github.GitHubTestApi;
 
 public class HomeControllerTest extends WithApplication {
+    private static Application testApp;
+    @Inject private WSClient ws;
 
-	/* Commenting this out; Will delete it once we have google guice
-	Application fakeApp = fakeApplication();
+    @BeforeClass
+      public static void initTestApp() {
+      testApp = new GuiceApplicationBuilder()
+      .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
+      .build();
+    }
 
-	Application fakeAppWithMemoryDb = fakeApplication(inMemoryDatabase("test"));
-	*/
-  
+    @AfterClass
+      public static void stopTestApp() {
+      Helpers.stop(testApp);
+    }
+
     @Test
-    public void testIndex() throws Exception{
-        Http.RequestBuilder request = new Http.RequestBuilder()
-                .method(GET)
-                .uri("/");
-
-        Result result = route(app, request);
-        assertEquals(OK, result.status());
-    }
-/*    
- * 
- * 	private static Application testApp;
-	private FormFactory formFactory;
-	static Session session;
-	
- *   @Override
-    protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
+      public final void testSearchRepositories() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.searchRepositories("facebook", ws);
+        try{
+          JsonNode repositories = res.get();
+          assertEquals("facebook-tools-new", repositories.get(0).get("name").asText());
+          assertEquals("Python", repositories.get(1).get("language").asText());
+        } catch (Exception e) {
+          System.out.println(e);
+      }
     }
 
-  @Test
-  public void CompletionStage() {
-	String  searchKeyword = "SquidGame";
-	String emptykeyword = "";
-	
-	Http.RequestBuilder search1 = new Http.RequestBuilder()
-			.method(GET)
-			.uri("https://api.github.com/search/repositories?q=\"+emptykeyword+\"&per_page=10");
-	
-	 Result result = route(app, search1);
-     assertEquals(OK, result.status());
-  }*/
-    
-    @Test
-    public void renderTemplate() {
-        Content html = views.html.index.render("Welcome to Play!");
-      assertEquals("text/html", html.contentType());
-      assertTrue(contentAsString(html).contains("Welcome to Play!"));
-    }
-    
-
-
-    
 }

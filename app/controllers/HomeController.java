@@ -1,13 +1,14 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import models.Owner;
 import models.Repository;
 import play.Application;
 import play.libs.Json;
-import play.libs.ws.WSBodyReadables;
-import play.libs.ws.WSBodyWritables;
-import play.libs.ws.WSClient;
+import play.libs.ws.*;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
@@ -15,19 +16,22 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
+import services.github.*;
+import modules.*;
+
 /**
  * This controller contains several actions to handle HTTP requests
  * to the application's home page.
  */
 /**
- * @author Pedram & Tayeeb
+ * @author Pedram & Tayeeb Hasan
  * @since 1.1.0
  * @version 1.1.3
  * 
@@ -37,8 +41,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     private Hashtable<String, ArrayList<JsonNode>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
 
-    @Inject
-    private Application application;
+    public Injector injector = Guice.createInjector(new GitHubModule());
+    private GitHubApi ghImpl = injector.getInstance(GitHubApi.class);
 
     /**
      * An action that renders an HTML page with a welcome message.
@@ -68,7 +72,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     /**
      * @param request Contains the HTTP request
      * @return Empty index page that contains the search bar
-     * @author Pedram & Tayeeb
+     * @author Pedram & Tayeeb Hasan
      * 
      * @version 1.1.2
      * @since 1.1.0
@@ -82,12 +86,13 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             this.searchTerms.put(userSession, new ArrayList<>());
             System.out.println("Cleared storage " + this.storage.get(userSession));
         }
+        
         return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
     }
 
 
     /**
-     * @author Pedram & Tayeeb
+     * @author Pedram & Tayeeb Hasan
      *
      * @param request Contains the HTTP request
      * @param keywords Contains the keywords which user entered in the search bar
@@ -105,12 +110,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        String clientSecret = application.config().getString("CLIENT_SECRET");
-
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/search/repositories?q="+keywords+"&per_page=10&sort=updated";
-        return ws.url(url).get().thenApplyAsync(response -> {
+        CompletableFuture<JsonNode> res = ghImpl.searchRepositories(keywords, ws);
+        return res.thenApplyAsync((JsonNode tempResponse) -> {
             try {
-                JsonNode tempResponse = response.asJson().get("items");
                 ArrayList<JsonNode> collectRepos = new ArrayList<>();
                 ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
@@ -129,6 +131,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.error.render());
             }
         });
+
     }
 
     /**
@@ -138,7 +141,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return The user page containing all the information about the requested user
      */
     public CompletionStage<Result> userProfile(String username) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
 
         return ws.url(url).get().thenApplyAsync(response -> {
@@ -161,15 +164,16 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     public CompletionStage<Result> userRepository(String username) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
         
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
 
     public CompletionStage<Result> repositoryProfile(String username, String repository) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository;
+        
         return ws.url(url).get().thenApplyAsync(response -> {
             Repository repo = Json.fromJson(response.asJson(), Repository.class);
             return ok(views.html.repo.render(username, repo));
@@ -177,7 +181,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?per_page=20&sort=updated";
 
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
@@ -200,34 +204,18 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
 
     
     public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
-        //hardcode
-      //  String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/octocat/hello-world/issues";
-
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";
-
-        // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
-     /*   return ws.url(url).get().thenApplyAsync(response -> {
-            return ok(views.html.repoissues.render(response.asJson().toString()));
-        });
-        */
-       
-     // return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
         
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
-            	
                 JsonNode tempResponse = response.asJson();
-//                System.out.println("issues: "+ tempResponse);
                 ArrayList<String> issuetitles = new ArrayList<>();
-                // collectRepos.add(tempResponse);
                 tempResponse.forEach(item -> {
-                	issuetitles.add(item.get("title").textValue());
+                    issuetitles.add(item.get("title").textValue());
                 });
                 System.out.println("issues: "+ issuetitles);
                 return ok(this.repoIssuesStats(issuetitles).toString());
-                
-//                return ok(response.asJson());
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
                 return ok(views.html.error.render());
@@ -271,21 +259,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                     w -> w, w -> 1, Integer::sum));
     	
     	counts.entrySet().stream().sorted(Map.Entry.<String, Integer> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
-    	//System.out.println(words);
-    	//System.out.println(counts);
     	return counts;
     	
     }
 
     public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/contributors";
 
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
     }
     
     public CompletionStage<Result> getRepositoryCommits(String username, String repository) {
-        String clientSecret = application.config().getString("CLIENT_SECRET");
+        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/commits";
 
         return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
