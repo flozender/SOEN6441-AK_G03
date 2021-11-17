@@ -64,6 +64,19 @@ public class HomeControllerTest extends WithApplication {
     }
 
     @Test
+    public final void testUserRepository() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.userRepository("erfan", ws);
+        try{
+            JsonNode repositories = res.get();
+            assertEquals("compose", repositories.get(0).get("name").asText());
+            assertEquals("Docker_training_with_DockerMe", repositories.get(1).get("name").asText());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Test
     public final void ownerTest() throws Exception{
         Owner o1 = new Owner();
         String stringDate="31/12/2018";

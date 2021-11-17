@@ -29,4 +29,15 @@ public class GitHubImpl implements GitHubApi {
         }).start();
         return futureUser;
     }
+
+    @Override
+    public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
+        CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
+        String url = API_URL + "/users/" + username + "/repos";
+        new Thread( () -> {
+            ws.url(url).get()
+                    .thenApplyAsync(response -> (futureRepositories.complete(response.asJson())));
+        }).start();
+        return futureRepositories;
+    }
 }

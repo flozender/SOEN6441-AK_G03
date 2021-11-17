@@ -70,4 +70,33 @@ public class GitHubTestApi implements GitHubApi{
 
         return futureUser;
     }
+
+    @Override
+    public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
+        CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
+        new Thread( () -> {
+            Path fileName = Paths.get("./app/services/github/resources/userRepository.json");
+            Charset charset = Charset.forName("ISO-8859-1");
+            String jsonString = "";
+            try {
+                List<String> lines = Files.readAllLines(fileName, charset);
+                for (String line : lines) {
+                    jsonString += line;
+                }
+            }
+            catch (IOException e) {
+                System.out.println(e);
+            }
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(jsonString);
+                futureRepositories.complete(node);
+            }
+            catch (IOException e) {
+                System.out.println(e);
+            }
+        }).start();
+
+        return futureRepositories;
+    }
 }

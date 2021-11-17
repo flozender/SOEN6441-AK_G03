@@ -144,9 +144,14 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         CompletableFuture<JsonNode> user = ghImpl.userProfile(username, ws);
 
         return user.thenApplyAsync(response -> {
-            System.out.println(response);
-            Owner userProfileInfo = Json.fromJson(response, Owner.class);
-            return ok(views.html.user.render(userProfileInfo));
+            try {
+                System.out.println(response);
+                Owner userProfileInfo = Json.fromJson(response, Owner.class);
+                return ok(views.html.user.render(userProfileInfo));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
         });
     }
     
@@ -164,10 +169,17 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     public CompletionStage<Result> userRepository(String username) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
+
+        CompletableFuture<JsonNode> repos = ghImpl.userRepository(username, ws);
         
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        return repos.thenApplyAsync(response -> {
+            try{
+                return ok((response));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
     }
 
     public CompletionStage<Result> repositoryProfile(String username, String repository) {

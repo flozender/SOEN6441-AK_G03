@@ -8,5 +8,6 @@ import java.util.concurrent.CompletableFuture;
 public interface GitHubApi {
     public CompletableFuture<JsonNode> searchRepositories(String keywords, WSClient ws);
     public CompletableFuture<JsonNode> userProfile(String username, WSClient ws);
+    public CompletableFuture<JsonNode> userRepository(String username, WSClient ws);
 
 }
