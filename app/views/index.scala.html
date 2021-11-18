@@ -64,7 +64,7 @@
                 <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                 @for(j <- 0 until repositories.get(i).size()){
                     <div class="data">
-                        @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile(@repositories.get(i).get(j).getOwner().getLogin())">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
+                        @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
                         @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
                             <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).getTopics().get(k))</b>
                         }
