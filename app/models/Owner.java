@@ -17,7 +17,7 @@ public class Owner {
     private int following;
     private int followers;
     private String email;
-    private String public_repos;
+    private int public_repos;
 
     /**
      * @return returns the username of the user
@@ -78,7 +78,43 @@ public class Owner {
     /**
      * @return returns the number of public repositories of the user
      */
-    public String getPublic_repos() {
+    public int getPublic_repos() {
         return public_repos;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setHtml_url(String html_url) {
+        this.html_url = html_url;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public void setFollowing(int following) {
+        this.following = following;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPublic_repos(int public_repos) {
+        this.public_repos = public_repos;
     }
 }

@@ -1,6 +1,7 @@
 @import java.util 
 @import com.fasterxml.jackson.databind.JsonNode;
-@(repositories: util.List[JsonNode], searchTerms: util.List[String])
+@import models.Repository;
+@(repositories: util.List[util.List[Repository]], searchTerms: util.List[String])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,9 +64,9 @@
                 <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                 @for(j <- 0 until repositories.get(i).size()){
                     <div class="data">
-                        @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile(@repositories.get(i).get(j).get("owner").get("login"))">@repositories.get(i).get(j).get("owner").get("login")</b> / @repositories.get(i).get(j).get("name")
-                        @for(k <- 0 until repositories.get(i).get(j).get("topics").size()){
-                            <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).get("topics").get(k))</b>
+                        @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
+                        @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
+                            <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).getTopics().get(k))</b>
                         }
                     </div>
                 }

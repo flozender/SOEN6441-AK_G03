@@ -1,58 +1,69 @@
 package controllers;
 
-import org.junit.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.test.WithApplication;
+import play.libs.ws.WSClient;
 import play.test.Helpers;
-import play.libs.ws.*;
-import org.junit.Test;
-
-
-import static play.inject.Bindings.bind;
-import static org.junit.Assert.*;
-import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.GET;
-import static play.test.Helpers.route;
-
-import java.util.concurrent.CompletableFuture;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Inject;
-
+import play.test.WithApplication;
 import services.github.GitHubApi;
 import services.github.GitHubTestApi;
+import play.mvc.Result;
+import play.mvc.Http.RequestBuilder;
+import play.mvc.Http.Cookie;
+import play.mvc.Http.Request;
+import play.inject.Injector;
+import play.inject.guice.GuiceInjectorBuilder;
+import static play.inject.Bindings.bind;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import static org.junit.Assert.assertEquals;
 
 public class HomeControllerTest extends WithApplication {
     private static Application testApp;
     @Inject private WSClient ws;
 
     @BeforeClass
-      public static void initTestApp() {
-      testApp = new GuiceApplicationBuilder()
-      .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
-      .build();
+        public static void initTestApp() {
+        testApp = new GuiceApplicationBuilder()
+        .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
+        .build();
+        
+        Helpers.start(testApp);
     }
 
     @AfterClass
-      public static void stopTestApp() {
-      Helpers.stop(testApp);
+        public static void stopTestApp() {
+        Helpers.stop(testApp);
     }
 
     @Test
-      public final void testSearchRepositories() {
-        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
-        CompletableFuture<JsonNode> res = testGitHub.searchRepositories("facebook", ws);
+    public final void testSearchRepositories() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
         try{
-          JsonNode repositories = res.get();
-          assertEquals("facebook-tools-new", repositories.get(0).get("name").asText());
-          assertEquals("Python", repositories.get(1).get("language").asText());
-        } catch (Exception e) {
-          System.out.println(e);
-      }
+            Result result = csResult.toCompletableFuture().get();
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(Helpers.contentAsString(result), containsString("Welcome to Gitterific!"));
+            assertThat(Helpers.contentAsString(result), containsString("facebook-tools-new"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
     }
-
+   
 }

@@ -3,29 +3,27 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import models.Owner;
 import models.Repository;
-import play.Application;
 import play.libs.Json;
-import play.libs.ws.*;
+import play.libs.ws.WSBodyReadables;
+import play.libs.ws.WSBodyWritables;
+import play.libs.ws.WSClient;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
+import services.github.GitHubApi;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Function;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-
-import services.github.*;
-import modules.*;
 
 /**
  * This controller contains several actions to handle HTTP requests
@@ -39,11 +37,10 @@ import modules.*;
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
-    private Hashtable<String, ArrayList<JsonNode>> storage;
+    private Hashtable<String, ArrayList<List<Repository>>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
 
-    public Injector injector = Guice.createInjector(new GitHubModule());
-    private GitHubApi ghImpl = injector.getInstance(GitHubApi.class);
+    private final GitHubApi ghImpl;
 
     /**
      * An action that renders an HTML page with a welcome message.
@@ -58,8 +55,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     @Inject
-    public HomeController(WSClient ws) {
+    public HomeController(WSClient ws, GitHubApi gitHubApi) {
         this.ws = ws;
+        this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
     }
@@ -109,17 +107,16 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
   
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
-        JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        CompletableFuture<JsonNode> res = ghImpl.searchRepositories(keywords, ws);
-        return res.thenApplyAsync((JsonNode tempResponse) -> {
+        CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
+        return res.thenApplyAsync((List<Repository> tempResponse) -> {
             try {
-                ArrayList<JsonNode> collectRepos = new ArrayList<>();
+                ArrayList<List<Repository>> collectRepos = new ArrayList<>();
                 ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
                 collectSearchTerms.add(keywords);
                 if (this.storage.containsKey(userSession)){
-                    ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                    ArrayList<List<Repository>> tempStorage = this.storage.get(userSession);
                     ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
                     tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
                     tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
@@ -142,12 +139,16 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return The user page containing all the information about the requested user
      */
     public CompletionStage<Result> userProfile(String username) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
+        CompletableFuture<JsonNode> user = ghImpl.userProfile(username, ws);
 
-        return ws.url(url).get().thenApplyAsync(response -> {
-            Owner user = Json.fromJson(response.asJson(), Owner.class);
-            return ok(views.html.user.render(user));
+        return user.thenApplyAsync(response -> {
+            try {
+                Owner userProfileInfo = Json.fromJson(response, Owner.class);
+                return ok(views.html.user.render(userProfileInfo));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
         });
     }
     
@@ -165,10 +166,17 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     public CompletionStage<Result> userRepository(String username) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
+
+        CompletableFuture<JsonNode> repos = ghImpl.userRepository(username, ws);
         
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        return repos.thenApplyAsync(response -> {
+            try{
+                return ok((response));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
     }
 
     public CompletionStage<Result> repositoryProfile(String username, String repository) {
@@ -215,8 +223,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
-                System.out.println("issues: "+ issuetitles);
-                return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
+                return ok(this.repoIssuesStats(issuetitles).toString());
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
                 return ok(views.html.error.render());
@@ -238,7 +245,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public Map<String, Long> repoIssuesStats (List<String> titles) {
+    public Map<String, Integer> repoIssuesStats (List<String> titles) {
     	ArrayList<String> strValues = new ArrayList<>();
     	titles.forEach(item -> {
     		String[] val = item.split(" ");
@@ -246,35 +253,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     			strValues.add(val[count]);
     		}
     	});
+    	List<String> words = strValues.stream()
+                .map(String::toLowerCase)
+                .collect(groupingBy(identity(), counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
+                .limit(100)
+                .map(Map.Entry::getKey)
+                .collect(toList());
     	
-    	Map<String, Long> counts =  strValues.stream().collect(groupingBy(Function.identity(), counting()));
+    	Map<String, Integer> counts = words.parallelStream().
+                collect(Collectors.toConcurrentMap(
+                    w -> w, w -> 1, Integer::sum));
     	
-    	//LinkedHashMap preserve the ordering of elements in which they are inserted
-    	Map<String, Long> reverseCounts = new LinkedHashMap<>();
-    	 
-    	//Use Comparator.reverseOrder() for reverse ordering
-    	counts.entrySet()
-    	    .stream()
-    	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
-    	    .forEachOrdered(x -> reverseCounts.put(x.getKey(), x.getValue()));
-    	
-    	System.out.println("sorted map is " + counts );
-    
-    	System.out.println("sorted map is " + reverseCounts );
-        
-		/*
-		 * List<String> words = strValues.stream() .map(String::toLowerCase)
-		 * .collect(groupingBy(identity(), counting())) .entrySet().stream()
-		 * .sorted(Map.Entry.<String, Long>
-		 * comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
-		 * .limit(100) .map(Map.Entry::getKey) .collect(toList());
-		 * 
-		 * Map<String, Integer> counts = words.parallelStream().
-		 * collect(Collectors.toConcurrentMap( w -> w, w -> 1, Integer::sum));
-		 */
-    	
-    //	counts.entrySet().stream().sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
-    	return reverseCounts;
+    	counts.entrySet().stream().sorted(Map.Entry.<String, Integer> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
+    	return counts;
     	
     }
 
