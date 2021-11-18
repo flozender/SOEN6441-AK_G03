@@ -12,9 +12,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 public class GitHubTestApi implements GitHubApi{
 
     @Override
@@ -36,8 +38,7 @@ public class GitHubTestApi implements GitHubApi{
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(jsonString);
-                System.out.println(node);
-                List<Repository> repoList = Arrays.asList();
+                List<Repository> repoList = new ArrayList<>();
                 for (JsonNode repo : node){
                     Repository res = Json.fromJson(repo, Repository.class);
                     repoList.add(res);

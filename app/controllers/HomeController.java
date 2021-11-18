@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import models.Owner;
 import models.Repository;
-import modules.GitHubModule;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
@@ -41,8 +40,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     private Hashtable<String, ArrayList<List<Repository>>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
 
-    public Injector injector = Guice.createInjector(new GitHubModule());
-    private GitHubApi ghImpl;
+    private final GitHubApi ghImpl;
 
     /**
      * An action that renders an HTML page with a welcome message.
@@ -57,9 +55,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     @Inject
-    public HomeController(WSClient ws) {
+    public HomeController(WSClient ws, GitHubApi gitHubApi) {
         this.ws = ws;
-        this.ghImpl = injector.getInstance(GitHubApi.class);
+        this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
     }
@@ -111,11 +109,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
         String userSession = request.cookie("GITTERIFIC").value();
         CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
-        System.out.println("GETTTING " );
-
         return res.thenApplyAsync((List<Repository> tempResponse) -> {
             try {
-                System.out.println("GETTTING " + tempResponse);
                 ArrayList<List<Repository>> collectRepos = new ArrayList<>();
                 ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
@@ -148,7 +143,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
 
         return user.thenApplyAsync(response -> {
             try {
-                System.out.println(response);
                 Owner userProfileInfo = Json.fromJson(response, Owner.class);
                 return ok(views.html.user.render(userProfileInfo));
             }catch (Exception e) {
@@ -229,7 +223,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
-                System.out.println("issues: "+ issuetitles);
                 return ok(this.repoIssuesStats(issuetitles).toString());
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
