@@ -53,7 +53,7 @@
                 <h1 class="h4">License: @if(repository.getLicense() != null){repository.getLicense().getName();}else{No license found}</h1>
                 <h1 class="h4">Stargazers Count: @repository.getStarGazersCount()</h1>
                 <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
-                <h1 class="h4">Open Issues: <a>@repository.getOpenIssuesCount() (view statistics)</a></h1>
+                <h1 class="h4">Open Issues: <a href="/reposissues/@repository.getOwner().getLogin()/@repository.getName()/issues">@repository.getOpenIssuesCount() (view statistics)</a></h1>
                 <h1 class="h4">Commits: <a id="commits">...</a></h1>
                 <h1 class="h4">Contributors: </h1>
                 <div class="h5" id="contributors"></div>
@@ -100,7 +100,8 @@
             }
         })
     }
-
+ 
+ 
     function getContributors() {
         $.ajax({
             type: "GET",
