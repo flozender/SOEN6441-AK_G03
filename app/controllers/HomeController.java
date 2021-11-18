@@ -3,28 +3,28 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import models.Owner;
 import models.Repository;
-import play.Application;
+import modules.GitHubModule;
 import play.libs.Json;
-import play.libs.ws.*;
+import play.libs.ws.WSBodyReadables;
+import play.libs.ws.WSBodyWritables;
+import play.libs.ws.WSClient;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
+import services.github.GitHubApi;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-
-import services.github.*;
-import modules.*;
 
 /**
  * This controller contains several actions to handle HTTP requests
@@ -141,12 +141,17 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return The user page containing all the information about the requested user
      */
     public CompletionStage<Result> userProfile(String username) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username;
+        CompletableFuture<JsonNode> user = ghImpl.userProfile(username, ws);
 
-        return ws.url(url).get().thenApplyAsync(response -> {
-            Owner user = Json.fromJson(response.asJson(), Owner.class);
-            return ok(views.html.user.render(user));
+        return user.thenApplyAsync(response -> {
+            try {
+                System.out.println(response);
+                Owner userProfileInfo = Json.fromJson(response, Owner.class);
+                return ok(views.html.user.render(userProfileInfo));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
         });
     }
     
@@ -164,10 +169,17 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      *
      */
     public CompletionStage<Result> userRepository(String username) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/users/" + username + "/repos";
+
+        CompletableFuture<JsonNode> repos = ghImpl.userRepository(username, ws);
         
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        return repos.thenApplyAsync(response -> {
+            try{
+                return ok((response));
+            }catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
     }
 
     public CompletionStage<Result> repositoryProfile(String username, String repository) {

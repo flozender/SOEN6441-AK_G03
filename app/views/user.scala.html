@@ -57,6 +57,7 @@
                     <h1 class="h4">Public Repos Count: @owner.getPublic_repos()</h1>
                     <div class="h5" id="repositories"></div>
 
+                    <img id="loadingImage" src="/assets/images/loading.gif" style="height: 40px;"/>
                 </div>
             </div>
         </div>
@@ -78,6 +79,8 @@
                         }
                         table.append("</table>")
 
+                        var img = document.getElementById('loadingImage');
+                        img.style.visibility = 'hidden';
                         $("#repositories").html(table);
                     }
                 })
