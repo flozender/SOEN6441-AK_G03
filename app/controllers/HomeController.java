@@ -38,11 +38,11 @@ import static java.util.stream.Collectors.*;
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
-    private Hashtable<String, ArrayList<JsonNode>> storage;
+    private Hashtable<String, ArrayList<List<Repository>>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
 
     public Injector injector = Guice.createInjector(new GitHubModule());
-    private GitHubApi ghImpl = injector.getInstance(GitHubApi.class);
+    private GitHubApi ghImpl;
 
     /**
      * An action that renders an HTML page with a welcome message.
@@ -59,6 +59,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     @Inject
     public HomeController(WSClient ws) {
         this.ws = ws;
+        this.ghImpl = injector.getInstance(GitHubApi.class);
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
     }
@@ -108,17 +109,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
   
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
-        JsonNode body = request.body().asJson();
         String userSession = request.cookie("GITTERIFIC").value();
-        CompletableFuture<JsonNode> res = ghImpl.searchRepositories(keywords, ws);
-        return res.thenApplyAsync((JsonNode tempResponse) -> {
+        CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
+        System.out.println("GETTTING " );
+
+        return res.thenApplyAsync((List<Repository> tempResponse) -> {
             try {
-                ArrayList<JsonNode> collectRepos = new ArrayList<>();
+                System.out.println("GETTTING " + tempResponse);
+                ArrayList<List<Repository>> collectRepos = new ArrayList<>();
                 ArrayList<String> collectSearchTerms = new ArrayList<>();
                 collectRepos.add(tempResponse);
                 collectSearchTerms.add(keywords);
                 if (this.storage.containsKey(userSession)){
-                    ArrayList<JsonNode> tempStorage = this.storage.get(userSession);
+                    ArrayList<List<Repository>> tempStorage = this.storage.get(userSession);
                     ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
                     tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
                     tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));

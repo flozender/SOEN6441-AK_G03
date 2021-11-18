@@ -2,6 +2,9 @@ package services.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import models.Repository;
+import play.libs.Json;
 import play.libs.ws.WSClient;
 
 import java.io.IOException;
@@ -9,13 +12,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 public class GitHubTestApi implements GitHubApi{
 
     @Override
-    public CompletableFuture<JsonNode> searchRepositories(String keywords, WSClient ws){
-        CompletableFuture<JsonNode> futureRepos = new CompletableFuture<>();
+    public CompletableFuture<List<Repository>> searchRepositories(String keywords, WSClient ws){
+        CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
         new Thread( () -> {
             Path fileName = Paths.get("./app/services/github/resources/searchRepositories.json");
             Charset charset = Charset.forName("ISO-8859-1");
@@ -32,7 +36,13 @@ public class GitHubTestApi implements GitHubApi{
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(jsonString);
-                futureRepos.complete(node);
+                System.out.println(node);
+                List<Repository> repoList = Arrays.asList();
+                for (JsonNode repo : node){
+                    Repository res = Json.fromJson(repo, Repository.class);
+                    repoList.add(res);
+                }
+                futureRepos.complete(repoList);
             }
             catch (IOException e) {
                 System.out.println(e);
