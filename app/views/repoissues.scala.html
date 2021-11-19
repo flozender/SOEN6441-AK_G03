@@ -23,30 +23,60 @@
             padding-top: 40px;
             padding-bottom: 40px;
             background-color: #f5f5f5;
+            flex-direction: column;
         }
+        
+        table {
+        	font-family: Arial, Helvetica, sans-serif;
+ 			border-collapse: collapse;
+  			width: 400px;
+        }
+        
+        td, th {
+  			border: 1px solid #ddd;
+  			padding: 8px;
+  		}
+  		
+  		th {
+  			padding-top: 12px;
+		  	padding-bottom: 12px;
+		  	text-align: center;
+		  	background-color: #04AA6D;
+		  	color: white;
+  		}
+  		
+  		tr:nth-child(even){background-color: #f2f2f2;}
+  		tr:hover {background-color: #ddd;}
+  		
+  		#issuesTable {
+  			height: 550px;
+    		overflow-y: scroll;
+  		}
         </style>
 </head>
 <body class="text-center">
 	<h1>Repositories Issues</h1><br/>
 	<div id="issuesTable" class="repository-results"></div>
+	<div id="dataVal">@issues</div>
 </body>
 <script>
-	let url = window.location.pathname.split("/");
-    let username = url.pop();
-    let reponame = url.pop();
-    let issArray = JSON.parse(@issues);
+	const issList = document.getElementById("dataVal").innerText;
+	const strVal = issList.toString();
+     console.log("before: "+ strVal);
+     let issArray = strVal.split(","); //JSON.parse(@issues);
     
     function getIssues() {
-         var table = $("<table><tr><th>Titles</th></tr>");
-                        for (let i = 0; i < issArray.length; i++) {
-                            table.append("<tr><td>" + issArray[i]["title"] + "</td></tr>")
+         var table = $("<table><tr><th>S.No.</th><th>Titles = Count</th></tr>");
+                        for (let i = 0, j=i+1; i < issArray.length; i++, j++) {
+                            table.append("<tr><td>" + j + "</td><td>" + issArray[i] + "</td></tr>")
                         }
                         table.append("</table>")
 
-                        $("#issuesTable").html(table);       
+                        $("#issuesTable").html(table); 
+                        document.getElementById("dataVal").style.visibility = 'hidden'; 
 	}
             
-            getIssues();
+            getIssues(); 
 
             
 </script>

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
@@ -263,7 +264,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
-                return ok(this.repoIssuesStats(issuetitles).toString());
+                System.out.println("issues: "+ issuetitles);
+                return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
                 return ok(views.html.error.render());
@@ -285,7 +287,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-    public Map<String, Integer> repoIssuesStats (List<String> titles) {
+    public Map<String, Long> repoIssuesStats (List<String> titles) {
     	ArrayList<String> strValues = new ArrayList<>();
     	titles.forEach(item -> {
     		String[] val = item.split(" ");
@@ -293,20 +295,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     			strValues.add(val[count]);
     		}
     	});
-    	List<String> words = strValues.stream()
-                .map(String::toLowerCase)
-                .collect(groupingBy(identity(), counting()))
-                .entrySet().stream()
-                .sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
-                .limit(100)
-                .map(Map.Entry::getKey)
-                .collect(toList());
     	
-    	Map<String, Integer> counts = words.parallelStream().
-                collect(Collectors.toConcurrentMap(
-                    w -> w, w -> 1, Integer::sum));
+    	Map<String, Long> counts =  strValues.stream().collect(groupingBy(Function.identity(), counting()));
     	
-    	counts.entrySet().stream().sorted(Map.Entry.<String, Integer> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
-    	return counts;
+    	Map<String, Long> reverseCounts = new LinkedHashMap<>();
+    	 
+    	counts.entrySet()
+    	    .stream()
+    	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+    	    .forEachOrdered(x -> reverseCounts.put(x.getKey(), x.getValue()));
+    	
+	 	return reverseCounts;
+    	
     }
+
+   
 }

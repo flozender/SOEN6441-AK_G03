@@ -61,9 +61,8 @@
           </h1>
           <h1 class="h4">Stargazers Count: @repository.getStargazersCount()</h1>
           <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
-          <h1 class="h4">
-            Open Issues:
-            <a>@repository.getOpenIssuesCount() (view statistics)</a>
+          <h1 class="h4">Open Issues: <a href="/reposissues/@repository.getOwner().getLogin()/@repository.getName()/issues">@repository.getOpenIssuesCount() (view statistics)</a></h1>
+              
           </h1>
           <h1 class="h4">Commits: <a id="commits">...</a></h1>
           <h1 class="h4">Contributors:</h1>
@@ -442,7 +441,8 @@
         },
       });
     }
-
+ 
+ 
     function getContributors() {
       $.ajax({
         type: "GET",
