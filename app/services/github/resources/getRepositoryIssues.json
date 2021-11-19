@@ -1,0 +1,78 @@
+[
+  {
+    "url": "https://api.github.com/repos/facebook/jest/issues/11864",
+    "repository_url": "https://api.github.com/repos/facebook/jest",
+    "labels_url": "https://api.github.com/repos/facebook/jest/issues/11864/labels{/name}",
+    "comments_url": "https://api.github.com/repos/facebook/jest/issues/11864/comments",
+    "events_url": "https://api.github.com/repos/facebook/jest/issues/11864/events",
+    "html_url": "https://github.com/facebook/jest/issues/11864",
+    "id": 993139846,
+    "node_id": "MDU6SXNzdWU5OTMxMzk4NDY=",
+    "number": 11864,
+    "title": "[Bug]: False negative (instanceof Float32Array)",
+    "user": {
+      "login": "o-alexandre-felipe",
+      "id": 19939799,
+      "node_id": "MDQ6VXNlcjE5OTM5Nzk5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19939799?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/o-alexandre-felipe",
+      "html_url": "https://github.com/o-alexandre-felipe",
+      "followers_url": "https://api.github.com/users/o-alexandre-felipe/followers",
+      "following_url": "https://api.github.com/users/o-alexandre-felipe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/o-alexandre-felipe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/o-alexandre-felipe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/o-alexandre-felipe/subscriptions",
+      "organizations_url": "https://api.github.com/users/o-alexandre-felipe/orgs",
+      "repos_url": "https://api.github.com/users/o-alexandre-felipe/repos",
+      "events_url": "https://api.github.com/users/o-alexandre-felipe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/o-alexandre-felipe/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "id": 843800282,
+        "node_id": "MDU6TGFiZWw4NDM4MDAyODI=",
+        "url": "https://api.github.com/repos/facebook/jest/labels/Needs%20Triage",
+        "name": "Needs Triage",
+        "color": "006b75",
+        "default": false,
+        "description": ""
+      },
+      {
+        "id": 1277038136,
+        "node_id": "MDU6TGFiZWwxMjc3MDM4MTM2",
+        "url": "https://api.github.com/repos/facebook/jest/labels/Bug%20Report",
+        "name": "Bug Report",
+        "color": "e0e0e0",
+        "default": false,
+        "description": ""
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "assignees": [],
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2021-09-10T11:19:49Z",
+    "updated_at": "2021-11-19T00:49:21Z",
+    "closed_at": null,
+    "author_association": "NONE",
+    "active_lock_reason": null,
+    "body": "### Version 27.1.1 ### Steps to reproduce I prepared an example [here](https://github.com/o-alexandre-felipe/jest-onnxruntime), simply run `npm install` then you have the `node run.js` that shows the expected behavior (without jest), and `npx jest` will show the behavior when running in `jest`. ### Expected behavior In this instance I expected that `Float32Array` created by native code to be `instanceof Float32Array`. ### Actual behavior It seems that jest redefined `Float32Array` globally, maybe we could simply surround commands like this by some function that would restore the native functions. `jest.withNativeTypes( () => do my test )` ### Additional context `onnxjs` is a frame work to evaluate neural network models in the format ONNX, it supports different backends. `onnxjs-node` enables the use of `onnxruntime` in `onnxjs`. These libraries use tensors objects, a tensor class is a multidimensional view of a typed array. The outputs of a neural network are constructed in NAPI as typed arrays [[1]](https://github.com/microsoft/onnxruntime/blob/e5ee0b435db9007921adeadffe929f247a5d6055/js/node/src/tensor_helper.cc#L257). Both the native code and javascript code have typed array maps [[2]](https://github.com/microsoft/onnxruntime/blob/e5ee0b435db9007921adeadffe929f247a5d6055/js/node/src/tensor_helper.cc#L55),[[3]](https://github.com/microsoft/onnxruntime/blob/009f342caf425edd1fe00832047d78d536d36402/js/common/lib/tensor-impl.ts#L18), and the javascript code checks if the value returned is an array of the expected type[[4]](https://github.com/microsoft/onnxruntime/blob/009f342caf425edd1fe00832047d78d536d36402/js/common/lib/tensor-impl.ts#L108). Normally this works, but if we invoke this from a jest test, that check will evaluate to false, and finally it will throw an error[[5]](https://github.com/microsoft/onnxruntime/blob/009f342caf425edd1fe00832047d78d536d36402/js/common/lib/tensor-impl.ts#L111). ### Environment For a way to reproduce, check [Dockerfile](https://github.com/o-alexandre-felipe/jest-onnxruntime/blob/master/Dockerfile), and [docker-compose.yaml](https://github.com/o-alexandre-felipe/jest-onnxruntime/blob/master/docker-compose.yml). ",
+    "reactions": {
+      "url": "https://api.github.com/repos/facebook/jest/issues/11864/reactions",
+      "total_count": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/facebook/jest/issues/11864/timeline",
+    "performed_via_github_app": null
+  }
+]

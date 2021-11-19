@@ -1,138 +1,483 @@
-@import java.util 
-@import models.Repository 
-@import com.fasterxml.jackson.databind.JsonNode;
+@import java.util;
+@import models.Repository;
+@import com.fasterxml.jackson.databind.JsonNode; 
 @(username: String, repository: Repository)
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gitterific: @username/@repository.getName()</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <style>        
-        html,
-        body {
-            height: 100%;
-        }
-        body {
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-align: center;
-            align-items: center;
-            padding-top: 40px;
-            padding-bottom: 40px;
-            background-color: #f5f5f5;
-        }
-        .form-signin {
-            width: 100%;
-            max-width: 600px;
-            padding: 15px;
-            margin: auto;
-        }
-        .search-data{
-            margin-top: 4rem;
-            text-align: start;
-        }
-        .cursoring-userProfile {
-            cursor: pointer;
-        }
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+      .form-signin {
+        width: 100%;
+        max-width: 700px;
+        padding: 15px;
+        margin: auto;
+      }
+      .search-data {
+        margin-top: 4rem;
+        text-align: start;
+      }
+      .cursoring-userProfile {
+        cursor: pointer;
+      }
     </style>
-</head>
-<body class="text-center">
-    <div class="form-signin" style="background-color: #eee;">
-        <a href="@repository.getHtmlUrl()" class="h2 font-weight-normal">@username/@repository.getName()</a>
-        <h1 class="h4 mb-1 font-weight-normal">@repository.getDescription()</h1>
-        <div class="d-flex flex-row">
-            <div class="search-data">
-                <h1 class="h4">Name: @repository.getName()</h1>
-                <h1 class="h4">Owner: @repository.getOwner().getLogin()</h1>
-                <h1 class="h4">Created: @repository.getCreatedAt()</h1>
-                <h1 class="h4">Language: @repository.getLanguage()</h1>
-                <h1 class="h4">License: @if(repository.getLicense() != null){repository.getLicense().getName();}else{No license found}</h1>
-                <h1 class="h4">Stargazers Count: @repository.getStarGazersCount()</h1>
-                <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
-                <h1 class="h4">Open Issues: <a>@repository.getOpenIssuesCount() (view statistics)</a></h1>
-                <h1 class="h4">Commits: <a id="commits">...</a></h1>
-                <h1 class="h4">Contributors: </h1>
-                <div class="h5" id="contributors"></div>
-                <div class="h4 mb-3 font-weight-normal">Topics: </div>
-                <div class="h5">
-                    @for(i <- 0 until repository.getTopics().size()){
-                        <a>@repository.getTopics().get(i)</a>, 
-                    }
-                    @if(repository.getTopics().size() == 0){
-                        <p>N/A</p>
-                    }
-                </div>
-                <div class="h4" style="margin-top: 2rem;">Issues: </div>
-                <div id="issues">
-                
-                    <img src="/assets/images/loading.gif" style="height: 40px;"/> 
-                </div>
-
-            </div>
+  </head>
+  <body class="text-center">
+    <div class="form-signin" style="background-color: #eee">
+      <a href="@repository.getHtmlUrl()" class="h2 font-weight-normal"
+        >@username/@repository.getName()</a
+      >
+      <h1 class="h4 mb-1 font-weight-normal">@repository.getDescription()</h1>
+      <div class="d-flex flex-row">
+        <div class="search-data d-flex flex-column">
+          <h1 class="h4">Name: @repository.getName()</h1>
+          <h1 class="h4">Owner: @repository.getOwner().getLogin()</h1>
+          <h1 class="h4">Created: @repository.getCreatedAt()</h1>
+          <h1 class="h4">Language: @repository.getLanguage()</h1>
+          <h1 class="h4">
+            License: @if(repository.getLicense() !=
+            null){@repository.getLicense().getName()}else{No license found}
+          </h1>
+          <h1 class="h4">Stargazers Count: @repository.getStargazersCount()</h1>
+          <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
+          <h1 class="h4">
+            Open Issues:
+            <a>@repository.getOpenIssuesCount() (view statistics)</a>
+          </h1>
+          <h1 class="h4">Commits: <a id="commits">...</a></h1>
+          <h1 class="h4">Contributors:</h1>
+          <div class="h5" id="contributors"></div>
+          <div class="h4 mb-3 font-weight-normal">Topics:</div>
+          <div class="h5">
+            @for(i <- 0 until repository.getTopics().size()){
+            <a>@repository.getTopics().get(i)</a>, }
+            @if(repository.getTopics().size() == 0){
+            <p>N/A</p>
+            }
+          </div>
+          <div class="h4" style="margin-top: 2rem">Issues:</div>
+          <div id="issues">
+            <img src="/assets/images/loading.gif" style="height: 40px" />
+          </div>
+          <div class="h4" style="margin-top: 2rem">Additional Information:</div>
+          <table class="table" style="background-color: #f5f5f5">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">id</th>
+                <td>@repository.getId()</td>
+              </tr>
+              <tr>
+                <th scope="row">node_id</th>
+                <td>@repository.getNode_id()</td>
+              </tr>
+              <tr>
+                <th scope="row">name</th>
+                <td>@repository.getName()</td>
+              </tr>
+              <tr>
+                <th scope="row">full_name</th>
+                <td>@repository.getFull_name()</td>
+              </tr>
+              <tr>
+                <th scope="row">owner</th>
+                <td>@repository.getOwner()</td>
+              </tr>
+              <tr>
+                <th scope="row">html_url</th>
+                <td>@repository.getHtmlUrl()</td>
+              </tr>
+              <tr>
+                <th scope="row">description</th>
+                <td>@repository.getDescription()</td>
+              </tr>
+              <tr>
+                <th scope="row">fork</th>
+                <td>@repository.getForks()</td>
+              </tr>
+              <tr>
+                <th scope="row">url</th>
+                <td>@repository.getUrl()</td>
+              </tr>
+              <tr>
+                <th scope="row">forks_url</th>
+                <td>@repository.getForks_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">keys_url</th>
+                <td>@repository.getKeys_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">collaborators_url</th>
+                <td>@repository.getCollaborators_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">teams_url</th>
+                <td>@repository.getTeams_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">hooks_url</th>
+                <td>@repository.getHooks_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">issue_events_url</th>
+                <td>@repository.getIssue_events_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">events_url</th>
+                <td>@repository.getEvents_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">assignees_url</th>
+                <td>@repository.getAssignees_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">branches_url</th>
+                <td>@repository.getBranches_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">tags_url</th>
+                <td>@repository.getTags_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">blobs_url</th>
+                <td>@repository.getBlobs_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">git_tags_url</th>
+                <td>@repository.getGit_tags_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">git_refs_url</th>
+                <td>@repository.getGit_refs_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">trees_url</th>
+                <td>@repository.getTrees_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">statuses_url</th>
+                <td>@repository.getStatuses_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">languages_url</th>
+                <td>@repository.getLanguages_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">stargazers_url</th>
+                <td>@repository.getStargazers_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">contributors_url</th>
+                <td>@repository.getContributors_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">subscribers_url</th>
+                <td>@repository.getSubscribers_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">subscription_url</th>
+                <td>@repository.getSubscription_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">commits_url</th>
+                <td>@repository.getCommits_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">git_commits_url</th>
+                <td>@repository.getGit_commits_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">comments_url</th>
+                <td>@repository.getComments_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">issue_comment_url</th>
+                <td>@repository.getIssue_comment_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">contents_url</th>
+                <td>@repository.getContents_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">compare_url</th>
+                <td>@repository.getCompare_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">merges_url</th>
+                <td>@repository.getMerges_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">archive_url</th>
+                <td>@repository.getArchive_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">downloads_url</th>
+                <td>@repository.getDownloads_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">issues_url</th>
+                <td>@repository.getIssues_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">pulls_url</th>
+                <td>@repository.getPulls_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">milestones_url</th>
+                <td>@repository.getMilestones_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">notifications_url</th>
+                <td>@repository.getNotifications_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">labels_url</th>
+                <td>@repository.getLabels_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">releases_url</th>
+                <td>@repository.getReleases_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">deployments_url</th>
+                <td>@repository.getDeployments_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">created_at</th>
+                <td>@repository.getCreatedAt()</td>
+              </tr>
+              <tr>
+                <th scope="row">updated_at</th>
+                <td>@repository.getUpdated_at()</td>
+              </tr>
+              <tr>
+                <th scope="row">pushed_at</th>
+                <td>@repository.getPushed_at()</td>
+              </tr>
+              <tr>
+                <th scope="row">git_url</th>
+                <td>@repository.getGit_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">ssh_url</th>
+                <td>@repository.getSsh_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">clone_url</th>
+                <td>@repository.getClone_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">svn_url</th>
+                <td>@repository.getSvn_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">homepage</th>
+                <td>@repository.getHomepage()</td>
+              </tr>
+              <tr>
+                <th scope="row">size</th>
+                <td>@repository.getSize()</td>
+              </tr>
+              <tr>
+                <th scope="row">stargazers_count</th>
+                <td>@repository.getStargazersCount()</td>
+              </tr>
+              <tr>
+                <th scope="row">watchers_count</th>
+                <td>@repository.getWatchers_count()</td>
+              </tr>
+              <tr>
+                <th scope="row">language</th>
+                <td>@repository.getLanguage()</td>
+              </tr>
+              <tr>
+                <th scope="row">has_issues</th>
+                <td>@repository.isHas_issues()</td>
+              </tr>
+              <tr>
+                <th scope="row">has_projects</th>
+                <td>@repository.isHas_projects()</td>
+              </tr>
+              <tr>
+                <th scope="row">has_downloads</th>
+                <td>@repository.isHas_downloads()</td>
+              </tr>
+              <tr>
+                <th scope="row">has_wiki</th>
+                <td>@repository.isHas_wiki()</td>
+              </tr>
+              <tr>
+                <th scope="row">has_pages</th>
+                <td>@repository.isHas_pages()</td>
+              </tr>
+              <tr>
+                <th scope="row">forks_count</th>
+                <td>@repository.getForksCount()</td>
+              </tr>
+              <tr>
+                <th scope="row">mirror_url</th>
+                <td>@repository.getMirror_url()</td>
+              </tr>
+              <tr>
+                <th scope="row">archived</th>
+                <td>@repository.isArchived()</td>
+              </tr>
+              <tr>
+                <th scope="row">disabled</th>
+                <td>@repository.isDisabled()</td>
+              </tr>
+              <tr>
+                <th scope="row">open_issues_count</th>
+                <td>@repository.getOpenIssuesCount()</td>
+              </tr>
+              <tr>
+                <th scope="row">license</th>
+                <td>@repository.getLicense().getName()</td>
+              </tr>
+              <tr>
+                <th scope="row">allow_forking</th>
+                <td>@repository.isAllow_forking()</td>
+              </tr>
+              <tr>
+                <th scope="row">is_template</th>
+                <td>@repository.isIs_template()</td>
+              </tr>
+              <tr>
+                <th scope="row">topics</th>
+                <td>@repository.getTopics()</td>
+              </tr>
+              <tr>
+                <th scope="row">visibility</th>
+                <td>@repository.getVisibility()</td>
+              </tr>
+              <tr>
+                <th scope="row">forks</th>
+                <td>@repository.getForks()</td>
+              </tr>
+              <tr>
+                <th scope="row">open_issues</th>
+                <td>@repository.getOpen_issues()</td>
+              </tr>
+              <tr>
+                <th scope="row">watchers</th>
+                <td>@repository.getWatchers()</td>
+              </tr>
+              <tr>
+                <th scope="row">default_branch</th>
+                <td>@repository.getDefault_branch()</td>
+              </tr>
+              <tr>
+                <th scope="row">temp_clone_token</th>
+                <td>@repository.getTemp_clone_token()</td>
+              </tr>
+              <tr>
+                <th scope="row">network_count</th>
+                <td>@repository.getNetwork_count()</td>
+              </tr>
+              <tr>
+                <th scope="row">subscribers_count</th>
+                <td>@repository.getSubscribers_count()</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
-</body>
-<script>
-
+  </body>
+  <script>
     let address = window.location.pathname.split("/");
     let repository = address.pop();
     let username = address.pop();
 
     function getIssues() {
-        $.ajax({
-            type: "GET",
-            url: `/issues/${username}/${repository}`,
-            success: function (result) {
-                var table = $("<div>");
-                for (let i = 0; i < result.length; i++) {
-                    table.append("<div class='h5'><b>#" + result[i]["number"] + "</b>&emsp;<a href=" + result[i]["html_url"] + ">" + result[i]["title"] + "</a></div>")
-                }
-                table.append("</div>")
-                if (result.length == 0){
-                    table = $("<p>N/A</p>");
-                }
+      $.ajax({
+        type: "GET",
+        url: `/issues/${username}/${repository}`,
+        success: function (result) {
+          var table = $("<div>");
+          for (let i = 0; i < result.length; i++) {
+            table.append(
+              "<div class='h5'><b>#" +
+                result[i]["number"] +
+                "</b>&emsp;<a href=" +
+                result[i]["html_url"] +
+                ">" +
+                result[i]["title"] +
+                "</a></div>"
+            );
+          }
+          table.append("</div>");
+          if (result.length == 0) {
+            table = $("<p>N/A</p>");
+          }
 
-                $("#issues").html(table);
-            }
-        })
+          $("#issues").html(table);
+        },
+      });
     }
 
     function getContributors() {
-        $.ajax({
-            type: "GET",
-            url: `/contributors/${username}/${repository}`,
-            success: function (result) {
-                var table = $("<div>");
-                for (let i = 0; i < result.length; i++) {
-                    table.append("<a href='/users/"+ result[i]["login"] +"'>" + result[i]["login"] + "</a>, ");
-                }
-                
-                table.append("</div>")
+      $.ajax({
+        type: "GET",
+        url: `/contributors/${username}/${repository}`,
+        success: function (result) {
+          var table = $("<div>");
+          for (let i = 0; i < result.length; i++) {
+            table.append(
+              "<a href='/users/" +
+                result[i]["login"] +
+                "'>" +
+                result[i]["login"] +
+                "</a>, "
+            );
+          }
 
-                $("#contributors").html(table);
-            }
-        })
+          table.append("</div>");
+
+          $("#contributors").html(table);
+        },
+      });
     }
 
     function getCommits() {
-        $.ajax({
-            type: "GET",
-            url: `/commits/${username}/${repository}`,
-            success: function (result) {
-                $("a#commits").text(`${result.length} (view commits)`);
-            }
-        })
+      $.ajax({
+        type: "GET",
+        url: `/commits/${username}/${repository}`,
+        success: function (result) {
+          $("a#commits").text(`${result.length >= 100 ? "100+" : result.length} (view commits)`);
+        },
+      });
     }
 
     getIssues();
     getContributors();
     getCommits();
-   
-    
-    
-</script>
+  </script>
 </html>
