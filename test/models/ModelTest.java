@@ -100,4 +100,20 @@ public class ModelTest extends WithApplication {
         assertEquals(332, r1.getOpenIssuesCount());
         assertEquals(40, r1.getForksCount());
     }
+
+    /**
+     * Tests the License model.
+     * 
+     * @author Tayeeb Hasan
+     * @version 1.0.0
+     */
+    @Test
+    public final void licenseTest() throws Exception{
+        License l1 = new License();
+        l1.setName("MIT License");
+        l1.setKey("MIT");
+
+        assertEquals("MIT License", l1.getName());
+        assertEquals("MIT", l1.getKey());
+    }
 }
