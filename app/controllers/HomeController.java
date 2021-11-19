@@ -309,17 +309,5 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     	
     }
 
-    public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/contributors";
-
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
-    }
-    
-    public CompletionStage<Result> getRepositoryCommits(String username, String repository) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/commits";
-
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
-    }
+   
 }
