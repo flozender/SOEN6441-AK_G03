@@ -8,12 +8,20 @@ import org.junit.Test;
 import play.test.WithApplication;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class ModelTest extends WithApplication {
 
+    /**
+     * Tests the Owner model.
+     * 
+     * @author Pedram Nouri
+     * @version 1.0.0
+     */
     @Test
     public final void ownerTest() throws Exception{
         Owner o1 = new Owner();
@@ -42,5 +50,54 @@ public class ModelTest extends WithApplication {
         assertEquals("github.com/pedramnoori", o1.getHtml_url());
         assertEquals(12, o1.getPublic_repos());
 
+    }
+
+    /**
+     * Tests the Repository model.
+     * 
+     * @author Tayeeb Hasan
+     * @version 1.0.0
+     */
+    @Test
+    public final void repositoryTest() throws Exception{
+        Repository r1 = new Repository();
+
+        r1.setName("Jest");
+        r1.setDescription("Delightful JavaScript Testing");
+
+        String stringDate="31/12/2018";
+        Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
+        r1.setCreatedAt(d1);
+        
+        
+        Owner o1 = new Owner();
+        o1.setName("Tayeeb Hasan");
+        r1.setOwner(o1);
+
+        License l1 = new License();
+        l1.setKey("gpl-3.0");
+        r1.setLicense(l1);
+
+        r1.setHtmlUrl("https://github.com/facebook/jest");
+        r1.setLanguage("TypeScript");
+
+        List<String> topics = Arrays.asList("JavaScript", "Testing", "Facebook");
+        r1.setTopics(topics);
+      
+        r1.setStargazersCount(5912);
+        r1.setOpenIssuesCount(332);
+        r1.setForksCount(40);
+
+        assertEquals("Jest", r1.getName());
+        assertEquals("Delightful JavaScript Testing", r1.getDescription());
+        assertEquals(d1, r1.getCreatedAt());
+        assertEquals("Tayeeb Hasan", r1.getOwner().getName());
+        assertEquals("gpl-3.0", r1.getLicense().getKey());
+        assertEquals("https://github.com/facebook/jest", r1.getHtmlUrl());
+        assertEquals("TypeScript", r1.getLanguage());
+        assertEquals(topics, r1.getTopics());
+        assertEquals(5912, r1.getStargazersCount());
+        assertEquals(332, r1.getOpenIssuesCount());
+        assertEquals(40, r1.getForksCount());
     }
 }

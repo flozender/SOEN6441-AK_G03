@@ -28,32 +28,24 @@ import static java.util.stream.Collectors.*;
 
 /**
  * This controller contains several actions to handle HTTP requests
- * to the application's home page.
- */
-/**
- * @author Pedram & Tayeeb Hasan
- * @since 1.1.0
- * @version 1.1.3
+ * for the web application.
+ * @author Pedram Nouri & Tayeeb Hasan
+ * @version 1.0.0
  * 
  */
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
     private Hashtable<String, ArrayList<List<Repository>>> storage;
     private Hashtable<String, ArrayList<String>> searchTerms;
-
     private final GitHubApi ghImpl;
 
     /**
-     * An action that renders an HTML page with a welcome message.
-     * The configuration in the <code>routes</code> file means that
-     * this method will be called when the application receives a
-     * <code>GET</code> request with a path of <code>/</code>.
-     */
-
-    /**
+     * Home Controller Constructor
+     * 
      * @param ws Handles the ws dependency for sending HTTP requests
-     *
-     *
+     * @param gitHubApi Handles the GitHubApi service
+     * @author Pedram Nouri & Tayeeb Hasan
+     * @return HomeController instance
      */
     @Inject
     public HomeController(WSClient ws, GitHubApi gitHubApi) {
@@ -62,53 +54,50 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
     }
-    /**
-     * An action that renders an HTML page with a welcome message.
-     * The configuration in the <code>routes</code> file means that
-     * this method will be called when the application receives a
-     * <code>GET</code> request with a path of <code>/</code>.
-     */
 
     /**
-     * @param request Contains the HTTP request
-     * @return Empty index page that contains the search bar
-     * @author Pedram & Tayeeb Hasan
+     * index page action
      * 
-     * @version 1.1.2
-     * @since 1.1.0
+     * @param request Contains the HTTP request
+     * @author Pedram Nouri & Tayeeb Hasan
+     * @return index view that contains the search bar and previously searched results
+     * @version 1.0.0
      */
-    
-    
     public Result index(Http.Request request) {
+        String userSession;
         if (request.cookie("GITTERIFIC") != null){
-            String userSession = request.cookie("GITTERIFIC").value();
-            this.storage.put(userSession, new ArrayList<>());
-            this.searchTerms.put(userSession, new ArrayList<>());
-            System.out.println("Cleared storage " + this.storage.get(userSession));
-        }
-        
-        return ok(views.html.index.render(Arrays.asList(), Arrays.asList())).withCookies(Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build());
+            userSession = request.cookie("GITTERIFIC").value();
+            if (this.storage.get(userSession) != null && this.searchTerms.get(userSession) != null) {
+                return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
+            } else {
+                return ok(views.html.index.render(Arrays.asList(), Arrays.asList()));
+            }
+        } else {
+            userSession = String.valueOf(Math.random());
+            return ok(views.html.index.render(Arrays.asList(), Arrays.asList()))
+            .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
+        }        
     }
 
-
     /**
-     * @author Pedram & Tayeeb Hasan
-     *
-     * @param request Contains the HTTP request
-     * @param keywords Contains the keywords which user entered in the search bar
-     * @return index page that contains search results (repositories)
-     * 
      * It searches for the repositories matching the string passed by the user in the search bar.
      * <p>
-     * It will generate the results related to the search string and render on the page.
+     * It will generate the results related to the search string and render the repositories on index view.
      * The result will include username and the repository name and topics related to each repository.
      * </p>
-     * 
+     * @author Pedram Nouri & Tayeeb Hasan
+     * @param request Contains the HTTP request
+     * @param keywords Contains the keywords which the user entered in the search bar
+     * @return index page that contains search results (repositories)
      * 
      */
-  
     public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
-        String userSession = request.cookie("GITTERIFIC").value();
+        String userSession;
+        if (request.cookie("GITTERIFIC") != null){
+            userSession = request.cookie("GITTERIFIC").value();
+        } else {
+            userSession = String.valueOf(Math.random());
+        }
         CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
         return res.thenApplyAsync((List<Repository> tempResponse) -> {
             try {
@@ -124,6 +113,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 }
                 this.storage.put(userSession, collectRepos);
                 this.searchTerms.put(userSession, collectSearchTerms);
+                if (request.cookie("GITTERIFIC") == null){
+                    return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)))
+                    .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
+                }
                 return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
@@ -134,8 +127,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     }
 
     /**
-     * @author Pedram
-     *
+     * @author Pedram Nouri
      * @param username Contains the github username of the user
      * @return The user page containing all the information about the requested user
      */
@@ -155,16 +147,15 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     
     
     /**
-     * @author Pedram Nouri
-     * @param username Contains the github username of the user
-     * @return A Json file that consume by the user page in order to show all the repositories of the user
-     * 
      * Method userRepository returns the results based on the username passed 
      * to it. It is an Async call.
      * 
      * The response contains all the public information of the user. Also, returns
      * repositories of the current user.
      *
+     * @author Pedram Nouri
+     * @param username Contains the github username of the user
+     * @return A Json file that consume by the user page in order to show all the repositories of the user
      */
     public CompletionStage<Result> userRepository(String username) {
 
@@ -180,21 +171,72 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
     }
 
+    /**
+     * Method repositoryProfile returns the details of the repository based on the username and repository 
+     * name passed to it. It is an Async call.
+     * 
+     * The response contains all the public information of the repository. Also, displays the 20 latest issues
+     * of the repository.
+     *
+     * @author Tayeeb Hasan
+     * @param username the github username of the user
+     * @param repository the repository name
+     * @return the Repo view with the public information of the requested repository
+     */
     public CompletionStage<Result> repositoryProfile(String username, String repository) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository;
+        CompletableFuture<Repository> repo = ghImpl.repositoryProfile(username, repository, ws);
         
-        return ws.url(url).get().thenApplyAsync(response -> {
-            Repository repo = Json.fromJson(response.asJson(), Repository.class);
-            return ok(views.html.repo.render(username, repo));
+        return repo.thenApplyAsync(response -> {
+            return ok(views.html.repo.render(username, response));
         });
     }
-
+    
+    /**
+     * Method getRepositoryIssues returns a JSON with the 20 latest issues based on the username and repository 
+     * name passed to it. It is an Async call.
+     * 
+     * The response contains all the public information of the issues. 
+     *
+     * @author Tayeeb Hasan
+     * @param username the github username of the user
+     * @param repository the repository name
+     * @return A JSON containing all the public information of the requested repository issues
+     */
     public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?per_page=20&sort=updated";
-
-        return ws.url(url).get().thenApplyAsync(response -> ok((response.asJson())));
+        CompletableFuture<JsonNode> res = ghImpl.getRepositoryIssues(username, repository, ws);
+        return res.thenApplyAsync(response -> ok(response));
+    }
+    
+    /**
+     * Method getRepositoryContributors returns a JSON with the contributors based on the username and repository 
+     * name passed to it. It is an Async call.
+     * 
+     * The response contains all the public information of the contributors. 
+     *
+     * @author Tayeeb Hasan
+     * @param username the github username of the user
+     * @param repository the repository name
+     * @return A JSON containing all the public information of the requested repository contributors
+     */
+    public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
+        CompletableFuture<JsonNode> res = ghImpl.getRepositoryContributors(username, repository, ws);
+        return res.thenApplyAsync(response -> ok(response));
+    }
+    
+    /**
+     * Method getRepositoryCommits returns a JSON with the 100 latest commits based on the username and repository 
+     * name passed to it. It is an Async call.
+     * 
+     * The response contains all the public information of the commits. 
+     *
+     * @author Tayeeb Hasan
+     * @param username the github username of the user
+     * @param repository the repository name
+     * @return A JSON containing all the public information of the requested repository commits
+     */
+    public CompletionStage<Result> getRepositoryCommits(String username, String repository) {
+        CompletableFuture<JsonNode> res = ghImpl.getRepositoryCommits(username, repository, ws);
+        return res.thenApplyAsync(response -> ok(response));
     }
     
     /**
@@ -211,8 +253,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * example https://api.github.com/repos/octocat/hello-world/issues
      * 
      */
-
-    
     public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
         String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
         String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";

@@ -1,0 +1,792 @@
+[
+  {
+    "sha": "7bb400c373a6f90ba956dd25fe24ee4d4788f41e",
+    "node_id": "C_kwDOAOXXVdoAKDdiYjQwMGMzNzNhNmY5MGJhOTU2ZGQyNWZlMjRlZTRkNDc4OGY0MWU",
+    "commit": {
+      "author": {
+        "name": "Rajat",
+        "email": "rd.rajat23@gmail.com",
+        "date": "2021-11-18T15:26:37Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-18T15:26:37Z"
+      },
+      "message": "replaced `substr` with `substring` (#12066)",
+      "tree": {
+        "sha": "ff1f412788962ae06ca5bb9e12c3b12624ed5125",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/ff1f412788962ae06ca5bb9e12c3b12624ed5125"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/7bb400c373a6f90ba956dd25fe24ee4d4788f41e",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhlnCtCRBK7hj4Ov3rIwAABekIAJnLwE5lnUyOtmftNpyqGJr8 g6e6AtPWYIYE0wC6BWif5zAOlOXuUwYPRsdd0mj/OTMV6YPbSy1pkJMclECt2o5e nUA7IDAihgKJKQN2qyeve3IpnidW8Dm7J02dqHR7+mNjGpI1A1NFTl0hTZlZEVoV yY84wJpYos/3r04irRPZLWsOH5bRyX+PbJXljv8fKpioJ1x6QCj0PoBKecX7B3yb s9z6pYzzzwU7u2ZDV6jHDJqqP1v+LbP1cFGi0ylc1TELd17WiI/4iMkzf4Z/Z2NM KdOvjQlmLU9CFnlNsiofbv2DePa9NcDmgdLiD0MyKpNilY96tJzJ4wSAaSRI7b0= =uthd -----END PGP SIGNATURE----- ",
+        "payload": "tree ff1f412788962ae06ca5bb9e12c3b12624ed5125 parent 0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8 author Rajat <rd.rajat23@gmail.com> 1637249197 +0530 committer GitHub <noreply@github.com> 1637249197 +0100 replaced `substr` with `substring` (#12066) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/7bb400c373a6f90ba956dd25fe24ee4d4788f41e",
+    "html_url": "https://github.com/facebook/jest/commit/7bb400c373a6f90ba956dd25fe24ee4d4788f41e",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/7bb400c373a6f90ba956dd25fe24ee4d4788f41e/comments",
+    "author": {
+      "login": "k-rajat19",
+      "id": 81867225,
+      "node_id": "MDQ6VXNlcjgxODY3MjI1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81867225?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/k-rajat19",
+      "html_url": "https://github.com/k-rajat19",
+      "followers_url": "https://api.github.com/users/k-rajat19/followers",
+      "following_url": "https://api.github.com/users/k-rajat19/following{/other_user}",
+      "gists_url": "https://api.github.com/users/k-rajat19/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/k-rajat19/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/k-rajat19/subscriptions",
+      "organizations_url": "https://api.github.com/users/k-rajat19/orgs",
+      "repos_url": "https://api.github.com/users/k-rajat19/repos",
+      "events_url": "https://api.github.com/users/k-rajat19/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/k-rajat19/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+        "url": "https://api.github.com/repos/facebook/jest/commits/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+        "html_url": "https://github.com/facebook/jest/commit/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8"
+      }
+    ]
+  },
+  {
+    "sha": "0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+    "node_id": "C_kwDOAOXXVdoAKDA0ODZhM2M0ZTM0MDBlZDZiYmFjZDBiOTZmZmE1YzQxMjFmYmJkZjg",
+    "commit": {
+      "author": {
+        "name": "Simen Bekkhus",
+        "email": "sbekkhus91@gmail.com",
+        "date": "2021-08-27T08:13:22Z"
+      },
+      "committer": {
+        "name": "Simen Bekkhus",
+        "email": "sbekkhus91@gmail.com",
+        "date": "2021-11-18T15:10:35Z"
+      },
+      "message": "chore: fix PnP test by forcing older version of typescript",
+      "tree": {
+        "sha": "3623d992c3ebbc92cb8a0b116ab250154d471a75",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/3623d992c3ebbc92cb8a0b116ab250154d471a75"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+    "html_url": "https://github.com/facebook/jest/commit/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/0486a3c4e3400ed6bbacd0b96ffa5c4121fbbdf8/comments",
+    "author": {
+      "login": "SimenB",
+      "id": 1404810,
+      "node_id": "MDQ6VXNlcjE0MDQ4MTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1404810?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SimenB",
+      "html_url": "https://github.com/SimenB",
+      "followers_url": "https://api.github.com/users/SimenB/followers",
+      "following_url": "https://api.github.com/users/SimenB/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SimenB/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SimenB/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SimenB/subscriptions",
+      "organizations_url": "https://api.github.com/users/SimenB/orgs",
+      "repos_url": "https://api.github.com/users/SimenB/repos",
+      "events_url": "https://api.github.com/users/SimenB/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SimenB/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "SimenB",
+      "id": 1404810,
+      "node_id": "MDQ6VXNlcjE0MDQ4MTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1404810?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SimenB",
+      "html_url": "https://github.com/SimenB",
+      "followers_url": "https://api.github.com/users/SimenB/followers",
+      "following_url": "https://api.github.com/users/SimenB/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SimenB/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SimenB/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SimenB/subscriptions",
+      "organizations_url": "https://api.github.com/users/SimenB/orgs",
+      "repos_url": "https://api.github.com/users/SimenB/repos",
+      "events_url": "https://api.github.com/users/SimenB/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SimenB/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "42b020f2931ac04820521cc8037b7c430eb2fa2f",
+        "url": "https://api.github.com/repos/facebook/jest/commits/42b020f2931ac04820521cc8037b7c430eb2fa2f",
+        "html_url": "https://github.com/facebook/jest/commit/42b020f2931ac04820521cc8037b7c430eb2fa2f"
+      }
+    ]
+  },
+  {
+    "sha": "42b020f2931ac04820521cc8037b7c430eb2fa2f",
+    "node_id": "C_kwDOAOXXVdoAKDQyYjAyMGYyOTMxYWMwNDgyMDUyMWNjODAzN2I3YzQzMGViMmZhMmY",
+    "commit": {
+      "author": {
+        "name": "Raymond Ng",
+        "email": "raymondng@berkeley.edu",
+        "date": "2021-11-11T08:28:32Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-11T08:28:32Z"
+      },
+      "message": "Remove cycle in printDiffs, diffLines and joinAlignedDiffs (#10818)",
+      "tree": {
+        "sha": "9fa52f62a784c79acf711bbd9ab22fa25d5dc271",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/9fa52f62a784c79acf711bbd9ab22fa25d5dc271"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/42b020f2931ac04820521cc8037b7c430eb2fa2f",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhjNQwCRBK7hj4Ov3rIwAANrwIAK7VgF0bRRdSBaEF6j+4gUXX Qg3Fv2XsxHaHx6W0zZ4wJEimj/sIXlRlxgfXnjIMIfjh+xRBfnO/WPy//8CdbTJp J6C/BLyPYr7KMGA4v1/79c1pabbYR50dmqUk4chyxUWJe/u033RulkGM0pvT21Ai qVpN9iCA3qUeTlNc0Kw2XsyUjMc7vq6h2ET01RMqU6of3zgx/M2kjd2OwzPJ6U63 6VdxLZHrNMEDnKMPwSepcuNV1We47SZ3OOeGLZXWB3XVTtn2viJzAzPmWu9JmoXf mvmpvc/Rs/DnXRKbeAD7anmHr238o1nFxjaymjMfRNC70UdfjInzAaf+NU0fhzY= =fllu -----END PGP SIGNATURE----- ",
+        "payload": "tree 9fa52f62a784c79acf711bbd9ab22fa25d5dc271 parent 7a34a69a753552fdb61ee35c2f15e9557723d8e5 author Raymond Ng <raymondng@berkeley.edu> 1636619312 -0800 committer GitHub <noreply@github.com> 1636619312 +0100 Remove cycle in printDiffs, diffLines and joinAlignedDiffs (#10818) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/42b020f2931ac04820521cc8037b7c430eb2fa2f",
+    "html_url": "https://github.com/facebook/jest/commit/42b020f2931ac04820521cc8037b7c430eb2fa2f",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/42b020f2931ac04820521cc8037b7c430eb2fa2f/comments",
+    "author": {
+      "login": "raymondnumbergenerator",
+      "id": 15065181,
+      "node_id": "MDQ6VXNlcjE1MDY1MTgx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15065181?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/raymondnumbergenerator",
+      "html_url": "https://github.com/raymondnumbergenerator",
+      "followers_url": "https://api.github.com/users/raymondnumbergenerator/followers",
+      "following_url": "https://api.github.com/users/raymondnumbergenerator/following{/other_user}",
+      "gists_url": "https://api.github.com/users/raymondnumbergenerator/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/raymondnumbergenerator/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/raymondnumbergenerator/subscriptions",
+      "organizations_url": "https://api.github.com/users/raymondnumbergenerator/orgs",
+      "repos_url": "https://api.github.com/users/raymondnumbergenerator/repos",
+      "events_url": "https://api.github.com/users/raymondnumbergenerator/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/raymondnumbergenerator/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+        "url": "https://api.github.com/repos/facebook/jest/commits/7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+        "html_url": "https://github.com/facebook/jest/commit/7a34a69a753552fdb61ee35c2f15e9557723d8e5"
+      }
+    ]
+  },
+  {
+    "sha": "7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+    "node_id": "C_kwDOAOXXVdoAKDdhMzRhNjlhNzUzNTUyZmRiNjFlZTM1YzJmMTVlOTU1NzcyM2Q4ZTU",
+    "commit": {
+      "author": {
+        "name": "dalvarezmartinez1",
+        "email": "4959873+dalvarezmartinez1@users.noreply.github.com",
+        "date": "2021-11-08T10:23:09Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-08T10:23:09Z"
+      },
+      "message": "Do not reset global.document before CustomElement:disconnectedCallbac… (#11871) * Do not reset global.document before CustomElement:disconnectedCallback has finished running, document should be accessible in this callback function * Update CHANGELOG.md Co-authored-by: dalvarezmartinez1 <example@example.com> Co-authored-by: Simen Bekkhus <sbekkhus91@gmail.com>",
+      "tree": {
+        "sha": "3d4ac6c2d74e5c00df83ae033be8a8c80fc258b0",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/3d4ac6c2d74e5c00df83ae033be8a8c80fc258b0"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhiPqNCRBK7hj4Ov3rIwAAszMIADFNv021CVP/r6/sejGx/5m0 2sUJXfNh3w5jCfqfEPZXfZzZO4nKuYlvmioewHUGgW/HaQFebh7Xbp6YxebMhzlO 1E13qGphdp9kwK0zMKJB2+cbP1W0oBOMak+tOdBUXZgAR6ADGdXaFXCT5MktLLJ+ lCZbvoxbsS7GoKovo9GAmfhDtOaA1IQZPANkjY1IawKXLtjODDGHUiX3zFZUaLOb WxZWydn0ComwVgCoIf4zOFQ3XrxXn+zRC78CJinhl6vZ3cdxD5HlOEO+yabiW0Kt nAlIIvDxg+SIGd1AinUZp7bB6jCFq02iUFulfcVwHfbAiDPgq3a2lwt3ugmTx3o= =7Frg -----END PGP SIGNATURE----- ",
+        "payload": "tree 3d4ac6c2d74e5c00df83ae033be8a8c80fc258b0 parent 8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d author dalvarezmartinez1 <4959873+dalvarezmartinez1@users.noreply.github.com> 1636366989 +0100 committer GitHub <noreply@github.com> 1636366989 +0100 Do not reset global.document before CustomElement:disconnectedCallbac… (#11871) * Do not reset global.document before CustomElement:disconnectedCallback has finished running, document should be accessible in this callback function * Update CHANGELOG.md Co-authored-by: dalvarezmartinez1 <example@example.com> Co-authored-by: Simen Bekkhus <sbekkhus91@gmail.com>"
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+    "html_url": "https://github.com/facebook/jest/commit/7a34a69a753552fdb61ee35c2f15e9557723d8e5",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/7a34a69a753552fdb61ee35c2f15e9557723d8e5/comments",
+    "author": {
+      "login": "dalvarezmartinez1",
+      "id": 4959873,
+      "node_id": "MDQ6VXNlcjQ5NTk4NzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4959873?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dalvarezmartinez1",
+      "html_url": "https://github.com/dalvarezmartinez1",
+      "followers_url": "https://api.github.com/users/dalvarezmartinez1/followers",
+      "following_url": "https://api.github.com/users/dalvarezmartinez1/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dalvarezmartinez1/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dalvarezmartinez1/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dalvarezmartinez1/subscriptions",
+      "organizations_url": "https://api.github.com/users/dalvarezmartinez1/orgs",
+      "repos_url": "https://api.github.com/users/dalvarezmartinez1/repos",
+      "events_url": "https://api.github.com/users/dalvarezmartinez1/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dalvarezmartinez1/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+        "url": "https://api.github.com/repos/facebook/jest/commits/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+        "html_url": "https://github.com/facebook/jest/commit/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d"
+      }
+    ]
+  },
+  {
+    "sha": "8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+    "node_id": "C_kwDOAOXXVdoAKDhmMmNkYWQ3Njk0ZjRjMjE3YWM3NzlkM2Y0ZTNhMTUwYjVhM2Q3NGQ",
+    "commit": {
+      "author": {
+        "name": "mrazauskas",
+        "email": "72159681+mrazauskas@users.noreply.github.com",
+        "date": "2021-11-05T06:49:38Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-05T06:49:38Z"
+      },
+      "message": "fix(docs): add missing table of contents to The Jest Object documentation page (#12039)",
+      "tree": {
+        "sha": "301e05e45b7c2fcf67706f2e2cb7d7d922d07cf0",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/301e05e45b7c2fcf67706f2e2cb7d7d922d07cf0"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhhNQCCRBK7hj4Ov3rIwAA42AIAIq/yV68Jy3jno9l5ZuYp+h7 UVaG+wD0fZ/wE+ZbiP1liHXizrtogG3pIdyuH2ydGJBOeDa9jYai1tB3VrvLChaF YF+lR94D8WsNwItBCu1EtfeoepoOI3CMkWPQNYWtIoKt3PfnuXn5BBe3xLpTxWSZ NQ0J+7BRRHfgD24zjj9qqHy4PrPSAYknMnF7rdTu5xYAbDmZy0mgkTRLeO42TyyK ZJCrBxeeu7sIrl7tct37g0M2EfGASw2+t8vUKPVNLz6HFXr0+fNcCFZGwEZFViwY MnzwUXzekus11PFknCj9lEi+AfrPSz3KAGE7XYf/Dr0y+3IkyssOcgDnKWtznsM= =xkUs -----END PGP SIGNATURE----- ",
+        "payload": "tree 301e05e45b7c2fcf67706f2e2cb7d7d922d07cf0 parent 95f49691d3472d8187640f1b703209b93c2bcecc author mrazauskas <72159681+mrazauskas@users.noreply.github.com> 1636094978 +0200 committer GitHub <noreply@github.com> 1636094978 +0100 fix(docs): add missing table of contents to The Jest Object documentation page (#12039) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+    "html_url": "https://github.com/facebook/jest/commit/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/8f2cdad7694f4c217ac779d3f4e3a150b5a3d74d/comments",
+    "author": {
+      "login": "mrazauskas",
+      "id": 72159681,
+      "node_id": "MDQ6VXNlcjcyMTU5Njgx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72159681?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mrazauskas",
+      "html_url": "https://github.com/mrazauskas",
+      "followers_url": "https://api.github.com/users/mrazauskas/followers",
+      "following_url": "https://api.github.com/users/mrazauskas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mrazauskas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mrazauskas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mrazauskas/subscriptions",
+      "organizations_url": "https://api.github.com/users/mrazauskas/orgs",
+      "repos_url": "https://api.github.com/users/mrazauskas/repos",
+      "events_url": "https://api.github.com/users/mrazauskas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mrazauskas/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "95f49691d3472d8187640f1b703209b93c2bcecc",
+        "url": "https://api.github.com/repos/facebook/jest/commits/95f49691d3472d8187640f1b703209b93c2bcecc",
+        "html_url": "https://github.com/facebook/jest/commit/95f49691d3472d8187640f1b703209b93c2bcecc"
+      }
+    ]
+  },
+  {
+    "sha": "95f49691d3472d8187640f1b703209b93c2bcecc",
+    "node_id": "C_kwDOAOXXVdoAKDk1ZjQ5NjkxZDM0NzJkODE4NzY0MGYxYjcwMzIwOWI5M2MyYmNlY2M",
+    "commit": {
+      "author": {
+        "name": "BIKI DAS",
+        "email": "bikid475@gmail.com",
+        "date": "2021-11-03T09:51:03Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-03T09:51:03Z"
+      },
+      "message": "Replaced module with namespace (#12018)",
+      "tree": {
+        "sha": "1f59d6042a0aef6698690273cbc6d97a00e86982",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/1f59d6042a0aef6698690273cbc6d97a00e86982"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/95f49691d3472d8187640f1b703209b93c2bcecc",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhgluHCRBK7hj4Ov3rIwAAp90IAK/hQXh5OjMnatFkDZAKsoOn iJqfreVjyw7cv19Bq+UDDWvRewu4f/d9pqWq1WC/AX0e+hrEQUC/BGt/pyArUzGl fI3NhxJvufMAkkuS1umLWiqQckaMRs0+6LcTEce+jpDeDkQbmkpKvKlycCnhSwjP ihEWRzs9lxDUR/ubca/9KFlcmfEJwhM9TIE0WC18QtwRpXvI+Y2HScfDGHaeInW0 y7n3cp8amIVvOktVx8AHSxriJlL4+5i1ms2n7ih5h45pSn1STRxLwP5Swuwj1MEQ stWub0SUxgVxvEJb67u9TGjrsO5o1Vmu25bhIGV+aVZa5YNdPhVOQzIZRxJMDLE= =WcM4 -----END PGP SIGNATURE----- ",
+        "payload": "tree 1f59d6042a0aef6698690273cbc6d97a00e86982 parent 9301c73c53675f912b724025de2480b65a9d276e author BIKI DAS <bikid475@gmail.com> 1635933063 +0530 committer GitHub <noreply@github.com> 1635933063 +0100 Replaced module with namespace (#12018) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/95f49691d3472d8187640f1b703209b93c2bcecc",
+    "html_url": "https://github.com/facebook/jest/commit/95f49691d3472d8187640f1b703209b93c2bcecc",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/95f49691d3472d8187640f1b703209b93c2bcecc/comments",
+    "author": {
+      "login": "Biki-das",
+      "id": 72331432,
+      "node_id": "MDQ6VXNlcjcyMzMxNDMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72331432?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Biki-das",
+      "html_url": "https://github.com/Biki-das",
+      "followers_url": "https://api.github.com/users/Biki-das/followers",
+      "following_url": "https://api.github.com/users/Biki-das/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Biki-das/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Biki-das/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Biki-das/subscriptions",
+      "organizations_url": "https://api.github.com/users/Biki-das/orgs",
+      "repos_url": "https://api.github.com/users/Biki-das/repos",
+      "events_url": "https://api.github.com/users/Biki-das/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Biki-das/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "9301c73c53675f912b724025de2480b65a9d276e",
+        "url": "https://api.github.com/repos/facebook/jest/commits/9301c73c53675f912b724025de2480b65a9d276e",
+        "html_url": "https://github.com/facebook/jest/commit/9301c73c53675f912b724025de2480b65a9d276e"
+      }
+    ]
+  },
+  {
+    "sha": "9301c73c53675f912b724025de2480b65a9d276e",
+    "node_id": "C_kwDOAOXXVdoAKDkzMDFjNzNjNTM2NzVmOTEyYjcyNDAyNWRlMjQ4MGI2NWE5ZDI3NmU",
+    "commit": {
+      "author": {
+        "name": "BIKI DAS",
+        "email": "bikid475@gmail.com",
+        "date": "2021-11-02T19:49:29Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-02T19:49:29Z"
+      },
+      "message": "Correcting mockClear api docs (#12019)",
+      "tree": {
+        "sha": "d34f3bf55b592219a11d5985e6838d777d608203",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/d34f3bf55b592219a11d5985e6838d777d608203"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/9301c73c53675f912b724025de2480b65a9d276e",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhgZZJCRBK7hj4Ov3rIwAAR3MIAJkt6/bzMgk0HS3BNCyJlCBf EbT/jP2JqkMWrtlnTpGVVyeY0Yba4Rb+3/lz4YQ5ud1YTGAnKb9VCq8aWm8OVomp Me7CGshHFnuhQrI2Y8b/yGQlitDoleubfBX6xrEOT7IBNvD3QgH1xUAeE2i+wCZJ rIzEDLuWyNQDkCeMs9SuIAzhK1kVDcO2b98EohNyF7iiTEEWh15IwursGzm6YmY1 86y2gtM8J45HF+vTV/T+UPg3dGDjiqMcDaeiPzw+bLMUo2Cyem44zO8A3cwXm+lf YmrWWFEmUJMaFA9kV51s5GEVIn30ka3vOnn82ATLXUVew8Cv7NGS5cGu52l8/QY= =fPh2 -----END PGP SIGNATURE----- ",
+        "payload": "tree d34f3bf55b592219a11d5985e6838d777d608203 parent d594f7158620e86bd3b46c8e302f9b3949ff5304 author BIKI DAS <bikid475@gmail.com> 1635882569 +0530 committer GitHub <noreply@github.com> 1635882569 +0100 Correcting mockClear api docs (#12019) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/9301c73c53675f912b724025de2480b65a9d276e",
+    "html_url": "https://github.com/facebook/jest/commit/9301c73c53675f912b724025de2480b65a9d276e",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/9301c73c53675f912b724025de2480b65a9d276e/comments",
+    "author": {
+      "login": "Biki-das",
+      "id": 72331432,
+      "node_id": "MDQ6VXNlcjcyMzMxNDMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72331432?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Biki-das",
+      "html_url": "https://github.com/Biki-das",
+      "followers_url": "https://api.github.com/users/Biki-das/followers",
+      "following_url": "https://api.github.com/users/Biki-das/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Biki-das/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Biki-das/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Biki-das/subscriptions",
+      "organizations_url": "https://api.github.com/users/Biki-das/orgs",
+      "repos_url": "https://api.github.com/users/Biki-das/repos",
+      "events_url": "https://api.github.com/users/Biki-das/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Biki-das/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "d594f7158620e86bd3b46c8e302f9b3949ff5304",
+        "url": "https://api.github.com/repos/facebook/jest/commits/d594f7158620e86bd3b46c8e302f9b3949ff5304",
+        "html_url": "https://github.com/facebook/jest/commit/d594f7158620e86bd3b46c8e302f9b3949ff5304"
+      }
+    ]
+  },
+  {
+    "sha": "d594f7158620e86bd3b46c8e302f9b3949ff5304",
+    "node_id": "C_kwDOAOXXVdoAKGQ1OTRmNzE1ODYyMGU4NmJkM2I0NmM4ZTMwMmY5YjM5NDlmZjUzMDQ",
+    "commit": {
+      "author": {
+        "name": "BIKI DAS",
+        "email": "bikid475@gmail.com",
+        "date": "2021-11-02T19:25:07Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-02T19:25:07Z"
+      },
+      "message": "Docs: docs/CodeTransformation.md (typo fix) (#12017)",
+      "tree": {
+        "sha": "70357b134c53ee82e709978829fb2f8c05126a48",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/70357b134c53ee82e709978829fb2f8c05126a48"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/d594f7158620e86bd3b46c8e302f9b3949ff5304",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhgZCUCRBK7hj4Ov3rIwAAsCUIABAkiVqmrCY1n0/6v0x9SSXA EMMZ2sny39XdcR+aOikQE1/ZIeQ8KvXERBOA634hlZT3bkYHYazpefLezsLl42Bv Uh9xvxMFKZ0Borrl3mtHl4Tdb3Z5rR8CCbaKv1nMYsiZN2ANDHrMzNt3Hkh/Za57 wrAZSBiorh6x/Hs6WpkZsUhGPzPRHOtSWxT4SakapVo9njuXPj7x20/ke5LFTCgA akr25cBp9C8uqK5aOJLqfEkJIIWuZBAldyxo24qGDAqgRep8/D2hUuR910GtIaxp SLNGarSnTTZHeBhZwyyV2ZDLtKnNlBQRH6aOaezxtKMyQ9nd1cZFUsSFsEnJ7Qk= =MtLJ -----END PGP SIGNATURE----- ",
+        "payload": "tree 70357b134c53ee82e709978829fb2f8c05126a48 parent 6114232af79f6ff945ae8080556b5171e4bd45b7 author BIKI DAS <bikid475@gmail.com> 1635881107 +0530 committer GitHub <noreply@github.com> 1635881107 +0100 Docs: docs/CodeTransformation.md (typo fix) (#12017) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/d594f7158620e86bd3b46c8e302f9b3949ff5304",
+    "html_url": "https://github.com/facebook/jest/commit/d594f7158620e86bd3b46c8e302f9b3949ff5304",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/d594f7158620e86bd3b46c8e302f9b3949ff5304/comments",
+    "author": {
+      "login": "Biki-das",
+      "id": 72331432,
+      "node_id": "MDQ6VXNlcjcyMzMxNDMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72331432?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Biki-das",
+      "html_url": "https://github.com/Biki-das",
+      "followers_url": "https://api.github.com/users/Biki-das/followers",
+      "following_url": "https://api.github.com/users/Biki-das/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Biki-das/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Biki-das/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Biki-das/subscriptions",
+      "organizations_url": "https://api.github.com/users/Biki-das/orgs",
+      "repos_url": "https://api.github.com/users/Biki-das/repos",
+      "events_url": "https://api.github.com/users/Biki-das/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Biki-das/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "6114232af79f6ff945ae8080556b5171e4bd45b7",
+        "url": "https://api.github.com/repos/facebook/jest/commits/6114232af79f6ff945ae8080556b5171e4bd45b7",
+        "html_url": "https://github.com/facebook/jest/commit/6114232af79f6ff945ae8080556b5171e4bd45b7"
+      }
+    ]
+  },
+  {
+    "sha": "6114232af79f6ff945ae8080556b5171e4bd45b7",
+    "node_id": "C_kwDOAOXXVdoAKDYxMTQyMzJhZjc5ZjZmZjk0NWFlODA4MDU1NmI1MTcxZTRiZDQ1Yjc",
+    "commit": {
+      "author": {
+        "name": "Oliver Salzburg",
+        "email": "oliver.salzburg@gmail.com",
+        "date": "2021-11-02T18:24:43Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-02T18:24:43Z"
+      },
+      "message": "fix: Incorrect detection of open ZLIB handles (#12022)",
+      "tree": {
+        "sha": "88bc91eb7f375288b4d4ba98aeb295cdf9ecd95e",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/88bc91eb7f375288b4d4ba98aeb295cdf9ecd95e"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/6114232af79f6ff945ae8080556b5171e4bd45b7",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhgYJrCRBK7hj4Ov3rIwAAC0EIAAjAkMtW2FdXWKTUDU9MMFHR FBbscrk3VeM/PNnZerW7B3Zs9HjjbBO8pz0uVjpags6re5/9p3PiQVNk0jC+ncJ7 MYdmt55ETH7db7jNxyksMzpOzt7Qv+xu50XJIChIRz4tIji4dQ0EHxCSBI/EEncy SJ8b8TAGR7WH1AKlSHDUXsHiux/i8KXiTwRh6AERHWLtkCcq6MDbCxIEgqAYWRBI u10ixX72YOziYqz+8LXKAv9TJ9DGFvCayz8MgGT5DQ2dtbd6pvbReukpokfU5v/D XDgtlKf02a/MGp/ks9bImblileNW0J3qM3yxnQnwhfiY9+KmUc/gubAo8wMhpDQ= =aRGQ -----END PGP SIGNATURE----- ",
+        "payload": "tree 88bc91eb7f375288b4d4ba98aeb295cdf9ecd95e parent 10d9580edec4058ffd8a7c52786331379e32e711 author Oliver Salzburg <oliver.salzburg@gmail.com> 1635877483 +0100 committer GitHub <noreply@github.com> 1635877483 +0100 fix: Incorrect detection of open ZLIB handles (#12022) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/6114232af79f6ff945ae8080556b5171e4bd45b7",
+    "html_url": "https://github.com/facebook/jest/commit/6114232af79f6ff945ae8080556b5171e4bd45b7",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/6114232af79f6ff945ae8080556b5171e4bd45b7/comments",
+    "author": {
+      "login": "oliversalzburg",
+      "id": 1658949,
+      "node_id": "MDQ6VXNlcjE2NTg5NDk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1658949?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/oliversalzburg",
+      "html_url": "https://github.com/oliversalzburg",
+      "followers_url": "https://api.github.com/users/oliversalzburg/followers",
+      "following_url": "https://api.github.com/users/oliversalzburg/following{/other_user}",
+      "gists_url": "https://api.github.com/users/oliversalzburg/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/oliversalzburg/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/oliversalzburg/subscriptions",
+      "organizations_url": "https://api.github.com/users/oliversalzburg/orgs",
+      "repos_url": "https://api.github.com/users/oliversalzburg/repos",
+      "events_url": "https://api.github.com/users/oliversalzburg/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/oliversalzburg/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "10d9580edec4058ffd8a7c52786331379e32e711",
+        "url": "https://api.github.com/repos/facebook/jest/commits/10d9580edec4058ffd8a7c52786331379e32e711",
+        "html_url": "https://github.com/facebook/jest/commit/10d9580edec4058ffd8a7c52786331379e32e711"
+      }
+    ]
+  },
+  {
+    "sha": "10d9580edec4058ffd8a7c52786331379e32e711",
+    "node_id": "C_kwDOAOXXVdoAKDEwZDk1ODBlZGVjNDA1OGZmZDhhN2M1Mjc4NjMzMTM3OWUzMmU3MTE",
+    "commit": {
+      "author": {
+        "name": "mrazauskas",
+        "email": "72159681+mrazauskas@users.noreply.github.com",
+        "date": "2021-11-01T14:11:18Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2021-11-01T14:11:18Z"
+      },
+      "message": "fix(jest-transform): improve runtime errors and warnings (#11998)",
+      "tree": {
+        "sha": "78e6af451166072096ccb62b302669f36a7f92b4",
+        "url": "https://api.github.com/repos/facebook/jest/git/trees/78e6af451166072096ccb62b302669f36a7f92b4"
+      },
+      "url": "https://api.github.com/repos/facebook/jest/git/commits/10d9580edec4058ffd8a7c52786331379e32e711",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE----- wsBcBAABCAAQBQJhf/WGCRBK7hj4Ov3rIwAA8aIIAC0MDYHh+aOG/GUEoIqjvYMb KZzyKAiLQmxEUEeZ+eJThk0EB2HU1181uNs4DZ7N7zi5lRTD+4jB781pBSS1qrss tUshiN0pUQl6XvfJY3vGkEbsZ1HtNFOGHDw1mcd+RfUq4jX7PcrZVUlwJc/yz1Rz 0/XZBC93deyvIgN4mSGipd2sTEO+HOrJq+kWK+NPCSW9l7DCnX/i0rc/nsYk2GTY pfJ0C/HrMAXCzns0wL6blkROWwGvOeAACIZG/CuX9ki8Qw7u9ZBqp5IYJwYQxAqV j8I2BkafuV5p4Gk8koTf1SBGkgzF8tDsGsd82puGrBuN6odr7LyJqya1o/QM2iA= =Qy0y -----END PGP SIGNATURE----- ",
+        "payload": "tree 78e6af451166072096ccb62b302669f36a7f92b4 parent 619f843a6edaf001b9f59459056305aad78d37bd author mrazauskas <72159681+mrazauskas@users.noreply.github.com> 1635775878 +0200 committer GitHub <noreply@github.com> 1635775878 +0100 fix(jest-transform): improve runtime errors and warnings (#11998) "
+      }
+    },
+    "url": "https://api.github.com/repos/facebook/jest/commits/10d9580edec4058ffd8a7c52786331379e32e711",
+    "html_url": "https://github.com/facebook/jest/commit/10d9580edec4058ffd8a7c52786331379e32e711",
+    "comments_url": "https://api.github.com/repos/facebook/jest/commits/10d9580edec4058ffd8a7c52786331379e32e711/comments",
+    "author": {
+      "login": "mrazauskas",
+      "id": 72159681,
+      "node_id": "MDQ6VXNlcjcyMTU5Njgx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72159681?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mrazauskas",
+      "html_url": "https://github.com/mrazauskas",
+      "followers_url": "https://api.github.com/users/mrazauskas/followers",
+      "following_url": "https://api.github.com/users/mrazauskas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mrazauskas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mrazauskas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mrazauskas/subscriptions",
+      "organizations_url": "https://api.github.com/users/mrazauskas/orgs",
+      "repos_url": "https://api.github.com/users/mrazauskas/repos",
+      "events_url": "https://api.github.com/users/mrazauskas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mrazauskas/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "619f843a6edaf001b9f59459056305aad78d37bd",
+        "url": "https://api.github.com/repos/facebook/jest/commits/619f843a6edaf001b9f59459056305aad78d37bd",
+        "html_url": "https://github.com/facebook/jest/commit/619f843a6edaf001b9f59459056305aad78d37bd"
+      }
+    ]
+  }
+]
