@@ -298,32 +298,14 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     	
     	Map<String, Long> counts =  strValues.stream().collect(groupingBy(Function.identity(), counting()));
     	
-    	//LinkedHashMap preserve the ordering of elements in which they are inserted
     	Map<String, Long> reverseCounts = new LinkedHashMap<>();
     	 
-    	//Use Comparator.reverseOrder() for reverse ordering
     	counts.entrySet()
     	    .stream()
     	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
     	    .forEachOrdered(x -> reverseCounts.put(x.getKey(), x.getValue()));
     	
-    	System.out.println("sorted map is " + counts );
-    
-    	System.out.println("sorted map is " + reverseCounts );
-        
-		/*
-		 * List<String> words = strValues.stream() .map(String::toLowerCase)
-		 * .collect(groupingBy(identity(), counting())) .entrySet().stream()
-		 * .sorted(Map.Entry.<String, Long>
-		 * comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey()))
-		 * .limit(100) .map(Map.Entry::getKey) .collect(toList());
-		 * 
-		 * Map<String, Integer> counts = words.parallelStream().
-		 * collect(Collectors.toConcurrentMap( w -> w, w -> 1, Integer::sum));
-		 */
-    	
-    //	counts.entrySet().stream().sorted(Map.Entry.<String, Long> comparingByValue(reverseOrder()).thenComparing(Map.Entry.comparingByKey())).collect(toList());
-    	return reverseCounts;
+	 	return reverseCounts;
     	
     }
 
