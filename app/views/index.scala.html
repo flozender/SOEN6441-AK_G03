@@ -48,11 +48,33 @@
 
         .cursoring-userProfile {
             cursor: pointer;
+            font-size: 15px;
+        }
+
+        .cursoring-userProfile:hover {
+            color:lightslategray;
+        }
+        .cursoring-userProfile:active {
+            position:relative;
+            top:1px;
+        }
+
+        .cursoring-topic {
+            cursor: pointer;
+        }
+
+        .cursoring-topic:hover {
+            color:lightslategray;
+        }
+
+        .cursoring-topic:active {
+            position:relative;
+            top:1px;
         }
     </style>
 </head>
 <body class="text-center">
-    <div class="form-signin" style="background-color: #eee;">
+    <div class="form-signin" style="background-color: #eee;border-radius: 50px">
         <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
         <div class="d-flex flex-row">
             <input type="text" id="searchInput" class="form-control" placeholder="Search repositories..." required autofocus>
@@ -66,7 +88,7 @@
                     <div class="data">
                         @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
                         @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
-                            <b style="font-size: 15px;color: #606060">(@repositories.get(i).get(j).getTopics().get(k))</b>
+                            <b class="cursoring-topic" onclick="search_repo('@repositories.get(i).get(j).getTopics().get(k)')">(@repositories.get(i).get(j).getTopics().get(k))</b>
                         }
                     </div>
                 }
@@ -86,5 +108,10 @@
     function getUserProfile(username) {
         window.location = "/users/"+username;
     }
+
+    function search_repo(topic){
+        window.location = "/search/repositories/"+topic;
+    }
+
   </script>
 </html>
