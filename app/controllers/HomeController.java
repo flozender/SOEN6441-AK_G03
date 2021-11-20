@@ -280,7 +280,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
         String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues";
+        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues/?state=all";
         
         return ws.url(url).get().thenApplyAsync(response -> {
             try {
