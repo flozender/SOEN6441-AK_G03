@@ -39,6 +39,7 @@ public class ModelTest extends WithApplication {
         o1.setLogin("pedramnoori");
         o1.setHtml_url("github.com/pedramnoori");
         o1.setPublic_repos(12);
+        o1.setBio("Right On");
 
         assertEquals("Pedram Nouri", o1.getName());
         assertEquals("noori.pedram816@gmail.com", o1.getEmail());
@@ -49,6 +50,7 @@ public class ModelTest extends WithApplication {
         assertEquals("pedramnoori", o1.getLogin());
         assertEquals("github.com/pedramnoori", o1.getHtml_url());
         assertEquals(12, o1.getPublic_repos());
+        assertEquals("Right On", o1.getBio());
 
     }
 

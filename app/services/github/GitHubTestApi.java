@@ -3,6 +3,7 @@ package services.github;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import models.Owner;
 import models.Repository;
 import play.libs.Json;
 import play.mvc.Result;
@@ -75,8 +76,8 @@ public class GitHubTestApi implements GitHubApi{
     }
 
     @Override
-    public CompletableFuture<JsonNode> userProfile(String username, WSClient ws) {
-        CompletableFuture<JsonNode> futureUser = new CompletableFuture<>();
+    public CompletableFuture<Owner> userProfile(String username, WSClient ws) {
+        CompletableFuture<Owner> futureUser = new CompletableFuture<>();
         new Thread( () -> {
             Path fileName = Paths.get("./app/services/github/resources/userProfile.json");
             Charset charset = Charset.forName("ISO-8859-1");
@@ -93,7 +94,8 @@ public class GitHubTestApi implements GitHubApi{
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(jsonString);
-                futureUser.complete(node);
+                Owner o1 = Json.fromJson(node, Owner.class);
+                futureUser.complete(o1);
             }
             catch (IOException e) {
                 System.out.println(e);
