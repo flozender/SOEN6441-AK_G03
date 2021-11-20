@@ -77,4 +77,77 @@ public class GitHubApiTest extends WithApplication {
             System.out.println(e);
         }
     }
+
+    /**
+     * Test the repositoryProfile service
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testRepositoryProfile() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<Repository> res = testGitHub.repositoryProfile("facebook", "jest", ws);
+        try{
+            Repository repository = res.get();
+            assertEquals("facebook/jest", repository.getFull_name());
+            assertEquals("Delightful JavaScript Testing.", repository.getDescription());
+            assertEquals("TypeScript", repository.getLanguage());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    /**
+     * Test the getRepositoryIssues service
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testGetRepositoryIssues() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.getRepositoryIssues("facebook", "jest", ws);
+        try{
+            JsonNode issues = res.get().get(0);
+            assertEquals("https://api.github.com/repos/facebook/jest/issues/11864", issues.get("url").textValue());
+            assertEquals("[Bug]: False negative (instanceof Float32Array)", issues.get("title").textValue());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+        
+    /**
+     * Test the getRepositoryContributors service
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testGetRepositoryContributors() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.getRepositoryContributors("facebook", "jest", ws);
+        try{
+            JsonNode contributors = res.get().get(0);
+            assertEquals("SimenB", contributors.get("login").textValue());
+            assertEquals("https://github.com/SimenB", contributors.get("html_url").textValue());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the getRepositoryCommits service
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testGetRepositoryCommits() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.getRepositoryCommits("facebook", "jest", ws);
+        try{
+            JsonNode commits = res.get().get(0);
+            assertEquals("7bb400c373a6f90ba956dd25fe24ee4d4788f41e", commits.get("sha").textValue());
+            assertEquals("https://github.com/facebook/jest/commit/7bb400c373a6f90ba956dd25fe24ee4d4788f41e", commits.get("html_url").textValue());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 }
