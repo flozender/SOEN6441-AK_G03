@@ -39,6 +39,11 @@ public class GitHubApiTest extends WithApplication {
       Helpers.stop(testApp);
     }
 
+    /**
+     * Test the searchRepositories service
+     *
+     * @author Tayeeb Hasan
+     */
     @Test
     public final void testSearchRepositories() {
       GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
@@ -52,6 +57,11 @@ public class GitHubApiTest extends WithApplication {
       }
     }
 
+    /**
+     * Test the userProfile service
+     *
+     * @author Pedram Nouri
+     */
     @Test
     public final void testUserProfile() {
         GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
@@ -65,6 +75,11 @@ public class GitHubApiTest extends WithApplication {
         }
     }
 
+    /**
+     * Test the userRepository service
+     *
+     * @author Pedram Nouri
+     */
     @Test
     public final void testUserRepository() {
         GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);

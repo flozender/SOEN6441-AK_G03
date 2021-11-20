@@ -75,6 +75,18 @@ public class GitHubTestApi implements GitHubApi{
         return futureRepos;
     }
 
+    /**
+     * Service to return the Owner for userRepository dummy method. Aims for unit testing.
+     * <p>
+     * It will load the related results and return it.
+     * The result will include user information from the predefined json file.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the username passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<Owner> that contains results (predefined user profile)
+     *
+     */
     @Override
     public CompletableFuture<Owner> userProfile(String username, WSClient ws) {
         CompletableFuture<Owner> futureUser = new CompletableFuture<>();
@@ -105,6 +117,18 @@ public class GitHubTestApi implements GitHubApi{
         return futureUser;
     }
 
+    /**
+     * Service to return the repositories for userRepository dummy method. Aims for unit testing.
+     * <p>
+     * It will load the related results and return it.
+     * The result will include user's repositories information from the predefined json file.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the username passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<JsonNode> that contains results (predefined user's repositories)
+     *
+     */
     @Override
     public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
         CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
