@@ -96,7 +96,7 @@ public class HomeControllerTest extends WithApplication {
             assertThat(parsedResult, containsString("facebook/jest"));
             assertThat(parsedResult, containsString("Delightful JavaScript Testing."));
             assertThat(parsedResult, containsString("15062869"));
-            assertThat(parsedResult, containsString("Typescript"));
+            assertThat(parsedResult, containsString("TypeScript"));
         } catch (Exception e){
             System.out.println(e);
         }
