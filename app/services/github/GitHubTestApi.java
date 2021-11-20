@@ -69,6 +69,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepos.completeExceptionally(e);
             }
         }).start();
 
@@ -111,6 +112,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureUser.completeExceptionally(e);
             }
         }).start();
 
@@ -152,6 +154,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepositories.completeExceptionally(e);
             }
         }).start();
 
@@ -195,6 +198,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepo.completeExceptionally(e);
             }
         }).start();
         return futureRepo;
@@ -235,6 +239,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureIssues.completeExceptionally(e);
             }
         }).start();
         return futureIssues;
@@ -275,6 +280,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureContributors.completeExceptionally(e);
             }
         }).start();
         return futureContributors;
@@ -294,7 +300,7 @@ public class GitHubTestApi implements GitHubApi{
      */
     @Override
     public CompletableFuture<JsonNode> getRepositoryCommits(String username, String repository, WSClient ws){
-        CompletableFuture<JsonNode> futureContributors = new CompletableFuture<>();
+        CompletableFuture<JsonNode> futureCommits = new CompletableFuture<>();
         new Thread( () -> {
             Path fileName = Paths.get("./app/services/github/resources/getRepositoryCommits.json");
             Charset charset = Charset.forName("ISO-8859-1");
@@ -311,12 +317,13 @@ public class GitHubTestApi implements GitHubApi{
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(jsonString);
-                futureContributors.complete(node);
+                futureCommits.complete(node);
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureCommits.completeExceptionally(e);
             }
         }).start();
-        return futureContributors;
+        return futureCommits;
     }
 }
