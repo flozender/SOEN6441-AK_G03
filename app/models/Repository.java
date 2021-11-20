@@ -293,7 +293,7 @@ public class Repository {
 	}
     
     /**
-     * @return boolean if forking allowde for the repository
+     * @return boolean if forking allowed for the repository
      */
 	public boolean isFork() {
 		return this.fork;

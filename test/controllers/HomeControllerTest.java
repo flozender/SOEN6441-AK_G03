@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static org.junit.Assert.assertEquals;
+
 /**
  * Home Controller Test class
  * 
@@ -67,6 +68,32 @@ public class HomeControllerTest extends WithApplication {
         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
         Request request = requestBuilder.build();
+        CompletionStage<Result> preCSResult = controller.searchRepositories(request, "facebook");
+        try{
+            Result preResult = preCSResult.toCompletableFuture().get();
+            // simulate a second search request
+            CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(parsedResult, containsString("facebook-tools-new"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the searchRepositories controller action without cookie
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testSearchRepositoriesWithoutCookie() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        RequestBuilder requestBuilder = Helpers.fakeRequest();
+        Request request = requestBuilder.build();
         CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
         try{
             Result result = csResult.toCompletableFuture().get();
@@ -78,7 +105,7 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
-
+    
     /**
      * Test the repositoryProfile controller action
      * 
@@ -257,7 +284,7 @@ public class HomeControllerTest extends WithApplication {
      * @author Tayeeb Hasan
      */
     @Test
-    public final void testIndexWithOutCookie() {
+    public final void testIndexWithoutCookie() {
         final HomeController controller = testApp.injector().instanceOf(HomeController.class);
         RequestBuilder requestBuilder = Helpers.fakeRequest();
         Request request = requestBuilder.build();
@@ -285,7 +312,6 @@ public class HomeControllerTest extends WithApplication {
         Request request = requestBuilder.build();
 
         CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
-
 
         try{
             Result result = csResult.toCompletableFuture().get();
