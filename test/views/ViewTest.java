@@ -4,6 +4,7 @@ package views;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import models.Owner;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,6 +86,41 @@ public class ViewTest {
             assertThat("text/html", is(html.contentType()));
             assertThat(html.body(), containsString("facebook/jest"));
             assertThat(html.body(), containsString("Delightful JavaScript Testing."));
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+
+    /**
+     * Test the user profile template
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public void testUserProfileTemplate() {
+        Path fileName = Paths.get("./app/services/github/resources/userProfile.json");
+        Charset charset = Charset.forName("ISO-8859-1");
+        String jsonString = "";
+        try {
+            List<String> lines = Files.readAllLines(fileName, charset);
+            for (String line : lines) {
+                jsonString += line;
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(jsonString);
+            Owner user = Json.fromJson(node, Owner.class);
+            Content html = views.html.user.render(user);
+            assertThat("text/html", is(html.contentType()));
+            assertThat(html.body(), containsString("https://justinw.me"));
+            assertThat(html.body(), containsString("https://avatars.githubusercontent.com/u/1384?v=4"));
+            assertThat(html.body(), containsString("Justin Williams"));
         }
         catch (IOException e) {
             System.out.println(e);
