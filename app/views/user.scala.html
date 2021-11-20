@@ -47,6 +47,7 @@
         <div class="form-signin" style="background-color: #eee;">
             <a href="@owner.getHtml_url()" class="h2 font-weight-normal">@owner.getLogin()</a>
             <h1 class="h4 mb-1 font-weight-normal">@owner.getCompany()</h1>
+            <h2 class="h4 mb-1 font-weight-normal">@owner.getBio()</h2>
             <div class="d-flex flex-row">
                 <div class="search-data">
                     <h1 class="h4">Name: @owner.getName()</h1>
@@ -58,6 +59,100 @@
                     <div class="h5" id="repositories"></div>
 
                     <img id="loadingImage" src="/assets/images/loading.gif" style="height: 40px;"/>
+
+                    <div class="h4" style="margin-top: 2rem">Additional Information:</div>
+                    <table class="table" style="background-color: #f5f5f5">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Key</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">id</th>
+                                <td>@owner.getId()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">node_id</th>
+                                <td>@owner.getNode_id()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">avatar_url</th>
+                                <td>@owner.getAvatar_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">gravatar_id</th>
+                                <td>@owner.getGravatar_id()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">url (API)</th>
+                                <td>@owner.getUrl()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">followers_url</th>
+                                <td>@owner.getFollowers_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">following_url</th>
+                                <td>@owner.getFollowing_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">gists_url</th>
+                                <td>@owner.getGists_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">starred_url</th>
+                                <td>@owner.getStarred_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">subscriptions_url</th>
+                                <td>@owner.getSubscriptions_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">organizations_url</th>
+                                <td>@owner.getOrganizations_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">repositories_url</th>
+                                <td>@owner.getRepos_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">events_url</th>
+                                <td>@owner.getEvents_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">received_events_url</th>
+                                <td>@owner.getReceived_events_url()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">type</th>
+                                <td>@owner.getType()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">is admin</th>
+                                <td>@owner.isSite_admin()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">blog</th>
+                                <td>@owner.getBlog()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">location</th>
+                                <td>@owner.getLocation()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">public gists</th>
+                                <td>@owner.getPublic_gists()</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">update date</th>
+                                <td>@owner.getUpdated_at()</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
@@ -75,7 +170,7 @@
                         for (let i = 0; i < result.length; i++) {
                             // table.append("<tr><td>Name:</td><td>" +"<a onclick='repFunction(\"" + result[i]["name"] + "\");'>" +result[i]["name"] + "</a>" + "</td></tr>")
                             table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +result[i]["name"] + "'>" + result[i]["name"] + "</a>" + "</td></tr>")
-                            table.append("<tr><td>Dec:</td><td>" + result[i]["description"] + "</td></tr>")
+                            table.append("<tr><td>Description:</td><td>" + result[i]["description"] + "</td></tr>")
                         }
                         table.append("</table>")
 
