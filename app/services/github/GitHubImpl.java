@@ -65,7 +65,7 @@ public class GitHubImpl implements GitHubApi {
     @Override
     public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
         CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
-        String url = API_URL + "/users/" + username + "/repos";
+        String url = API_URL + "/users/" + username + "/repos?per_page=100";
         new Thread( () -> {
             ws.url(url).get()
                     .thenApplyAsync(response -> (futureRepositories.complete(response.asJson())));

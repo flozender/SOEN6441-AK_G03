@@ -358,7 +358,11 @@
               </tr>
               <tr>
                 <th scope="row">license</th>
-                <td>@repository.getLicense().getName()</td>
+                @if(repository.getLicense() != null){
+                  <td>@repository.getLicense().getName()</td>
+                }else{
+                  <td>No License Found</td>
+                }
               </tr>
               <tr>
                 <th scope="row">allow_forking</th>

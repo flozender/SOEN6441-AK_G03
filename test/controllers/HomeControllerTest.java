@@ -6,6 +6,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import models.Repository;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -30,7 +32,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static org.junit.Assert.assertEquals;
-
+/**
+ * Home Controller Test class
+ * 
+ * @author Tayeeb Hasan
+ */
 public class HomeControllerTest extends WithApplication {
     private static Application testApp;
     @Inject private WSClient ws;
@@ -49,6 +55,11 @@ public class HomeControllerTest extends WithApplication {
         Helpers.stop(testApp);
     }
 
+    /**
+     * Test the searchRepositories controller action
+     * 
+     * @author Tayeeb Hasan
+     */
     @Test
     public final void testSearchRepositories() {
         final HomeController controller = testApp.injector().instanceOf(HomeController.class);
@@ -58,9 +69,34 @@ public class HomeControllerTest extends WithApplication {
         CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
         try{
             Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
             assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(Helpers.contentAsString(result), containsString("Welcome to Gitterific!"));
-            assertThat(Helpers.contentAsString(result), containsString("facebook-tools-new"));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(parsedResult, containsString("facebook-tools-new"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    /**
+     * Test the repositoryProfile controller action
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testRepositoryProfile() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.repositoryProfile("facebook", "jest");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("facebook/jest"));
+            assertThat(parsedResult, containsString("Delightful JavaScript Testing."));
+            assertThat(parsedResult, containsString("15062869"));
+            assertThat(parsedResult, containsString("Typescript"));
         } catch (Exception e){
             System.out.println(e);
         }
