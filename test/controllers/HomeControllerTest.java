@@ -250,4 +250,52 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
+
+    /**
+     * Test the index controller action without user cookie
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testIndexWithOutCookie() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        RequestBuilder requestBuilder = Helpers.fakeRequest();
+        Request request = requestBuilder.build();
+        Result csResult = controller.index(request);
+        try{
+            String parsedResult = Helpers.contentAsString(csResult);
+            assertThat("Optional[text/html]", is(csResult.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(csResult.cookie("GITTERIFIC"), is(notNullValue()));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the index controller action when a search has already been performed
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testIndexWithSearch() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+
+        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
+
+
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            Result indexPage = controller.index(request);
+            String parsedResult = Helpers.contentAsString(indexPage);
+            assertThat("Optional[text/html]", is(indexPage.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(parsedResult, containsString("facebook-tools-new"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
 }

@@ -120,7 +120,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
+                return badRequest(views.html.error.render());
             }
         });
 
@@ -139,7 +139,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.user.render(response));
             }catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
+                return badRequest(views.html.error.render());
             }
         });
     }
@@ -165,7 +165,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok((response));
             }catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
+                return badRequest(views.html.error.render());
             }
         });
     }
@@ -186,7 +186,12 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         CompletableFuture<Repository> repo = ghImpl.repositoryProfile(username, repository, ws);
         
         return repo.thenApplyAsync(response -> {
-            return ok(views.html.repo.render(username, response));
+            try {
+                return ok(views.html.repo.render(username, response));
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return badRequest(views.html.error.render());
+            }
         });
     }
     
@@ -203,7 +208,14 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public CompletionStage<Result> getRepositoryIssues(String username, String repository) {
         CompletableFuture<JsonNode> res = ghImpl.getRepositoryIssues(username, repository, ws);
-        return res.thenApplyAsync(response -> ok(response));
+        return res.thenApplyAsync(response -> {
+            try {
+                return ok(response);
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return badRequest("Invalid request!");
+            }
+        });
     }
     
     /**
@@ -219,7 +231,14 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public CompletionStage<Result> getRepositoryContributors(String username, String repository) {
         CompletableFuture<JsonNode> res = ghImpl.getRepositoryContributors(username, repository, ws);
-        return res.thenApplyAsync(response -> ok(response));
+        return res.thenApplyAsync(response -> {
+            try {
+                return ok(response);
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return badRequest("Invalid request!");
+            }
+        });
     }
     
     /**
@@ -235,7 +254,14 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public CompletionStage<Result> getRepositoryCommits(String username, String repository) {
         CompletableFuture<JsonNode> res = ghImpl.getRepositoryCommits(username, repository, ws);
-        return res.thenApplyAsync(response -> ok(response));
+        return res.thenApplyAsync(response -> {
+            try {
+                return ok(response);
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return badRequest("Invalid request!");
+            }
+        });
     }
     
     /**
