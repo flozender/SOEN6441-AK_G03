@@ -55,11 +55,11 @@ public class GitHubApiTest extends WithApplication {
     @Test
     public final void testUserProfile() {
         GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
-        CompletableFuture<JsonNode> res = testGitHub.userProfile("justin", ws);
+        CompletableFuture<Owner> res = testGitHub.userProfile("justin", ws);
         try{
-            JsonNode user = res.get();
-            assertEquals("justin", user.get("login").asText());
-            assertEquals("Justin Williams", user.get("name").asText());
+            Owner user = res.get();
+            assertEquals("justin", user.getLogin());
+            assertEquals("Justin Williams", user.getName());
         } catch (Exception e) {
             System.out.println(e);
         }

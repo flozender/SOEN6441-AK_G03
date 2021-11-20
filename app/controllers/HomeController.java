@@ -132,12 +132,11 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return The user page containing all the information about the requested user
      */
     public CompletionStage<Result> userProfile(String username) {
-        CompletableFuture<JsonNode> user = ghImpl.userProfile(username, ws);
+        CompletableFuture<Owner> user = ghImpl.userProfile(username, ws);
 
         return user.thenApplyAsync(response -> {
             try {
-                Owner userProfileInfo = Json.fromJson(response, Owner.class);
-                return ok(views.html.user.render(userProfileInfo));
+                return ok(views.html.user.render(response));
             }catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
                 return ok(views.html.error.render());

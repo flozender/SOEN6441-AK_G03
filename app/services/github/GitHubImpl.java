@@ -2,6 +2,7 @@ package services.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.Owner;
 import models.Repository;
 import play.libs.Json;
 import play.libs.ws.WSClient;
@@ -52,12 +53,16 @@ public class GitHubImpl implements GitHubApi {
     }
 
     @Override
-    public CompletableFuture<JsonNode> userProfile(String username, WSClient ws) {
-        CompletableFuture<JsonNode> futureUser = new CompletableFuture<>();
+    public CompletableFuture<Owner> userProfile(String username, WSClient ws) {
+        CompletableFuture<Owner> futureUser = new CompletableFuture<>();
         String url = API_URL + "/users/"+username;
         new Thread( () -> {
             ws.url(url).get()
-                    .thenApplyAsync(response -> (futureUser.complete(response.asJson())));
+                    .thenApplyAsync(response -> {
+                        JsonNode res = response.asJson();
+                        Owner o1 = Json.fromJson(res, Owner.class);
+                        return futureUser.complete(o1);
+                    });
         }).start();
         return futureUser;
     }

@@ -178,4 +178,55 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
+
+    /**
+     * Test the userRepository controller action
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public final void testUserRepository() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.userRepository("erfan-gh");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode userRepository = mapper.readTree(parsedResult).get(0);
+            assertThat("Optional[application/json]", is(result.contentType().toString()));
+            assertThat(userRepository.get("owner").get("login").textValue(), equalTo("erfan-gh"));
+            assertThat(userRepository.get("html_url").textValue(), equalTo("https://github.com/erfan-gh/compose"));
+            assertThat(userRepository.get("teams_url").textValue(), equalTo("https://api.github.com/repos/erfan-gh/compose/teams"));
+
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the userRepository controller action
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public final void testUserProfile() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.userProfile("justin");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("Justin Williams"));
+            assertThat(parsedResult, containsString("Mobile application developer located in sunny Denver, Colorado."));
+
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
 }
