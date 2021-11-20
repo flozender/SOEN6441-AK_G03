@@ -145,10 +145,10 @@ public class HomeControllerTest extends WithApplication {
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode repoIssue = mapper.readTree(parsedResult).get(0);
+            JsonNode contributors = mapper.readTree(parsedResult).get(0);
             assertThat("Optional[application/json]", is(result.contentType().toString()));
-            assertThat(repoIssue.get("login").textValue(), equalTo("SimenB"));
-            assertThat(repoIssue.get("html_url").textValue(), equalTo("https://github.com/SimenB"));
+            assertThat(contributors.get("login").textValue(), equalTo("SimenB"));
+            assertThat(contributors.get("html_url").textValue(), equalTo("https://github.com/SimenB"));
         } catch (Exception e){
             System.out.println(e);
         }
