@@ -207,7 +207,7 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
-     * Test the userRepository controller action
+     * Test the userProfile controller action
      *
      * @author Pedram Nouri
      */
@@ -225,6 +225,27 @@ public class HomeControllerTest extends WithApplication {
             assertThat(parsedResult, containsString("Justin Williams"));
             assertThat(parsedResult, containsString("Mobile application developer located in sunny Denver, Colorado."));
 
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the index controller action
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public final void testIndex() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        Result csResult = controller.index(request);
+        try{
+            String parsedResult = Helpers.contentAsString(csResult);
+            assertThat("Optional[text/html]", is(csResult.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
         } catch (Exception e){
             System.out.println(e);
         }
