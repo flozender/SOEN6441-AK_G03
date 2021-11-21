@@ -77,7 +77,56 @@ public class GitHubTestApi implements GitHubApi{
     }
 
     /**
-     * Service to return the Owner for userRepository dummy method. Aims for unit testing.
+     * Service to return the JSON file for searchTopicRepositories dummy method.
+     * <p>
+     * It will load the results related to the given string and return it.
+     * The result will include username and the repository name and topics related to each repository of the topic.
+     * </p>
+     * @author Vedasree Reddy Sapatapu
+     * @param keywords Contains the keywords passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<List<Repository>> that contains search results (repositories)
+     *
+     */
+
+    @Override
+    public CompletableFuture<List<Repository>> searchTopicRepositories(String keywords, WSClient ws){
+        CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
+        new Thread( () -> {
+            Path fileName = Paths.get("./app/services/github/resources/searchTopicRepositories.json");
+            Charset charset = Charset.forName("ISO-8859-1");
+            String jsonString = "";
+            try {
+                List<String> lines = Files.readAllLines(fileName, charset);
+                for (String line : lines) {
+                    jsonString += line;
+                }
+            }
+            catch (IOException e) {
+                System.out.println(e);
+            }
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(jsonString);
+                List<Repository> repoList = new ArrayList<>();
+                for (JsonNode repo : node){
+                    Repository res = Json.fromJson(repo, Repository.class);
+                    repoList.add(res);
+                }
+                futureRepos.complete(repoList);
+            }
+            catch (IOException e) {
+                System.out.println(e);
+            }
+        }).start();
+
+        return futureRepos;
+    }
+
+
+
+    /**
+     * Service to return the Owner for userProfile dummy method. Aims for unit testing.
      * <p>
      * It will load the related results and return it.
      * The result will include user information from the predefined json file.
@@ -243,9 +292,9 @@ public class GitHubTestApi implements GitHubApi{
             }
         }).start();
         return futureIssues;
-    } 
+    }
 
-     /**
+    /**
      * Dummy Service method getRepositoryContributors returns a JSON file for the getRepositoryContributors method
      * It is an Async call.
      * 

@@ -36,6 +36,8 @@ import static java.util.stream.Collectors.*;
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
     private Hashtable<String, ArrayList<List<Repository>>> storage;
+    private Hashtable<String, ArrayList<List<Repository>>> storageTopicRepos;
+    private Hashtable<String, ArrayList<String>> searchTermsTopics;
     private Hashtable<String, ArrayList<String>> searchTerms;
     private final GitHubApi ghImpl;
 
@@ -52,6 +54,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.ws = ws;
         this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
+
         this.searchTerms = new Hashtable<>();
     }
 
@@ -124,6 +127,32 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             }
         });
 
+    }
+
+    /**
+     * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
+     * <p>
+     * It will generate the results related to the user given topic keyword and render the repositories on topic_repos view.
+     * The result will include username and the repository name and topics related to each repository.
+     * </p>
+     * @author Vedasree Reddy Sapatapu
+     * @param request Contains the HTTP request
+     * @param keyword Contains the keywords which the user clicked from the topics
+     * @return topic_repos page that contains search results (repositories) of the clicked topic
+     *
+     */
+
+    public CompletionStage<Result> searchTopicRepositories(Http.Request request, String keyword) {
+        CompletableFuture<List<Repository>> res = ghImpl.searchTopicRepositories(keyword, ws);
+        return res.thenApplyAsync((List<Repository> tempResponse) -> {
+            System.out.println("tempResponse: " + tempResponse.get(0).getOwner());
+            try {
+                return ok(views.html.topic_repos.render(tempResponse, keyword));
+            } catch (Exception e) {
+                System.out.println("CAUGHT EXCEPTION: " + e);
+                return ok(views.html.error.render());
+            }
+        });
     }
 
     /**
@@ -299,7 +328,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             }
         });
         
-    } 
+    }
 
     /**
      * @author Nazanin
