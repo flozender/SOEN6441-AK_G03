@@ -145,7 +145,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     public CompletionStage<Result> searchTopicRepositories(Http.Request request, String keyword) {
         CompletableFuture<List<Repository>> res = ghImpl.searchTopicRepositories(keyword, ws);
         return res.thenApplyAsync((List<Repository> tempResponse) -> {
-            System.out.println("tempResponse: " + tempResponse.get(0).getOwner());
             try {
                 return ok(views.html.topic_repos.render(tempResponse, keyword));
             } catch (Exception e) {

@@ -73,7 +73,6 @@ public class GitHubImpl implements GitHubApi {
             ws.url(url).get()
             .thenApplyAsync(response -> {
                 List<Repository> repoList = new ArrayList<>();
-                System.out.println(response.asJson());
                 for (JsonNode repo : response.asJson().get("items")){
                     Repository res = Json.fromJson(repo, Repository.class);
                     System.out.println(res);

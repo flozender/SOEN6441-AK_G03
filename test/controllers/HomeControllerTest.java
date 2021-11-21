@@ -103,6 +103,16 @@ public class HomeControllerTest extends WithApplication {
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
         Request request = requestBuilder.build();
         CompletionStage<Result> csResult = controller.searchTopicRepositories(request, "facebook");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("FBLinkTester"));
+            assertThat(parsedResult, containsString("facebook-login-page"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
 
     /**
      * Test the searchRepositories controller action without cookie
@@ -119,10 +129,6 @@ public class HomeControllerTest extends WithApplication {
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
             assertThat("Optional[text/html]", is(result.contentType().toString()));
-
-            assertThat(parsedResult, containsString("FBLinkTester"));
-            assertThat(parsedResult, containsString("facebook-login-page"));
-
             assertThat(parsedResult, containsString("Welcome to Gitterific!"));
             assertThat(parsedResult, containsString("facebook-tools-new"));
         } catch (Exception e){
@@ -431,12 +437,8 @@ public class HomeControllerTest extends WithApplication {
     			
     	try {
     		assertFalse("Size is different as expected in a negative case test", resultmap.size()==actualMap.size());
-
-    		
     	} catch (Exception e){
     		System.out.print(e);
     	}
     }
-    
-    
 }

@@ -82,7 +82,7 @@
                 <button class="btn btn-md btn-primary btn-block" type="submit" id="myBtn" onclick="search()">Search</button>
             </div>
             @for(i <- 0 until repositories.size()){
-                <div class="search-data" style="background-color: lightgray">
+                <div class="search-data" style="background-color: #f7f7f7; padding: 10px;">
                     <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                     @for(j <- 0 until repositories.get(i).size()){
                         <div class="data">
