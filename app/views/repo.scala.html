@@ -38,9 +38,7 @@
         margin-top: 4rem;
         text-align: start;
       }
-      .cursoring-userProfile {
-        cursor: pointer;
-      }
+
     </style>
   </head>
   <body class="text-center">
@@ -70,7 +68,7 @@
           <div class="h4 mb-3 font-weight-normal">Topics:</div>
           <div class="h5">
             @for(i <- 0 until repository.getTopics().size()){
-            <a>@repository.getTopics().get(i)</a>, }
+            <a href="/topic/@repository.getTopics().get(i)">@repository.getTopics().get(i)</a>, }
             @if(repository.getTopics().size() == 0){
             <p>N/A</p>
             }

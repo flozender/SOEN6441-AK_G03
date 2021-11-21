@@ -80,6 +80,30 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
+     * Test the searchTopicRepositories controller action
+     *
+     * @author Vedasree Reddy Sapatapu
+     */
+    @Test
+    public final void testSearchTopicRepositories() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.searchTopicRepositories(request, "facebook");
+
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("FBLinkTester"));
+            assertThat(parsedResult, containsString("facebook-login-page"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
      * Test the repositoryProfile controller action
      * 
      * @author Tayeeb Hasan
@@ -250,4 +274,6 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
+
+
 }

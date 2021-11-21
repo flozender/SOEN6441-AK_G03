@@ -2,6 +2,7 @@ package services.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.fasterxml.jackson.module.scala.ser.SymbolSerializer;
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
@@ -49,6 +50,26 @@ public class GitHubImpl implements GitHubApi {
                 return futureRepos.complete(repoList);
             });
             }).start();
+        return futureRepos;
+    }
+
+    @Override
+    public CompletableFuture<List<Repository>> searchTopicRepositories(String keywords, WSClient ws){
+        CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
+        String url = API_URL + "/search/repositories?q=topic:"+keywords+"&per_page=10&sort=updated";
+        new Thread( () -> {
+            ws.url(url).get()
+            .thenApplyAsync(response -> {
+                List<Repository> repoList = new ArrayList<>();
+                System.out.println(response.asJson());
+                for (JsonNode repo : response.asJson().get("items")){
+                    Repository res = Json.fromJson(repo, Repository.class);
+                    System.out.println(res);
+                    repoList.add(res);
+                }
+                return futureRepos.complete(repoList);
+            });
+        }).start();
         return futureRepos;
     }
 
@@ -124,6 +145,29 @@ public class GitHubImpl implements GitHubApi {
         }).start();
         return futureIssues;
     }
+
+//    /**
+//     * Service method getRepositoryTopics returns a JSON with the topics based on the username and repository
+//     * name passed to it. It is an Async call.
+//     *
+//     * The response contains all the topics of the repository.
+//     *
+//     * @author Vedasree Reddy Sapatapu
+//     * @param username the github username of the user
+//     * @param repository the repository name
+//     * @param ws WSClient to make HTTP requests
+//     * @return CompletableFuture<JsonNode> containing all the topics of the provided repository
+//     */
+//    @Override
+//    public CompletableFuture<JsonNode> getRepositoryTopics(String username, String repository, WSClient ws) {
+//        CompletableFuture<JsonNode> futureTopics = new CompletableFuture<>();
+//        String url = API_URL + "/repos/" + username + "/" + repository + "/topics";
+//        new Thread( () -> {
+//            ws.url(url).get()
+//                    .thenApplyAsync(response -> (futureTopics.complete(response.asJson())));
+//        }).start();
+//        return futureTopics;
+//    }
 
     /**
      * Service method getRepositoryContributors returns a JSON with the contributors based on the username and repository 

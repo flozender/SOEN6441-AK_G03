@@ -53,6 +53,19 @@ public class GitHubApiTest extends WithApplication {
     }
 
     @Test
+    public final void testSearchTopicRepositories() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<List<Repository>> res = testGitHub.searchRepositories("facebook", ws);
+        try {
+            List<Repository> repositories = res.get();
+            assertEquals("facebook-tools-new", repositories.get(0).getName());
+            assertEquals("bot", repositories.get(1).getTopics().get(0));
+        } catch (Exception e) {
+            System.out.println("Exeception: " + e);
+        }
+    }
+
+    @Test
     public final void testUserProfile() {
         GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
         CompletableFuture<Owner> res = testGitHub.userProfile("justin", ws);

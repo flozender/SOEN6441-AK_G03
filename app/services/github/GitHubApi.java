@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface GitHubApi {
     public CompletableFuture<List<Repository>> searchRepositories(String keywords, WSClient ws);
+    public CompletableFuture<List<Repository>> searchTopicRepositories(String keywords, WSClient ws);
     public CompletableFuture<Owner> userProfile(String username, WSClient ws);
     public CompletableFuture<JsonNode> userRepository(String username, WSClient ws);
     public CompletableFuture<Repository> repositoryProfile(String username, String repository, WSClient ws);
