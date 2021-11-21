@@ -2,6 +2,7 @@ package services.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.fasterxml.jackson.module.scala.ser.SymbolSerializer;
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
@@ -52,6 +53,38 @@ public class GitHubImpl implements GitHubApi {
         return futureRepos;
     }
 
+    /**
+     * Service to search for the repositories for given keywords.
+     * <p>
+     * It will load the results related to the clicked string from the topics and return it.
+     * The result will include username and the repository name and topics related to each repository of the topic provided .
+     * </p>
+     * @author Vedasree Reddy Sapatapu
+     * @param keyword Contains the keywords passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<List<Repository>> that contains search results (repositories)
+     *
+     */
+    @Override
+    public CompletableFuture<List<Repository>> searchTopicRepositories(String keyword, WSClient ws){
+        CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
+        String url = API_URL + "/search/repositories?q=topic:"+keyword+"&per_page=10&sort=updated";
+        new Thread( () -> {
+            ws.url(url).get()
+            .thenApplyAsync(response -> {
+                List<Repository> repoList = new ArrayList<>();
+                System.out.println(response.asJson());
+                for (JsonNode repo : response.asJson().get("items")){
+                    Repository res = Json.fromJson(repo, Repository.class);
+                    System.out.println(res);
+                    repoList.add(res);
+                }
+                return futureRepos.complete(repoList);
+            });
+        }).start();
+        return futureRepos;
+    }
+  
     /**
      * Service to find the user profile for given username.
      * <p>

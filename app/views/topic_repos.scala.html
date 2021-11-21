@@ -1,7 +1,10 @@
 @import java.util
 @import com.fasterxml.jackson.databind.JsonNode;
 @import models.Repository;
-@(repositories: util.List[util.List[Repository]], searchTerms: util.List[String])
+
+@(repositories: util.List[Repository], searchTerms: String)
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -75,25 +78,22 @@
     </head>
     <body class="text-center">
         <div class="form-signin" style="background-color: #eee;">
-            <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
-            <div class="d-flex flex-row">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search repositories..." required autofocus>
-                <br/>
-                <button class="btn btn-md btn-primary btn-block" type="submit" id="myBtn" onclick="search()">Search</button>
-            </div>
-            @for(i <- 0 until repositories.size()){
-                <div class="search-data" style="background-color: lightgray">
-                    <b>Search terms: @searchTerms.get(i)</b><br/><br/>
-                    @for(j <- 0 until repositories.get(i).size()){
-                        <div class="data">
-                            @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
-                            @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
-                                <b class="cursoring-topic" onclick="search_repo('@repositories.get(i).get(j).getTopics().get(k)')">(@repositories.get(i).get(j).getTopics().get(k))</b>
-                            }
-                        </div>
-                    }
-                </div>
-            }
+            <b style="font-size: 30px">TOPIC : @searchTerms</b><br/><br/>
+
+
+           @for(i <- 0 until repositories.size()){
+@*                <div class="search-data" style="background-color: lightgray">*@
+
+                       <div class="data">
+               <br/><br/>
+               @(i+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).getOwner().getLogin()')">@repositories.get(i).getOwner().getLogin()</b> / @repositories.get(i).getName()
+                           @for(j <- 0 until repositories.get(i).getTopics().size()){
+                               <b class="cursoring-topic" onclick="search_repo('@repositories.get(i).getTopics().get(j)')">(@repositories.get(i).getTopics().get(j))</b>
+                          }
+                       </div>
+@*                </div>*@
+           }
+
         </div>
     </body>
     <script>
