@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * @author Nazanin
  *
- *API https://docs.github.com/en/rest/reference/issues#list-repository-issues
+ * API https://docs.github.com/en/rest/reference/issues#list-repository-issues
  *
  *
- *curl \
+ *@see curl \
   -H "Accept: application/vnd.github.v3+json" \
   https://api.github.com/repos/octocat/hello-world/issues
   
@@ -25,6 +25,10 @@ import java.util.List;
  */
 public class RepositoryIssues {
 	
+	/**
+	 * 
+	 * Getter Setters for the class RepositoryIssues
+	 */
 	public String title;
 	
 	public String repo;
