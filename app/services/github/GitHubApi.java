@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Interface for the GitHubApi Service
- * @author Tayeeb Hasan & Pedram Nouri
+ * @author Tayeeb Hasan & Pedram Nouri & Vedasree Reddy Sapatapu
  * @version 1.0.0
  */
 public interface GitHubApi {

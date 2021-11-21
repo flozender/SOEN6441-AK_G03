@@ -75,6 +75,19 @@ public class GitHubTestApi implements GitHubApi{
         return futureRepos;
     }
 
+    /**
+     * Service to return the JSON file for searchTopicRepositories dummy method.
+     * <p>
+     * It will load the results related to the given string and return it.
+     * The result will include username and the repository name and topics related to each repository of the topic.
+     * </p>
+     * @author Vedasree Reddy Sapatapu
+     * @param keywords Contains the keywords passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<List<Repository>> that contains search results (repositories)
+     *
+     */
+
     @Override
     public CompletableFuture<List<Repository>> searchTopicRepositories(String keywords, WSClient ws){
         CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
@@ -251,47 +264,6 @@ public class GitHubTestApi implements GitHubApi{
         }).start();
         return futureIssues;
     }
-
-//    /**
-//     * Dummy Service method getRepositoryTopics returns a JSON file for the getRepositoryTopics method
-//     * It is an Async call.
-//     *
-//     * The response contains all the topics of the repository.
-//     *
-//     * @author Vedasree Reddy Sapatapu
-//     * @param username the github username of the user
-//     * @param repository the repository name
-//     * @param ws WSClient to make HTTP requests
-//     * @return CompletableFuture<JsonNode> containing all the topics of the provided repository
-//     */
-//    @Override
-//    public CompletableFuture<JsonNode> getRepositoryTopics(String username, String repository, WSClient ws){
-//        CompletableFuture<JsonNode> futureTopics = new CompletableFuture<>();
-//        new Thread( () -> {
-//            Path fileName = Paths.get("./app/services/github/resources/getRepositoryTopics.json");
-//            Charset charset = Charset.forName("ISO-8859-1");
-//            String jsonString = "";
-//            try {
-//                List<String> lines = Files.readAllLines(fileName, charset);
-//                for (String line : lines) {
-//                    jsonString += line;
-//                }
-//            }
-//            catch (IOException e) {
-//                System.out.println(e);
-//            }
-//            try {
-//                ObjectMapper mapper = new ObjectMapper();
-//                JsonNode node = mapper.readTree(jsonString);
-//                futureTopics.complete(node);
-//            }
-//            catch (IOException e) {
-//                System.out.println(e);
-//            }
-//        }).start();
-//        return futureTopics;
-//    }
-
 
     /**
      * Dummy Service method getRepositoryContributors returns a JSON file for the getRepositoryContributors method

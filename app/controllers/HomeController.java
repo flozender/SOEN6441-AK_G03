@@ -58,41 +58,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.searchTerms = new Hashtable<>();
     }
 
-//    public CompletionStage<Result> topicRepositories(Http.Request request, String keywords) {
-//        String userSession;
-//        if (request.cookie("GITTERIFIC") != null){
-//            userSession = request.cookie("GITTERIFIC").value();
-//        } else {
-//            userSession = String.valueOf(Math.random());
-//        }
-//        CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
-//        return res.thenApplyAsync((List<Repository> tempResponse) -> {
-//            try {
-//                ArrayList<List<Repository>> collectRepos = new ArrayList<>();
-//                ArrayList<String> collectSearchTerms = new ArrayList<>();
-//                collectRepos.add(tempResponse);
-//                collectSearchTerms.add(keywords);
-//                if (this.storage.containsKey(userSession)){
-//                    ArrayList<List<Repository>> tempStorage = this.storage.get(userSession);
-//                    ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
-//                    tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
-//                    tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
-//                }
-//                this.storage.put(userSession, collectRepos);
-//                this.searchTerms.put(userSession, collectSearchTerms);
-//                if (request.cookie("GITTERIFIC") == null){
-////                    return ok(views.html.topicRepos.render(this.storage.get(userSession), this.searchTerms.get(userSession)))
-////                            .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
-//                }
-////                return ok(views.html.topicRepos.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
-//            } catch (Exception e) {
-//                System.out.println("CAUGHT EXCEPTION: " + e);
-//                return ok(views.html.error.render());
-//            }
-//        });
-//    }
-
-    /** vgf vcxz
+    /**
      * index page action
      * 
      * @param request Contains the HTTP request
@@ -162,6 +128,19 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         });
 
     }
+
+    /**
+     * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
+     * <p>
+     * It will generate the results related to the given topic keyword and render the repositories on topic_repos view.
+     * The result will include username and the repository name and topics related to each repository.
+     * </p>
+     * @author Vedasree Reddy Sapatapu
+     * @param request Contains the HTTP request
+     * @param keyword Contains the keywords which the user clicked from the topics
+     * @return topic_repos page that contains search results (repositories) of the clicked topic
+     *
+     */
 
     public CompletionStage<Result> searchTopicRepositories(Http.Request request, String keyword) {
         CompletableFuture<List<Repository>> res = ghImpl.searchTopicRepositories(keyword, ws);
@@ -287,23 +266,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         CompletableFuture<JsonNode> res = ghImpl.getRepositoryCommits(username, repository, ws);
         return res.thenApplyAsync(response -> ok(response));
     }
-
-//    /**
-//     * Method getRepositoryTopics returns a JSON with the list of topics based on the username and repository
-//     * name passed to it. It is an Async call.
-//     *
-//     * The response contains all the topics of the repository.
-//     *
-//     * @author Vedasree Reddy Sapatapu
-//     * @param username the github username of the user
-//     * @param repository the repository name
-//     * @return A JSON containing all the topics of the provided repository
-//     */
-//
-//    public CompletionStage<Result> getRepositoryTopics(String username, String repository) {
-//        CompletableFuture<JsonNode> res = ghImpl.getRepositoryTopics(username, repository, ws);
-//        return res.thenApplyAsync(response -> ok(response));
-//    }
     
     /**
      * @author Nazanin
@@ -338,41 +300,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             }
         });
         
-    }
-
-    public CompletionStage<Result> getTopicRepositories(Http.Request request, String keywords) {
-        String userSession;
-        if (request.cookie("GITTERIFIC") != null){
-            userSession = request.cookie("GITTERIFIC").value();
-        } else {
-            userSession = String.valueOf(Math.random());
-        }
-        CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
-        return res.thenApplyAsync((List<Repository> tempResponse) -> {
-            try {
-                ArrayList<List<Repository>> collectRepos = new ArrayList<>();
-                ArrayList<String> collectSearchTerms = new ArrayList<>();
-                collectRepos.add(tempResponse);
-                collectSearchTerms.add(keywords);
-                if (this.storageTopicRepos.containsKey(userSession)){
-                    ArrayList<List<Repository>> tempStorage = this.storageTopicRepos.get(userSession);
-                    ArrayList<String> tempSearchTerms = this.searchTermsTopics.get(userSession);
-                    tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
-                    tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
-                }
-                this.storageTopicRepos.put(userSession, collectRepos);
-                this.searchTermsTopics.put(userSession, collectSearchTerms);
-                if (request.cookie("GITTERIFIC") == null){
-                    return ok(views.html.index.render(this.storageTopicRepos.get(userSession), this.searchTermsTopics.get(userSession)))
-                            .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
-                }
-                return ok(views.html.index.render(this.storageTopicRepos.get(userSession), this.searchTermsTopics.get(userSession)));
-            } catch (Exception e) {
-                System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
-            }
-        });
-
     }
 
     /**
