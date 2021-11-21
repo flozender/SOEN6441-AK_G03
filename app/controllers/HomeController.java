@@ -289,6 +289,9 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
+                
+                
+                
                 return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
@@ -330,6 +333,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     	    .forEachOrdered(x -> reverseCounts.put(x.getKey(), x.getValue()));
     	
 	 	return reverseCounts;
+	 	
+	 	
     	
     }
 
