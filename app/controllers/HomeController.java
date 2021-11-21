@@ -132,7 +132,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     /**
      * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
      * <p>
-     * It will generate the results related to the given topic keyword and render the repositories on topic_repos view.
+     * It will generate the results related to the user given topic keyword and render the repositories on topic_repos view.
      * The result will include username and the repository name and topics related to each repository.
      * </p>
      * @author Vedasree Reddy Sapatapu
