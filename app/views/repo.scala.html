@@ -377,10 +377,6 @@
                 <td>@repository.isIs_template()</td>
               </tr>
               <tr>
-                <th scope="row">topics</th>
-                <td>@repository.getTopics()</td>
-              </tr>
-              <tr>
                 <th scope="row">visibility</th>
                 <td>@repository.getVisibility()</td>
               </tr>
@@ -479,7 +475,7 @@
         type: "GET",
         url: `/commits/${username}/${repository}`,
         success: function (result) {
-          $("a#commits").text(`${result.length >= 100 ? "100+" : result.length} (view commits)`);
+          $("a#commits").text(`${result.length >= 100 ? "100+" : result.length || 0} (view commits)`);
         },
       });
     }
