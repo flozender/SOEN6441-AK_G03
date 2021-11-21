@@ -69,6 +69,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepos.completeExceptionally(e);
             }
         }).start();
 
@@ -124,6 +125,18 @@ public class GitHubTestApi implements GitHubApi{
 
 
 
+    /**
+     * Service to return the Owner for userProfile dummy method. Aims for unit testing.
+     * <p>
+     * It will load the related results and return it.
+     * The result will include user information from the predefined json file.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the username passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<Owner> that contains results (predefined user profile)
+     *
+     */
     @Override
     public CompletableFuture<Owner> userProfile(String username, WSClient ws) {
         CompletableFuture<Owner> futureUser = new CompletableFuture<>();
@@ -148,12 +161,25 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureUser.completeExceptionally(e);
             }
         }).start();
 
         return futureUser;
     }
 
+    /**
+     * Service to return the repositories for userRepository dummy method. Aims for unit testing.
+     * <p>
+     * It will load the related results and return it.
+     * The result will include user's repositories information from the predefined json file.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the username passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<JsonNode> that contains results (predefined user's repositories)
+     *
+     */
     @Override
     public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
         CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
@@ -177,6 +203,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepositories.completeExceptionally(e);
             }
         }).start();
 
@@ -220,6 +247,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureRepo.completeExceptionally(e);
             }
         }).start();
         return futureRepo;
@@ -260,6 +288,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureIssues.completeExceptionally(e);
             }
         }).start();
         return futureIssues;
@@ -300,6 +329,7 @@ public class GitHubTestApi implements GitHubApi{
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureContributors.completeExceptionally(e);
             }
         }).start();
         return futureContributors;
@@ -319,7 +349,7 @@ public class GitHubTestApi implements GitHubApi{
      */
     @Override
     public CompletableFuture<JsonNode> getRepositoryCommits(String username, String repository, WSClient ws){
-        CompletableFuture<JsonNode> futureContributors = new CompletableFuture<>();
+        CompletableFuture<JsonNode> futureCommits = new CompletableFuture<>();
         new Thread( () -> {
             Path fileName = Paths.get("./app/services/github/resources/getRepositoryCommits.json");
             Charset charset = Charset.forName("ISO-8859-1");
@@ -336,12 +366,13 @@ public class GitHubTestApi implements GitHubApi{
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(jsonString);
-                futureContributors.complete(node);
+                futureCommits.complete(node);
             }
             catch (IOException e) {
                 System.out.println(e);
+                futureCommits.completeExceptionally(e);
             }
         }).start();
-        return futureContributors;
+        return futureCommits;
     }
 }

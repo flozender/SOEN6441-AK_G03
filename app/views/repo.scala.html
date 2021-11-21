@@ -104,7 +104,7 @@
               </tr>
               <tr>
                 <th scope="row">owner</th>
-                <td>@repository.getOwner()</td>
+                <td>@repository.getOwner().getLogin()</td>
               </tr>
               <tr>
                 <th scope="row">html_url</th>
@@ -117,6 +117,10 @@
               <tr>
                 <th scope="row">fork</th>
                 <td>@repository.getForks()</td>
+              </tr>
+              <tr>
+                <th scope="row">isFork</th>
+                <td>@repository.isFork()</td>
               </tr>
               <tr>
                 <th scope="row">url</th>

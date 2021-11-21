@@ -28,11 +28,19 @@ import play.inject.guice.GuiceInjectorBuilder;
 import static play.inject.Bindings.bind;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.stream.Collectors;
+
 /**
  * Home Controller Test class
  * 
@@ -67,10 +75,14 @@ public class HomeControllerTest extends WithApplication {
         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
         Request request = requestBuilder.build();
-        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
+        CompletionStage<Result> preCSResult = controller.searchRepositories(request, "facebook");
         try{
+            Result preResult = preCSResult.toCompletableFuture().get();
+            // simulate a second search request
+            CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
+            
             assertThat("Optional[text/html]", is(result.contentType().toString()));
             assertThat(parsedResult, containsString("Welcome to Gitterific!"));
             assertThat(parsedResult, containsString("facebook-tools-new"));
@@ -92,12 +104,27 @@ public class HomeControllerTest extends WithApplication {
         Request request = requestBuilder.build();
         CompletionStage<Result> csResult = controller.searchTopicRepositories(request, "facebook");
 
+    /**
+     * Test the searchRepositories controller action without cookie
+     * 
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testSearchRepositoriesWithoutCookie() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        RequestBuilder requestBuilder = Helpers.fakeRequest();
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
         try{
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
             assertThat("Optional[text/html]", is(result.contentType().toString()));
+
             assertThat(parsedResult, containsString("FBLinkTester"));
             assertThat(parsedResult, containsString("facebook-login-page"));
+
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(parsedResult, containsString("facebook-tools-new"));
         } catch (Exception e){
             System.out.println(e);
         }
@@ -276,4 +303,140 @@ public class HomeControllerTest extends WithApplication {
     }
 
 
+    /**
+     * Test the index controller action without user cookie
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testIndexWithoutCookie() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        RequestBuilder requestBuilder = Helpers.fakeRequest();
+        Request request = requestBuilder.build();
+        Result csResult = controller.index(request);
+        try{
+            String parsedResult = Helpers.contentAsString(csResult);
+            assertThat("Optional[text/html]", is(csResult.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(csResult.cookie("GITTERIFIC"), is(notNullValue()));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * Test the index controller action when a search has already been performed
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testIndexWithSearch() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+
+        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
+
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            Result indexPage = controller.index(request);
+            String parsedResult = Helpers.contentAsString(indexPage);
+            assertThat("Optional[text/html]", is(indexPage.contentType().toString()));
+            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
+            assertThat(parsedResult, containsString("facebook-tools-new"));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    
+    /**
+     * Test the helper method for getRepositoryIssuesTittles. It computes the word stats on a parsed list of issues
+     *
+     * @author Nazanin
+     */
+    @Test
+    public final void testrepoIssuesStats() {
+    	
+    	String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
+    	List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
+    
+    	String outputstr ="Bump=15, from=15, to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
+    	Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
+                .map(s -> s.split("="))
+                .collect(Collectors.toMap(s -> s[0].toString(), s -> Long.parseLong(s[1])));
+    	
+    	
+    	final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+    	
+    	Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
+    			
+    	try {
+    		assertTrue("Size matches", resultmap.size()==actualMap.size());
+
+    		assertTrue("element present as expected", actualMap.get("Bump")==resultmap.get("Bump"));
+    		
+    	} catch (Exception e){
+    		System.out.print(e);
+    	}
+    }
+    
+    /**
+     * Test getRepositoryIssuesTittles controller action
+     *
+     * @author Nazanin
+     */
+    
+    @Test
+    public final void testgetRepositoryIssuesTittles() {
+    	//http://localhost:9000/reposissues/m4thieulavoie/brorganized/issues
+    	 final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+         Request request = requestBuilder.build();
+         CompletionStage<Result> csResult = controller.getRepositoryIssuesTittles("m4thieulavoie","brorganized");
+         try{
+             Result result = csResult.toCompletableFuture().get();
+             String parsedResult = Helpers.contentAsString(result);
+             assertThat("Optional[text/html]", is(result.contentType().toString()));
+             assertThat(parsedResult, containsString("Bump      =      15"));
+             assertThat(parsedResult, containsString("repository-results"));
+
+         } catch (Exception e){
+             System.out.println(e);
+         }
+    		
+    }
+    
+    /**
+     * Test the helper method for getRepositoryIssuesTittles for negative input values. It computes the word stats on a parsed list of issues
+     *
+     * @author Nazanin
+     */
+    @Test
+    public final void testrepoIssuesStatsNegate() {
+    	
+    	String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
+    	List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
+    
+    	String outputstr ="to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
+    	Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
+                .map(s -> s.split("="))
+                .collect(Collectors.toMap(s -> s[0].toString(), s -> Long.parseLong(s[1])));
+    	
+    	
+    	final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+    	
+    	Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
+    			
+    	try {
+    		assertFalse("Size is different as expected in a negative case test", resultmap.size()==actualMap.size());
+
+    		
+    	} catch (Exception e){
+    		System.out.print(e);
+    	}
+    }
+    
+    
 }

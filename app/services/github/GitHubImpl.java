@@ -65,7 +65,6 @@ public class GitHubImpl implements GitHubApi {
      * @return CompletableFuture<List<Repository>> that contains search results (repositories)
      *
      */
-
     @Override
     public CompletableFuture<List<Repository>> searchTopicRepositories(String keyword, WSClient ws){
         CompletableFuture<List<Repository>> futureRepos = new CompletableFuture<>();
@@ -85,7 +84,19 @@ public class GitHubImpl implements GitHubApi {
         }).start();
         return futureRepos;
     }
-
+  
+    /**
+     * Service to find the user profile for given username.
+     * <p>
+     * It will load the results related to the user's page and return it.
+     * The result will include user information.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the keywords passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<Owner> that contains results (user profile)
+     *
+     */
     @Override
     public CompletableFuture<Owner> userProfile(String username, WSClient ws) {
         CompletableFuture<Owner> futureUser = new CompletableFuture<>();
@@ -101,6 +112,18 @@ public class GitHubImpl implements GitHubApi {
         return futureUser;
     }
 
+    /**
+     * Service to find repositories of a user for given username.
+     * <p>
+     * It will load the results related to the user's repositories and return it.
+     * The result will include repositories information.
+     * </p>
+     * @author Pedram Nouri
+     * @param username Contains the keywords passed by the controller
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<JsonNode> that contains results (user's repositories)
+     *
+     */
     @Override
     public CompletableFuture<JsonNode> userRepository(String username, WSClient ws) {
         CompletableFuture<JsonNode> futureRepositories = new CompletableFuture<>();
