@@ -86,7 +86,7 @@
                     <b>Search terms: @searchTerms.get(i)</b><br/><br/>
                     @for(j <- 0 until repositories.get(i).size()){
                         <div class="data">
-                            @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / @repositories.get(i).get(j).getName()
+                            @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / <a onclick="getRepository('@repositories.get(i).get(j).getOwner().getLogin()', '@repositories.get(i).get(j).getName()')">@repositories.get(i).get(j).getName()</a>
                             @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
                                 <b class="cursoring-topic" onclick="search_repo('@repositories.get(i).get(j).getTopics().get(k)')">(@repositories.get(i).get(j).getTopics().get(k))</b>
                             }
@@ -117,6 +117,10 @@
 
     function getUserProfile(username) {
         window.location = "/users/"+username;
+    }
+
+    function getRepository(username, repository) {
+        window.location = `/repos/${username}/${repository}`;
     }
 
     function search_repo(topic){

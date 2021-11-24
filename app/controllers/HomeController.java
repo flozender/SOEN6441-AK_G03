@@ -54,7 +54,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.ws = ws;
         this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
-
         this.searchTerms = new Hashtable<>();
     }
 
