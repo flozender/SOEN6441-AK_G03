@@ -3,6 +3,8 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
+import actors.GitHubSupervisor;
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
@@ -14,6 +16,9 @@ import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
 import services.github.GitHubApi;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -40,6 +45,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     private Hashtable<String, ArrayList<String>> searchTermsTopics;
     private Hashtable<String, ArrayList<String>> searchTerms;
     private final GitHubApi ghImpl;
+    private ActorSystem system;
+    private ActorRef supervisor;
 
     /**
      * Home Controller Constructor
@@ -55,6 +62,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
+        this.system = ActorSystem.create("gitterific");
+        this.supervisor = system.actorOf(GitHubSupervisor.props(), "github-supervisor");
     }
 
     /**
