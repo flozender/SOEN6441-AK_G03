@@ -4,32 +4,39 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import actors.GitHubSupervisor;
+import actors.SearchActor;
+import actors.SearchGroupActor;
+
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
 import play.libs.ws.WSBodyReadables;
 import play.libs.ws.WSBodyWritables;
 import play.libs.ws.WSClient;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
 import services.github.GitHubApi;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
+import akka.actor.*;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import scala.compat.java8.FutureConverters;
+import actors.GitHubActorProtocol;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
+import static akka.pattern.Patterns.ask;
+
 
 /**
  * This controller contains several actions to handle HTTP requests
@@ -41,12 +48,11 @@ import static java.util.stream.Collectors.*;
 public class HomeController extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
     private Hashtable<String, ArrayList<List<Repository>>> storage;
-    private Hashtable<String, ArrayList<List<Repository>>> storageTopicRepos;
-    private Hashtable<String, ArrayList<String>> searchTermsTopics;
     private Hashtable<String, ArrayList<String>> searchTerms;
     private final GitHubApi ghImpl;
-    private ActorSystem system;
-    private ActorRef supervisor;
+    private final ActorSystem system;
+    final ActorRef searchGroupActor;
+    @Inject @Named("githubactorsupervisor") private ActorRef supervisor;
 
     /**
      * Home Controller Constructor
@@ -57,13 +63,13 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return HomeController instance
      */
     @Inject
-    public HomeController(WSClient ws, GitHubApi gitHubApi) {
+    public HomeController(WSClient ws, GitHubApi gitHubApi, ActorSystem system) {
         this.ws = ws;
         this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
-        this.system = ActorSystem.create("gitterific");
-        this.supervisor = system.actorOf(GitHubSupervisor.props(), "github-supervisor");
+        this.searchGroupActor = system.actorOf(SearchGroupActor.props());
+        this.system = system;
     }
 
     /**
@@ -74,20 +80,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return index view that contains the search bar and previously searched results
      * @version 1.0.0
      */
-    public Result index(Http.Request request) {
+    public CompletableFuture<Result> index(Http.Request request) {
         String userSession;
         if (request.cookie("GITTERIFIC") != null){
             userSession = request.cookie("GITTERIFIC").value();
-            if (this.storage.get(userSession) != null && this.searchTerms.get(userSession) != null) {
-                return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
-            } else {
-                return ok(views.html.index.render(Arrays.asList(), Arrays.asList()));
-            }
         } else {
             userSession = String.valueOf(Math.random());
-            return ok(views.html.index.render(Arrays.asList(), Arrays.asList()))
-            .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
-        }        
+        }
+        CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
+        return searchResults.thenApplyAsync((sr)-> {
+            if (request.cookie("GITTERIFIC") == null){
+                return ok(views.html.index.render(sr.repositories, sr.searchTerms))
+                .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
+            }
+            return ok(views.html.index.render(sr.repositories, sr.searchTerms));
+        });     
     }
 
     /**
@@ -102,40 +109,35 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return index page that contains search results (repositories)
      * 
      */
-    public CompletionStage<Result> searchRepositories(Http.Request request, String keywords) {
+    public CompletableFuture<Result> searchRepositories(Http.Request request, String keywords) {
         String userSession;
         if (request.cookie("GITTERIFIC") != null){
             userSession = request.cookie("GITTERIFIC").value();
         } else {
             userSession = String.valueOf(Math.random());
         }
-        CompletableFuture<List<Repository>> res = ghImpl.searchRepositories(keywords, ws);
-        return res.thenApplyAsync((List<Repository> tempResponse) -> {
-            try {
-                ArrayList<List<Repository>> collectRepos = new ArrayList<>();
-                ArrayList<String> collectSearchTerms = new ArrayList<>();
-                collectRepos.add(tempResponse);
-                collectSearchTerms.add(keywords);
-                if (this.storage.containsKey(userSession)){
-                    ArrayList<List<Repository>> tempStorage = this.storage.get(userSession);
-                    ArrayList<String> tempSearchTerms = this.searchTerms.get(userSession);
-                    tempStorage.stream().limit(9).forEach(e->collectRepos.add(e));
-                    tempSearchTerms.stream().limit(9).forEach(e->collectSearchTerms.add(e));
-                }
-                this.storage.put(userSession, collectRepos);
-                this.searchTerms.put(userSession, collectSearchTerms);
-                if (request.cookie("GITTERIFIC") == null){
-                    return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)))
-                    .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
-                }
-                return ok(views.html.index.render(this.storage.get(userSession), this.searchTerms.get(userSession)));
-            } catch (Exception e) {
-                System.out.println("CAUGHT EXCEPTION: " + e);
-                return badRequest(views.html.error.render());
-            }
+        
+        CompletableFuture<Object> searchObj = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.Search(userSession, keywords, ghImpl, ws), 5000)).toCompletableFuture();
+        CompletableFuture<List<Repository>> search = searchObj.thenApplyAsync(repos -> (List<Repository>) repos);
+        
+        CompletableFuture<Result> returnObj = search.thenCompose(repos -> {
+            CompletableFuture<GitHubActorProtocol.AddedSearchResponse> adding = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.AddSearchResponse(userSession, repos, keywords), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.AddedSearchResponse) res);
+            return adding.thenCompose((results)-> {
+                CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
+                return searchResults.thenApplyAsync((sr)-> {
+                    System.out.println(sr.searchTerms);
+                    if (request.cookie("GITTERIFIC") == null){
+                        return ok(views.html.index.render(sr.repositories, sr.searchTerms))
+                        .withCookies(Cookie.builder("GITTERIFIC", userSession).build());
+                    }
+                    return ok(views.html.index.render(sr.repositories, sr.searchTerms));
+                });
+            });
         });
-
+        
+        return returnObj;
     }
+
 
     /**
      * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
