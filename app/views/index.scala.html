@@ -77,7 +77,7 @@
         <div class="form-signin" style="background-color: #eee;">
             <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
             <div class="d-flex flex-row">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search repositories..." required autofocus>
+                <input type="text" id="searchInputField" class="form-control" placeholder="Search repositories..." required autofocus>
                 <br/>
                 <button class="btn btn-md btn-primary btn-block" type="submit" id="myBtn" onclick="search()">Search</button>
             </div>
@@ -97,7 +97,7 @@
         </div>
     </body>
     <script>
-    let input = document.getElementById("searchInput");
+    let input = document.getElementById("searchInputField");
 
     input.addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
