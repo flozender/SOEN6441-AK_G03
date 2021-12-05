@@ -22,4 +22,6 @@ public interface GitHubApi {
     public CompletableFuture<JsonNode> getRepositoryIssues(String username, String repository, WSClient ws);
     public CompletableFuture<JsonNode> getRepositoryContributors(String username, String repository, WSClient ws);
     public CompletableFuture<JsonNode> getRepositoryCommits(String username, String repository, WSClient ws);
+    public CompletableFuture<JsonNode> getRepositoryIssuesTittles(String username, String repository, WSClient ws);
+    
 }

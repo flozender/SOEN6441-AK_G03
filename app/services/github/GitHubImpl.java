@@ -226,4 +226,27 @@ public class GitHubImpl implements GitHubApi {
         }).start();
         return futureCommits;
     }
+    
+    /**
+     * Service method getRepositoryIssuesTittles returns a JSON with the titles of all the issues based on the username and repository 
+     * name passed to it. It is an Async call.
+     * 
+     * The response contains all the public information of the commits. 
+     *
+     * @author Nazanin 
+     * @param username the github username of the user
+     * @param repository the repository name
+     * @param ws WSClient to make HTTP requests
+     * @return CompletableFuture<JsonNode> containing all the public information of the requested repository commits
+     */
+    @Override
+    public CompletableFuture<JsonNode> getRepositoryIssuesTittles(String username, String repository, WSClient ws) {
+        CompletableFuture<JsonNode> futureCommits = new CompletableFuture<>();
+        String url = API_URL + "/repos/" + username + "/" + repository + "/issues?state=all";
+        new Thread( () -> {
+            ws.url(url).get()
+                    .thenApplyAsync(response -> (futureCommits.complete(response.asJson())));
+        }).start();
+        return futureCommits;
+    }
 }
