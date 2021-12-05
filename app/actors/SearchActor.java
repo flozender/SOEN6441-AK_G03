@@ -39,25 +39,17 @@ import akka.actor.Props;
 import actors.GitHubActorProtocol;
 
 public class SearchActor extends AbstractActor { 
-    final String userId;
     private static GitHubApi ghImpl;
     private static WSClient ws;
-    private ArrayList<List<Repository>> repositories;
-    private ArrayList<String> searchTerms;
     
-    // need to inject ws and ghimpl here -> 
-    public static Props props(String userId) {
-        return Props.create(SearchActor.class, userId, ws, ghImpl);
+    public static Props props() {
+        return Props.create(SearchActor.class, ws, ghImpl);
     }
 
-
     @Inject
-    public SearchActor(String userId, WSClient ws, GitHubApi gitHubApi) {
-        this.userId = userId;
+    public SearchActor(WSClient ws, GitHubApi gitHubApi) {
         this.ws = ws;
         this.ghImpl = gitHubApi;
-        this.repositories = new ArrayList<>();
-        this.searchTerms = new ArrayList<>();
     }
 
     @Override
@@ -66,17 +58,6 @@ public class SearchActor extends AbstractActor {
         .match(GitHubActorProtocol.Search.class, search -> {
             CompletableFuture<List<Repository>> reply = search.gitHubApi.searchRepositories(search.keywords, search.ws);
             pipe(reply, getContext().dispatcher()).to(sender());
-        })
-        .match(GitHubActorProtocol.AddSearchResponse.class, searchResponse -> {
-            this.repositories.add(0, searchResponse.repositories);
-            this.searchTerms.add(0, searchResponse.searchTerms);
-            this.repositories = this.repositories.stream().limit(10).collect(Collectors.toCollection(ArrayList::new));
-            this.searchTerms = this.searchTerms.stream().limit(10).collect(Collectors.toCollection(ArrayList::new));
-            sender().tell(new GitHubActorProtocol.AddedSearchResponse(searchResponse.userId), getSelf());
-        })
-        .match(GitHubActorProtocol.GetSearchResults.class, search -> {
-            GitHubActorProtocol.SearchResults sr = new GitHubActorProtocol.SearchResults(this.repositories, this.searchTerms);
-            sender().tell(sr, getSelf());
         })
         .build();
     }

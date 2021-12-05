@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import actors.SearchActor;
-import actors.SearchGroupActor;
 
 import models.Owner;
 import models.Repository;
@@ -31,6 +30,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import scala.compat.java8.FutureConverters;
 import actors.GitHubActorProtocol;
+import actors.*;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
@@ -51,7 +51,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     private Hashtable<String, ArrayList<String>> searchTerms;
     private final GitHubApi ghImpl;
     private final ActorSystem system;
-    final ActorRef searchGroupActor;
+    final ActorRef searchActor;
+    final ActorRef userGroupActor;
     @Inject @Named("githubactorsupervisor") private ActorRef supervisor;
 
     /**
@@ -68,7 +69,8 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         this.ghImpl = gitHubApi;
         this.storage = new Hashtable<>();
         this.searchTerms = new Hashtable<>();
-        this.searchGroupActor = system.actorOf(SearchGroupActor.props());
+        this.searchActor = system.actorOf(SearchActor.props());
+        this.userGroupActor = system.actorOf(UserGroupActor.props());
         this.system = system;
     }
 
@@ -87,7 +89,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         } else {
             userSession = String.valueOf(Math.random());
         }
-        CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
+        CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(userGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
         return searchResults.thenApplyAsync((sr)-> {
             if (request.cookie("GITTERIFIC") == null){
                 return ok(views.html.index.render(sr.repositories, sr.searchTerms))
@@ -117,13 +119,13 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             userSession = String.valueOf(Math.random());
         }
         
-        CompletableFuture<Object> searchObj = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.Search(userSession, keywords, ghImpl, ws), 5000)).toCompletableFuture();
+        CompletableFuture<Object> searchObj = FutureConverters.toJava(ask(searchActor, new GitHubActorProtocol.Search(userSession, keywords, ghImpl, ws), 5000)).toCompletableFuture();
         CompletableFuture<List<Repository>> search = searchObj.thenApplyAsync(repos -> (List<Repository>) repos);
         
         CompletableFuture<Result> returnObj = search.thenCompose(repos -> {
-            CompletableFuture<GitHubActorProtocol.AddedSearchResponse> adding = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.AddSearchResponse(userSession, repos, keywords), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.AddedSearchResponse) res);
+            CompletableFuture<GitHubActorProtocol.AddedSearchResponse> adding = FutureConverters.toJava(ask(userGroupActor, new GitHubActorProtocol.StoreSearch(userSession, repos, keywords), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.AddedSearchResponse) res);
             return adding.thenCompose((results)-> {
-                CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(searchGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
+                CompletableFuture<GitHubActorProtocol.SearchResults> searchResults = FutureConverters.toJava(ask(userGroupActor, new GitHubActorProtocol.GetSearchResults(userSession), 5000)).toCompletableFuture().thenApplyAsync(res-> (GitHubActorProtocol.SearchResults) res);
                 return searchResults.thenApplyAsync((sr)-> {
                     System.out.println(sr.searchTerms);
                     if (request.cookie("GITTERIFIC") == null){
@@ -134,7 +136,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 });
             });
         });
-        
+
         return returnObj;
     }
 

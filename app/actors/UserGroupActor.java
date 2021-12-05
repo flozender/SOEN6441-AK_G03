@@ -37,34 +37,22 @@ import akka.actor.Props;
 
 import actors.GitHubActorProtocol.*;
 
-public class SearchGroupActor extends AbstractActor{
+public class UserGroupActor extends AbstractActor{
     final Map<String, ActorRef> userIdToActor = new HashMap<>();
 
     public static Props props() {
-        return Props.create(SearchGroupActor.class);
+        return Props.create(UserGroupActor.class);
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-        .match(GitHubActorProtocol.Search.class, this::searchRepository)
-        .match(GitHubActorProtocol.AddSearchResponse.class, this::addSearchResponse)
+        .match(GitHubActorProtocol.StoreSearch.class, this::StoreSearch)
         .match(GitHubActorProtocol.GetSearchResults.class, this::GetSearchResults)
         .build();
     }
 
-    private void searchRepository(GitHubActorProtocol.Search search) {
-        ActorRef userActor = userIdToActor.get(search.userId);
-        if (userActor != null) {
-            userActor.forward(search, getContext());
-        } else {
-            userActor = getContext().actorOf(SearchActor.props(search.userId), "user-" + search.userId);
-            userIdToActor.put(search.userId, userActor);
-            userActor.forward(search, getContext());
-        }
-    }
-
-    private void addSearchResponse(GitHubActorProtocol.AddSearchResponse searchResponse) {
+    private void StoreSearch(GitHubActorProtocol.StoreSearch searchResponse) {
         ActorRef userActor = userIdToActor.get(searchResponse.userId);
         if (userActor != null) {
             userActor.forward(searchResponse, getContext());
@@ -76,7 +64,7 @@ public class SearchGroupActor extends AbstractActor{
         if (userActor != null) {
             userActor.forward(search, getContext());
         } else {
-            userActor = getContext().actorOf(SearchActor.props(search.userId), "user-" + search.userId);
+            userActor = getContext().actorOf(UserActor.props(search.userId), "user-" + search.userId);
             userIdToActor.put(search.userId, userActor);
             userActor.forward(search, getContext());
         }

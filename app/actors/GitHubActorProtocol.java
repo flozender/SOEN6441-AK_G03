@@ -40,12 +40,12 @@ public class GitHubActorProtocol {
         }
     }
 
-    public static class AddSearchResponse{
+    public static class StoreSearch{
         public final String userId;
         public final List<Repository> repositories;
         public final String searchTerms;
 
-        public AddSearchResponse(String userId, List<Repository> repositories, String searchTerms){
+        public StoreSearch(String userId, List<Repository> repositories, String searchTerms){
             this.userId = userId;
             this.repositories = repositories;
             this.searchTerms = searchTerms;
