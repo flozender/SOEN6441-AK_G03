@@ -78,7 +78,7 @@
         }
     </style>
     </head>
-    <body class="text-center" data-ws-url="@routes.HomeController.ws.webSocketURL(request)">
+    <body class="text-center" data-ws-url="@routes.HomeController.wsSearch.webSocketURL(request)">
         <div id="search-results" class="form-signin" style="background-color: #eee;">
             <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
             <div class="d-flex flex-row">
@@ -91,7 +91,7 @@
     </body>
     <script>
     // Create WebSocket connection.
-    const socket = new WebSocket('ws://localhost:9000/ws');
+    const socket = new WebSocket('ws://localhost:9000/wsSearch');
 
     // Connection opened
     socket.addEventListener('open', function (event) {

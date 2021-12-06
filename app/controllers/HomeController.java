@@ -107,10 +107,10 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return ws connection contains search results (repositories)
      * 
      */
-    public WebSocket ws() {
+    public WebSocket wsSearch() {
         return WebSocket.Text.accept(
             request -> ActorFlow.actorRef((r)->WebSocketActor.props(r, ws, ghImpl), system, materializer));
-      }
+    }
 
     /**
      * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
