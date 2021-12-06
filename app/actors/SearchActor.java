@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import actors.GitHubActor;
+import actors.SupervisorActor;
 import models.Owner;
 import models.Repository;
 import play.libs.Json;
@@ -42,21 +42,21 @@ public class SearchActor extends AbstractActor {
     private static GitHubApi ghImpl;
     private static WSClient ws;
     
-    public static Props props() {
+    public static Props props(WSClient ws, GitHubApi ghImpl) {
         return Props.create(SearchActor.class, ws, ghImpl);
     }
 
     @Inject
-    public SearchActor(WSClient ws, GitHubApi gitHubApi) {
+    public SearchActor(WSClient ws, GitHubApi ghImpl) {
         this.ws = ws;
-        this.ghImpl = gitHubApi;
+        this.ghImpl = ghImpl;
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
         .match(GitHubActorProtocol.Search.class, search -> {
-            CompletableFuture<List<Repository>> reply = search.gitHubApi.searchRepositories(search.keywords, search.ws);
+            CompletableFuture<List<Repository>> reply = ghImpl.searchRepositories(search.keywords, ws);
             pipe(reply, getContext().dispatcher()).to(sender());
         })
         .build();

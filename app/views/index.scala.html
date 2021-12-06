@@ -1,7 +1,7 @@
 @import java.util
 @import com.fasterxml.jackson.databind.JsonNode;
 @import models.Repository;
-@(repositories: util.List[util.List[Repository]], searchTerms: util.List[String])
+@(request: play.mvc.Http.Request)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -71,32 +71,52 @@
             position:relative;
             top:1px;
         }
+
+        .search-data{
+            background-color: #f7f7f7; 
+            padding: 10px;
+        }
     </style>
     </head>
-    <body class="text-center">
-        <div class="form-signin" style="background-color: #eee;">
+    <body class="text-center" data-ws-url="@routes.HomeController.ws.webSocketURL(request)">
+        <div id="search-results" class="form-signin" style="background-color: #eee;">
             <h1 class="h4 mb-3 font-weight-normal">Welcome to Gitterific!</h1><br/>
             <div class="d-flex flex-row">
                 <input type="text" id="searchInputField" class="form-control" placeholder="Search repositories..." required autofocus>
                 <br/>
                 <button class="btn btn-md btn-primary btn-block" type="submit" id="myBtn" onclick="search()">Search</button>
             </div>
-            @for(i <- 0 until repositories.size()){
-                <div class="search-data" style="background-color: #f7f7f7; padding: 10px;">
-                    <b>Search terms: @searchTerms.get(i)</b><br/><br/>
-                    @for(j <- 0 until repositories.get(i).size()){
-                        <div class="data">
-                            @(j+1). <b class="cursoring-userProfile" onclick="getUserProfile('@repositories.get(i).get(j).getOwner().getLogin()')">@repositories.get(i).get(j).getOwner().getLogin()</b> / <a onclick="getRepository('@repositories.get(i).get(j).getOwner().getLogin()', '@repositories.get(i).get(j).getName()')">@repositories.get(i).get(j).getName()</a>
-                            @for(k <- 0 until repositories.get(i).get(j).getTopics().size()){
-                                <b class="cursoring-topic" onclick="search_repo('@repositories.get(i).get(j).getTopics().get(k)')">(@repositories.get(i).get(j).getTopics().get(k))</b>
-                            }
-                        </div>
-                    }
-                </div>
-            }
+            <div id="search-cards"></div>
         </div>
     </body>
     <script>
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:9000/ws');
+
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        data = JSON.parse(event.data);
+        if (data.update){
+            let index = data.index;
+            newCard = getRepositoryCard(data.repositories[0], data.searchTerms[0], data.index);
+            originalCard = $(`#card-${index}`);
+            if(String(newCard.html()) != String(originalCard.html())){
+                $(`card-${index}`).html(newCard);
+            }
+        } else {
+            let cards = [];
+            for (let i = 0; i < data.searchTerms.length; i++){
+                cards.push(getRepositoryCard(data.repositories[i], data.searchTerms[i], i))
+            }
+            $("#search-cards").html(cards);
+        }
+    });
+
+
     let input = document.getElementById("searchInputField");
 
     input.addEventListener("keyup", function(event) {
@@ -108,7 +128,7 @@
 
     function search() {
         if (input.value.trim() !== "") {
-            window.location = "/search/repositories/"+input.value;
+            socket.send(input.value)
         }
         else{
             alert('Please enter a search term');
@@ -123,8 +143,26 @@
         window.location = `/repos/${username}/${repository}`;
     }
 
-    function search_repo(topic){
+    function getTopic(topic){
         window.location = "/topic/"+topic;
+    }
+
+    function getRepositoryCard(repositories, searchTerm, i){
+        container = $("<div>").addClass("search-data").prop("id", "card-" + i);
+        container.append($("<b>").text("Search terms: " + searchTerm))
+        container.append($("<br/>"))
+        container.append($("<br/>"))
+        for (let i = 0; i < repositories.length; i++){
+            card = $("<div>").addClass("data")
+            card.append($("<b>").addClass("cursoring-userProfile").text(repositories[i].owner.login).attr("onclick", "getUserProfile('"+repositories[i].owner.login+"')"))
+            card.append(" / ")
+            card.append($("<a>").text(repositories[i].name).attr("onclick", "getRepository('"+ repositories[i].owner.login +"','"+repositories[i].name+"')"))
+            for (let j = 0; j < repositories[i].topics.length; j++){
+                card.append($("<b>").addClass("cursoring-topic").text(` (${repositories[i].topics[j]})`).attr("onclick", "getTopic('"+repositories[i].topics[j]+"')"))
+            } 
+            container.append(card)
+        }
+        return container;
     }
   </script>
 </html>

@@ -5,15 +5,16 @@
 # An example controller showing a sample home page
 GET    /                                      controllers.HomeController.index(request: play.mvc.Http.Request)
 GET    /topic/:topic_name                     controllers.HomeController.searchTopicRepositories(request: play.mvc.Http.Request, topic_name: String)
-GET    /search/repositories/:keywords         controllers.HomeController.searchRepositories(request: play.mvc.Http.Request, keywords: String)
 GET    /users/:username                       controllers.HomeController.userProfile(username: String)
 GET    /users/repos/:username                 controllers.HomeController.userRepository(username: String)
 GET    /repos/:username/:repository           controllers.HomeController.repositoryProfile(username: String, repository: String)
 GET    /reposissues/:username/:repository/issues   			controllers.HomeController.getRepositoryIssuesTittles(username: String, repository: String)
 GET    /issues/:username/:repository          controllers.HomeController.getRepositoryIssues(username: String, repository: String)
 GET    /contributors/:username/:repository    controllers.HomeController.getRepositoryContributors(username: String, repository: String)
-GET    /commits/:username/:repository    controllers.HomeController.getRepositoryCommits(username: String, repository: String)
+GET    /commits/:username/:repository         controllers.HomeController.getRepositoryCommits(username: String, repository: String)
+GET      /ws                                  controllers.HomeController.ws 
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file               controllers.Assets.at(path="/public", file)
