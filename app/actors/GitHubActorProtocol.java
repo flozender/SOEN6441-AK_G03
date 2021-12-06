@@ -18,34 +18,32 @@ public class GitHubActorProtocol {
 
     public static class Search {
         public final String keywords;
-        public final String userId;
-        public final GitHubApi gitHubApi;
-        public final WSClient ws;
 
-        public Search(String userId, String keywords, GitHubApi gitHubApi, WSClient ws) {
-            this.userId = userId;
+        public Search(String keywords) {
             this.keywords = keywords;
-            this.gitHubApi = gitHubApi;
-            this.ws = ws;
         }
     } 
 
     public static class SearchResults{
         public final ArrayList<List<Repository>> repositories;
         public final ArrayList<String> searchTerms;
+        public final boolean update;
+        public final int index;
 
-        public SearchResults(ArrayList<List<Repository>> repositories, ArrayList<String> searchTerms){
+        public SearchResults(ArrayList<List<Repository>> repositories, ArrayList<String> searchTerms, boolean update, int index){
             this.repositories = repositories;
             this.searchTerms = searchTerms;
+            this.update = update;
+            this.index = index;
         }
     }
 
-    public static class AddSearchResponse{
+    public static class StoreSearch{
         public final String userId;
         public final List<Repository> repositories;
         public final String searchTerms;
 
-        public AddSearchResponse(String userId, List<Repository> repositories, String searchTerms){
+        public StoreSearch(String userId, List<Repository> repositories, String searchTerms){
             this.userId = userId;
             this.repositories = repositories;
             this.searchTerms = searchTerms;
