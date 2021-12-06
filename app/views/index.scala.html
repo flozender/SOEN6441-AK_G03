@@ -106,8 +106,6 @@
             originalCard = $(`#card-${index}`);
             if(String(newCard.html()) != String(originalCard.html())){
                 $(`#card-${index}`).replaceWith(newCard);
-                console.log(newCard.html());
-                console.log($(`#card-${index}`).html());
             }
         } else {
             let cards = [];
