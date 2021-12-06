@@ -105,7 +105,7 @@
             newCard = getRepositoryCard(data.repositories[0], data.searchTerms[0], data.index);
             originalCard = $(`#card-${index}`);
             if(String(newCard.html()) != String(originalCard.html())){
-                $(`card-${index}`).html(newCard);
+                $(`#card-${index}`).replaceWith(newCard);
             }
         } else {
             let cards = [];
@@ -113,6 +113,7 @@
                 cards.push(getRepositoryCard(data.repositories[i], data.searchTerms[i], i))
             }
             $("#search-cards").html(cards);
+            $("#searchInputField").val("");
         }
     });
 
