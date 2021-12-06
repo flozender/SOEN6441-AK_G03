@@ -115,6 +115,7 @@
                 cards.push(getRepositoryCard(data.repositories[i], data.searchTerms[i], i))
             }
             $("#search-cards").html(cards);
+            $("#searchInputField").val("");
         }
     });
 
