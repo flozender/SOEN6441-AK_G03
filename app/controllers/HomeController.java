@@ -307,7 +307,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
+                return badRequest("Invalid request!");
             }
         });
         
