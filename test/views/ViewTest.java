@@ -120,7 +120,10 @@ public class ViewTest {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(jsonString);
             Owner user = Json.fromJson(node, Owner.class);
-            Content html = views.html.user.render(user);
+            Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+            RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+            Request request = requestBuilder.build();
+            Content html = views.html.user.render(request);
             assertThat("text/html", is(html.contentType()));
             assertThat(html.body(), containsString("https://justinw.me"));
             assertThat(html.body(), containsString("https://avatars.githubusercontent.com/u/1384?v=4"));
