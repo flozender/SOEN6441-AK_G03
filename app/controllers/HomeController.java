@@ -332,10 +332,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * 
      */
     public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
-        
-
         CompletableFuture<JsonNode> res = ghImpl.getRepositoryIssuesTittles(username, repository, ws);
-        
         return res.thenApplyAsync(response -> {
             try {
                 JsonNode tempResponse = response;
@@ -343,9 +340,6 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
-                
-                
-                
                 return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);

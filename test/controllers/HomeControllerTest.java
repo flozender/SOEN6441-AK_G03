@@ -318,7 +318,6 @@ public class HomeControllerTest extends WithApplication {
 
     @Test
     public final void testgetRepositoryIssuesTittles() {
-        //http://localhost:9000/reposissues/m4thieulavoie/brorganized/issues
         final HomeController controller = testApp.injector().instanceOf(HomeController.class);
         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
