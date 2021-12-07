@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import play.test.Helpers;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,7 +55,10 @@ public class ViewTest {
      */
     @Test
     public void renderIndex() {
-        Content html = views.html.index.render(Arrays.asList(), Arrays.asList());
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        Content html = views.html.index.render(request);
         assertThat("text/html", is(html.contentType()));
         assertThat(html.body(), containsString("Welcome to Gitterific!"));
     }

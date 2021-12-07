@@ -52,7 +52,7 @@ public class RepositoryProfileActor extends AbstractActorWithTimers {
     
     @Override
     public void preStart() {
-        getTimers().startPeriodicTimer("Timer", new Tick(), Duration.create(10, TimeUnit.SECONDS));
+        getTimers().startPeriodicTimer("Timer", new Tick(), Duration.create(5, TimeUnit.SECONDS));
     }
 
     public static Props props(ActorRef out, WSClient ws, GitHubApi ghImpl) {
