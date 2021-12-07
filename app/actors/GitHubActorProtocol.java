@@ -36,6 +36,16 @@ public class GitHubActorProtocol {
         }
     }
 
+    public static class RepositoryProfile {
+        public final String username;
+        public final String repository;
+
+        public RepositoryProfile(String username, String repository) {
+            this.username = username;
+            this.repository = repository;
+        }
+    }
+
     public static class Search {
         public final String keywords;
 

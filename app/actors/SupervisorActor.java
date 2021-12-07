@@ -51,6 +51,7 @@ public class SupervisorActor extends AbstractActor {
     private final ActorRef searchActor;
     private final ActorRef userProfileActor;
     private final ActorRef userRepositoryActor;
+    private final ActorRef repositoryProfileActor;
     private final WSClient ws;
     private final GitHubApi ghImpl;
 
@@ -78,7 +79,8 @@ public class SupervisorActor extends AbstractActor {
         this.searchActor = getContext().actorOf(SearchActor.props(ws, ghImpl), "searchActor");
         this.userProfileActor = getContext().actorOf(UserProfileActor.props(ws, ghImpl), "userProfileActor");
         this.userRepositoryActor = getContext().actorOf(UserRepositoryActor.props(ws, ghImpl), "userRepositoryActor");
-      }
+        this.repositoryProfileActor = getContext().actorOf(RepositoryProfileActor.props(ws, ghImpl), "repositoryProfileActor");
+    }
 
     @Override
     public void preStart() {
@@ -90,13 +92,13 @@ public class SupervisorActor extends AbstractActor {
         log.info("Server supervisor stopped");
     }
 
-
     @Override
     public Receive createReceive() {
         return receiveBuilder()
         .match(GitHubActorProtocol.Search.class, this::Search)
         .match(GitHubActorProtocol.UserProfile.class, this::UserProfile)
         .match(GitHubActorProtocol.UserRepository.class, this::UserRepository)
+        .match(GitHubActorProtocol.RepositoryProfile.class, this::RepositoryProfile)
         .build();
     }
 
@@ -110,5 +112,9 @@ public class SupervisorActor extends AbstractActor {
 
     private void UserRepository(GitHubActorProtocol.UserRepository userRepository) {
         userRepositoryActor.forward(userRepository, getContext());
+    }
+    
+    private void RepositoryProfile(GitHubActorProtocol.RepositoryProfile repositoryProfile) {
+        repositoryProfileActor.forward(repositoryProfile, getContext());
     }
 }

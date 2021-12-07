@@ -464,16 +464,21 @@
 
     setUpContributors = (result) => {
       var table = $("<div>");
-      for (let i = 0; i < result.length; i++) {
-        table.append(
-        "<a href='/users/" +
-          result[i]["login"] +
-          "'>" +
-          result[i]["login"] +
-          "</a>, "
-        );
+      if (result == null) {
+        table = $("<p>N/A</p>");
+      } else {
+        for (let i = 0; i < result.length; i++) {
+          table.append(
+          "<a href='/users/" +
+            result[i]["login"] +
+            "'>" +
+            result[i]["login"] +
+            "</a>, "
+          );
+        }
+        table.append("</div>");
       }
-      table.append("</div>");
+
       $("#contributors").html(table);
     }
 
@@ -482,12 +487,16 @@
     }
 
     setUpTopics = (repository) => {
-      let list = [];
-      for(let i = 0; i < repository.topics.length; i++){
-        tl = $("<a>").text(`${repository.topics[i]}, `).prop("href", `/topic/${repository.topics[i]}`);
-        list.push(tl);
+      if (repository.topics.length == 0) {
+        $("#topics").text("N/A");
+      } else {
+        let list = [];
+        for(let i = 0; i < repository.topics.length; i++){
+          tl = $("<a>").text(`${repository.topics[i]}, `).prop("href", `/topic/${repository.topics[i]}`);
+          list.push(tl);
+        }
+        $("#topics").html(list);
       }
-      $("#topics").html(list);
     }
   </script>
 </html>

@@ -245,7 +245,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public WebSocket wsRepositoryProfile() {
         return WebSocket.Text.accept(
-            request -> ActorFlow.actorRef((r)->RepositoryProfileActor.props(r, ws, ghImpl), system, materializer));
+            request -> ActorFlow.actorRef((r)->RepositoryProfileSocketActor.props(r, ws, ghImpl), system, materializer));
     }
     
     /**

@@ -43,27 +43,22 @@ import scala.concurrent.duration.Duration;
 
 import actors.GitHubActorProtocol;
 
-public class RepositoryProfileActor extends AbstractActorWithTimers { 
-    private final ActorRef out;
+public class RepositoryProfileActor extends AbstractActor { 
     private static WSClient ws;
     private static GitHubApi ghImpl;
     private String username; 
     private String repository;
     
-    @Override
-    public void preStart() {
-        getTimers().startPeriodicTimer("Timer", new Tick(), Duration.create(5, TimeUnit.SECONDS));
-    }
 
-    public static Props props(ActorRef out, WSClient ws, GitHubApi ghImpl) {
-        return Props.create(RepositoryProfileActor.class, out, ws, ghImpl);
+
+    public static Props props(WSClient ws, GitHubApi ghImpl) {
+        return Props.create(RepositoryProfileActor.class, ws, ghImpl);
     }
 
     @Inject
-    public RepositoryProfileActor(ActorRef out, WSClient ws, GitHubApi ghImpl) {
+    public RepositoryProfileActor(WSClient ws, GitHubApi ghImpl) {
         this.ws = ws;
         this.ghImpl = ghImpl;
-        this.out = out;
     }
     
     public static final class Tick{}
@@ -71,44 +66,31 @@ public class RepositoryProfileActor extends AbstractActorWithTimers {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-        .match(String.class, this::handleSearch)
-        .match(Tick.class, (r)->{
-            if(this.username != null){
-                this.handleSearch(this.username+"/"+this.repository);
-            }
-        })
+        .match(GitHubActorProtocol.RepositoryProfile.class, this::handleSearch)
         .build();
     }
 
-    private void handleSearch(String search) {
-        String[] data = search.split("/");
-        this.username = data[0];
-        this.repository = data[1];
-        CompletableFuture<Repository> repo = ghImpl.repositoryProfile(data[0], data[1], ws);
-        CompletableFuture<JsonNode> commits = ghImpl.getRepositoryCommits(data[0], data[1], ws);
-        CompletableFuture<JsonNode> issues = ghImpl.getRepositoryIssues(data[0], data[1], ws);
-        CompletableFuture<JsonNode> contributors = ghImpl.getRepositoryContributors(data[0], data[1], ws);
+    private void handleSearch(GitHubActorProtocol.RepositoryProfile repositoryProfile) {
+        String username = repositoryProfile.username;
+        String repository = repositoryProfile.repository;
+        CompletableFuture<Repository> repo = ghImpl.repositoryProfile(username, repository, ws);
+        CompletableFuture<JsonNode> commits = ghImpl.getRepositoryCommits(username, repository, ws);
+        CompletableFuture<JsonNode> issues = ghImpl.getRepositoryIssues(username, repository, ws);
+        CompletableFuture<JsonNode> contributors = ghImpl.getRepositoryContributors(username, repository, ws);
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(repo, commits, issues, contributors);
-        allFutures.thenApplyAsync((v)->{
-            repo.thenApplyAsync(r -> {
-                commits.thenApplyAsync(c -> {
-                    issues.thenApplyAsync(i -> {
-                        contributors.thenApplyAsync(cr -> {
-                            GitHubActorProtocol.RepositoryInformation rf = new GitHubActorProtocol.RepositoryInformation(data[0], r, i, c, cr);
-                            try {
-                                ObjectMapper mapper = new ObjectMapper();  
-                                String resp = mapper.writeValueAsString(rf);
-                                out.tell(resp, self());
-                            } catch (Exception e) {}
-                            return null;
+        CompletableFuture<GitHubActorProtocol.RepositoryInformation> response = allFutures.thenCompose((v)->{
+            return repo.thenCompose(r -> {
+                return commits.thenCompose(c -> {
+                    return issues.thenCompose(i -> {
+                        return contributors.thenApplyAsync(cr -> {
+                            GitHubActorProtocol.RepositoryInformation rf = new GitHubActorProtocol.RepositoryInformation(username, r, i, c, cr);
+                            return rf;
                         });
-                        return null;
                     });
-                    return null;
                 });
-                return null;
             });                
-            return null;
         });
+        pipe(response, getContext().dispatcher()).to(sender());
+
     };
 }
