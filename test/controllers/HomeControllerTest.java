@@ -51,7 +51,7 @@ public class HomeControllerTest extends WithApplication {
     @Inject private WSClient ws;
 
     @BeforeClass
-        public static void initTestApp() {
+    public static void initTestApp() {
         testApp = new GuiceApplicationBuilder()
         .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
         .build();
@@ -60,35 +60,8 @@ public class HomeControllerTest extends WithApplication {
     }
 
     @AfterClass
-        public static void stopTestApp() {
+    public static void stopTestApp() {
         Helpers.stop(testApp);
-    }
-
-    /**
-     * Test the searchRepositories controller action
-     * 
-     * @author Tayeeb Hasan
-     */
-    @Test
-    public final void testSearchRepositories() {
-        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
-        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
-        Request request = requestBuilder.build();
-        CompletionStage<Result> preCSResult = controller.searchRepositories(request, "facebook");
-        try{
-            Result preResult = preCSResult.toCompletableFuture().get();
-            // simulate a second search request
-            CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
-            Result result = csResult.toCompletableFuture().get();
-            String parsedResult = Helpers.contentAsString(result);
-            
-            assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
-            assertThat(parsedResult, containsString("facebook-tools-new"));
-        } catch (Exception e){
-            System.out.println(e);
-        }
     }
 
     /**
@@ -109,28 +82,6 @@ public class HomeControllerTest extends WithApplication {
             assertThat("Optional[text/html]", is(result.contentType().toString()));
             assertThat(parsedResult, containsString("FBLinkTester"));
             assertThat(parsedResult, containsString("facebook-login-page"));
-        } catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
-    /**
-     * Test the searchRepositories controller action without cookie
-     * 
-     * @author Tayeeb Hasan
-     */
-    @Test
-    public final void testSearchRepositoriesWithoutCookie() {
-        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-        RequestBuilder requestBuilder = Helpers.fakeRequest();
-        Request request = requestBuilder.build();
-        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
-        try{
-            Result result = csResult.toCompletableFuture().get();
-            String parsedResult = Helpers.contentAsString(result);
-            assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
-            assertThat(parsedResult, containsString("facebook-tools-new"));
         } catch (Exception e){
             System.out.println(e);
         }
@@ -330,31 +281,6 @@ public class HomeControllerTest extends WithApplication {
         }
     }
 
-    /**
-     * Test the index controller action when a search has already been performed
-     *
-     * @author Tayeeb Hasan
-     */
-    @Test
-    public final void testIndexWithSearch() {
-        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
-        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
-        Request request = requestBuilder.build();
-
-        CompletionStage<Result> csResult = controller.searchRepositories(request, "facebook");
-
-        try{
-            Result result = csResult.toCompletableFuture().get();
-            Result indexPage = controller.index(request);
-            String parsedResult = Helpers.contentAsString(indexPage);
-            assertThat("Optional[text/html]", is(indexPage.contentType().toString()));
-            assertThat(parsedResult, containsString("Welcome to Gitterific!"));
-            assertThat(parsedResult, containsString("facebook-tools-new"));
-        } catch (Exception e){
-            System.out.println(e);
-        }
-    }
     
     /**
      * Test the helper method for getRepositoryIssuesTittles. It computes the word stats on a parsed list of issues
