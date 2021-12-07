@@ -125,4 +125,29 @@ public class GitHubActorProtocolTest {
         assertEquals("facebook", repositoryInformation.userId);
         assertEquals("jest", repositoryInformation.repository.getName());
     }
+    /**
+     * Test the userRepository protocol
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public void testUserRepositoryProtocol() {
+        String username = "pedram";
+
+        GitHubActorProtocol.UserRepository userRepository = new GitHubActorProtocol.UserRepository(username);
+        assertEquals(userRepository.username, "pedram");
+    }
+
+    /**
+     * Test the userProfile protocol
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public void testUserProfileProtocol() {
+        String username = "justin";
+
+        GitHubActorProtocol.UserProfile userProfile = new GitHubActorProtocol.UserProfile(username);
+        assertEquals(userProfile.username, "justin");
+    }
 }
