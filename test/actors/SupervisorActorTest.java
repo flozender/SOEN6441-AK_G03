@@ -46,6 +46,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.stream.Collectors;
 
+/**
+ * Test the Supervisor Actor and its children
+ *
+ * @author Tayeeb Hasan
+ */
 public class SupervisorActorTest {
     static ActorSystem system;
     private static Application testApp;
