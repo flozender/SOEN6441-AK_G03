@@ -166,15 +166,20 @@
             let username = window.location.pathname.split("/").pop();
 
             const socket = new WebSocket('ws://localhost:9000/wsUserProfile');
+            const socketUserRepos = new WebSocket('ws://localhost:9000/wsUserRepos');
+
 
             socket.addEventListener('open', function (event) {
                 socket.send(username);
             });
 
+            socketUserRepos.addEventListener('open', function (event) {
+                socketUserRepos.send(username);
+            });
+
 
             socket.addEventListener('message', function (event) {
                 data = JSON.parse(event.data);
-                console.log(data);
 
                 document.getElementById('id').innerText = data.id;
                 document.getElementById('node_id').innerText = data.node_id;
@@ -194,37 +199,35 @@
                 document.getElementById('blog').innerText = data.blog;
                 document.getElementById('location').innerText = data.location;
                 document.getElementById('public_gists').innerText = data.public_gists;
-                document.getElementById('updated_at').innerText = data.updated_at;
+                document.getElementById('updated_at').innerText = parseDate(data.updated_at)
                 document.getElementById('login').innerText = data.login;
                 document.getElementById('company').innerText = data.company;
                 document.getElementById('bio').innerText = data.bio;
                 document.getElementById('name').innerText = data.name;
-                document.getElementById('created_at').innerText = data.created_at;
+                document.getElementById('created_at').innerText = parseDate(data.created_at)
                 document.getElementById('email').innerText = data.email;
                 document.getElementById('following').innerText = data.following;
                 document.getElementById('followers').innerText = data.followers;
 
             });
 
-            function repositoryButton() {
-                $.ajax({
-                    type: "GET",
-                    url: "/users/repos/"+username,
-                    success: function (result) {
-                        var table = $("<table><tr><th>Repositories Information</th></tr>");
-                        for (let i = 0; i < result.length; i++) {
-                            // table.append("<tr><td>Name:</td><td>" +"<a onclick='repFunction(\"" + result[i]["name"] + "\");'>" +result[i]["name"] + "</a>" + "</td></tr>")
-                            table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +result[i]["name"] + "'>" + result[i]["name"] + "</a>" + "</td></tr>")
-                            table.append("<tr><td>Description:</td><td>" + result[i]["description"] + "</td></tr>")
-                        }
-                        table.append("</table>")
+            socketUserRepos.addEventListener('message', function (event) {
+                data = JSON.parse(event.data);
+                console.log(data);
+                var table = $("<table><tr><th>Repositories Information</th></tr>");
+                for (let i = 0; i < data.length; i++) {
+                    table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +data[i]["name"] + "'>" + data[i]["name"] + "</a>" + "</td></tr>")
+                    table.append("<tr><td>Description:</td><td>" + data[i]["description"] + "</td></tr>")
+                }
+                table.append("</table>");
+                var img = document.getElementById('loadingImage');
+                img.style.visibility = 'hidden';
+                $("#repositories").html(table);
+            })
 
-                        var img = document.getElementById('loadingImage');
-                        img.style.visibility = 'hidden';
-                        $("#repositories").html(table);
-                    }
-                })
+            function parseDate(ms){
+                var date = new Date(ms);
+                return date;
             }
-            repositoryButton();
     </script>
 </html>

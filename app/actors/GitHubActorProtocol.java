@@ -28,6 +28,14 @@ public class GitHubActorProtocol {
         }
     }
 
+    public static class UserRepository {
+        public final String username;
+
+        public UserRepository(String username) {
+            this.username = username;
+        }
+    }
+
     public static class Search {
         public final String keywords;
 

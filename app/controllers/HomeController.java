@@ -112,9 +112,34 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             request -> ActorFlow.actorRef((r)->WebSocketActor.props(r, ws, ghImpl), system, materializer));
     }
 
+    /**
+     * It creates the WS connection for the user profile page.
+     * <p>
+     * It will generate the results related to the specified user
+     * The result will include all the information of the user, along with his/her repositories.
+     * </p>
+     * @author Pedram Nouri
+     * @return ws connection contains user profile
+     *
+     */
     public WebSocket wsUserProfile() {
         return WebSocket.Text.accept(
             request -> ActorFlow.actorRef((r)->UserProfileSocketActor.props(r, ws, ghImpl), system, materializer));
+    }
+
+    /**
+     * It creates the WS connection for the user repositories.
+     * <p>
+     * It will generate the results related to the specified user (his/her repositories)
+     * The result will include all user's repositories.
+     * </p>
+     * @author Pedram Nouri
+     * @return ws connection contains user repositories
+     *
+     */
+    public WebSocket wsUserRepositories() {
+        return WebSocket.Text.accept(
+                request -> ActorFlow.actorRef((r)->UserRepositorySocketActor.props(r, ws, ghImpl), system, materializer));
     }
 
     /**
@@ -149,7 +174,12 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return The user page containing all the information about the requested user
      */
     public Result userProfile(String username, Http.Request request) {
-        return ok(views.html.user.render(request));
+        try {
+            return ok(views.html.user.render(request));
+        }catch (Exception e) {
+            System.out.println("CAUGHT EXCEPTION: " + e);
+            return badRequest(views.html.error.render());
+        }
     }
     
     
