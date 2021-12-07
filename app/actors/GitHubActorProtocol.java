@@ -101,4 +101,17 @@ public class GitHubActorProtocol {
             this.contributors = contributors;
         }
     }
+    
+    /**
+     * Object used to return the issues titles information
+     *
+     * @author Nazanin
+     */
+    public static class RepoIssuesTitle {
+        public final JsonNode titles;
+
+        public RepoIssuesTitle(JsonNode titles) {
+            this.titles = titles;
+        }
+    }
 }

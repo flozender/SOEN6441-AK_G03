@@ -327,7 +327,6 @@ public class HomeControllerTest extends WithApplication {
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
             assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(parsedResult, containsString("Bump      =      15"));
             assertThat(parsedResult, containsString("repository-results"));
 
         } catch (Exception e){
