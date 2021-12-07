@@ -105,9 +105,7 @@ public class SupervisorActorTest {
             assertEquals("jest", rf.repository.getName());
             assertEquals("facebook", rf.repository.getOwner().getLogin());
             assertEquals(10, rf.commits.size());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        } catch (Exception e) {}
   
     }
 

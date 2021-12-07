@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import models.Repository;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -34,6 +33,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import play.libs.Json;
+import play.test.TestServer;
+import play.mvc.*;
+
+import java.util.Collections;
+import java.util.concurrent.ArrayBlockingQueue;
+
+import static play.test.Helpers.running;
+import static play.test.Helpers.testServer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -65,29 +73,6 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
-     * Test the searchTopicRepositories controller action
-     *
-     * @author Vedasree Reddy Sapatapu
-     */
-    @Test
-    public final void testSearchTopicRepositories() {
-        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
-        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
-        Request request = requestBuilder.build();
-        CompletionStage<Result> csResult = controller.searchTopicRepositories(request, "facebook");
-        try{
-            Result result = csResult.toCompletableFuture().get();
-            String parsedResult = Helpers.contentAsString(result);
-            assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(parsedResult, containsString("FBLinkTester"));
-            assertThat(parsedResult, containsString("facebook-login-page"));
-        } catch (Exception e){
-            System.out.println(e);
-        }
-    }
-
-    /**
      * Test the repositoryProfile controller action
      *
      * @author Tayeeb Hasan
@@ -110,6 +95,38 @@ public class HomeControllerTest extends WithApplication {
         } catch (Exception e){
             System.out.println(e);
         }
+    }
+
+    /**
+     * Test the Websocket connection for Search
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testWSSearch() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        WebSocket result = controller.wsSearch();
+
+        assertEquals("play.mvc.WebSocket$1", result.getClass().getName());
+    }
+
+    /**
+     * Test the Websocket connection for Repository Profile
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public final void testWSRepositoryProfile() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        WebSocket result = controller.wsRepositoryProfile();
+
+        assertEquals("play.mvc.WebSocket$1", result.getClass().getName());
     }
 
     /**
@@ -362,6 +379,29 @@ public class HomeControllerTest extends WithApplication {
             assertFalse("Size is different as expected in a negative case test", resultmap.size()==actualMap.size());
         } catch (Exception e){
             System.out.print(e);
+        }
+    }
+
+    /**
+     * Test the searchTopicRepositories controller action
+     *
+     * @author Vedasree Reddy Sapatapu
+     */
+    @Test
+    public final void testSearchTopicRepositories() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.searchTopicRepositories(request, "facebook");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("FBLinkTester"));
+            assertThat(parsedResult, containsString("facebook-login-page"));
+        } catch (Exception e){
+            System.out.println(e);
         }
     }
 }
