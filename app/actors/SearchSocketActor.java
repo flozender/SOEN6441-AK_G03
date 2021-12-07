@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 import actors.GitHubActorProtocol.*;
 
-public class UserSessionActor extends AbstractActorWithTimers {
+public class SearchSocketActor extends AbstractActorWithTimers {
     private final ActorRef out;
     private final WSClient ws;
     private final ActorRef supervisorActor;
@@ -58,10 +58,10 @@ public class UserSessionActor extends AbstractActorWithTimers {
     }
 
     public static Props props(ActorRef out, WSClient ws, GitHubApi ghImpl) {
-        return Props.create(UserSessionActor.class, out, ws, ghImpl);
+        return Props.create(SearchSocketActor.class, out, ws, ghImpl);
     }    
 
-    public UserSessionActor(ActorRef out, WSClient ws, GitHubApi ghImpl) {
+    public SearchSocketActor(ActorRef out, WSClient ws, GitHubApi ghImpl) {
       this.out = out;
       this.ws = ws;
       this.ghImpl = ghImpl;

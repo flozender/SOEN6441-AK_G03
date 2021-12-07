@@ -109,7 +109,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      */
     public WebSocket wsSearch() {
         return WebSocket.Text.accept(
-            request -> ActorFlow.actorRef((r)->UserSessionActor.props(r, ws, ghImpl), system, materializer));
+            request -> ActorFlow.actorRef((r)->SearchSocketActor.props(r, ws, ghImpl), system, materializer));
     }
 
     /**
