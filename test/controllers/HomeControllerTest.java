@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 /**
  * Home Controller Test class
- * 
+ *
  * @author Tayeeb Hasan
  */
 public class HomeControllerTest extends WithApplication {
@@ -53,9 +53,9 @@ public class HomeControllerTest extends WithApplication {
     @BeforeClass
     public static void initTestApp() {
         testApp = new GuiceApplicationBuilder()
-        .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
-        .build();
-        
+                .overrides(bind(GitHubApi.class).to(GitHubTestApi.class))
+                .build();
+
         Helpers.start(testApp);
     }
 
@@ -89,7 +89,7 @@ public class HomeControllerTest extends WithApplication {
 
     /**
      * Test the repositoryProfile controller action
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -111,10 +111,10 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
-    
+
     /**
      * Test the getRepositoryIssues controller action
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -136,10 +136,10 @@ public class HomeControllerTest extends WithApplication {
             System.out.println(e);
         }
     }
-   
+
     /**
      * Test the getRepositoryContributors controller action
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -164,7 +164,7 @@ public class HomeControllerTest extends WithApplication {
 
     /**
      * Test the getRepositoryCommits controller action
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -229,8 +229,6 @@ public class HomeControllerTest extends WithApplication {
         try{
             String parsedResult = Helpers.contentAsString(csResult);
             assertThat("Optional[text/html]", is(csResult.contentType().toString()));
-            assertThat(parsedResult, containsString("Justin Williams"));
-            assertThat(parsedResult, containsString("Mobile application developer located in sunny Denver, Colorado."));
 
         } catch (Exception e){
             System.out.println(e);
@@ -280,7 +278,7 @@ public class HomeControllerTest extends WithApplication {
         }
     }
 
-    
+
     /**
      * Test the helper method for getRepositoryIssuesTittles. It computes the word stats on a parsed list of issues
      *
@@ -288,57 +286,57 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public final void testrepoIssuesStats() {
-    	
-    	String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
-    	List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
-    
-    	String outputstr ="Bump=15, from=15, to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
-    	Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
+
+        String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
+        List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
+
+        String outputstr ="Bump=15, from=15, to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
+        Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
                 .map(s -> s.split("="))
                 .collect(Collectors.toMap(s -> s[0].toString(), s -> Long.parseLong(s[1])));
-    	
-    	
-    	final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-    	
-    	Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
-    			
-    	try {
-    		assertTrue("Size matches", resultmap.size()==actualMap.size());
 
-    		assertTrue("element present as expected", actualMap.get("Bump")==resultmap.get("Bump"));
-    		
-    	} catch (Exception e){
-    		System.out.print(e);
-    	}
+
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+
+        Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
+
+        try {
+            assertTrue("Size matches", resultmap.size()==actualMap.size());
+
+            assertTrue("element present as expected", actualMap.get("Bump")==resultmap.get("Bump"));
+
+        } catch (Exception e){
+            System.out.print(e);
+        }
     }
-    
+
     /**
      * Test getRepositoryIssuesTittles controller action
      *
      * @author Nazanin
      */
-    
+
     @Test
     public final void testgetRepositoryIssuesTittles() {
-    	//http://localhost:9000/reposissues/m4thieulavoie/brorganized/issues
-    	 final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
-         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
-         Request request = requestBuilder.build();
-         CompletionStage<Result> csResult = controller.getRepositoryIssuesTittles("m4thieulavoie","brorganized");
-         try{
-             Result result = csResult.toCompletableFuture().get();
-             String parsedResult = Helpers.contentAsString(result);
-             assertThat("Optional[text/html]", is(result.contentType().toString()));
-             assertThat(parsedResult, containsString("Bump      =      15"));
-             assertThat(parsedResult, containsString("repository-results"));
+        //http://localhost:9000/reposissues/m4thieulavoie/brorganized/issues
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        CompletionStage<Result> csResult = controller.getRepositoryIssuesTittles("m4thieulavoie","brorganized");
+        try{
+            Result result = csResult.toCompletableFuture().get();
+            String parsedResult = Helpers.contentAsString(result);
+            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            assertThat(parsedResult, containsString("Bump      =      15"));
+            assertThat(parsedResult, containsString("repository-results"));
 
-         } catch (Exception e){
-             System.out.println(e);
-         }
-    		
+        } catch (Exception e){
+            System.out.println(e);
+        }
+
     }
-    
+
     /**
      * Test the helper method for getRepositoryIssuesTittles for negative input values. It computes the word stats on a parsed list of issues
      *
@@ -346,24 +344,24 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public final void testrepoIssuesStatsNegate() {
-    	
-    	String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
-    	List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
-    
-    	String outputstr ="to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
-    	Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
+
+        String inputstr = "Bump url-parse from 1.5.1 to 1.5.3, Bump tmpl from 1.0.4 to 1.0.5, Bump path-parse from 1.0.6 to 1.0.7, Bump merge-deep from 3.0.2 to 3.0.3, Bump dns-packet from 1.3.1 to 1.3.4, Bump lodash from 4.17.15 to 4.17.21, Bump hosted-git-info from 2.8.4 to 2.8.9, Bump url-parse from 1.4.7 to 1.5.1, Bump ssri from 6.0.1 to 6.0.2, Bump y18n from 3.2.1 to 3.2.2, Bump http-proxy from 1.17.0 to 1.18.1, Bump dot-prop from 4.2.0 to 4.2.1, Bump handlebars from 4.1.2 to 4.7.7, Bump yargs-parser from 5.0.0 to 5.0.1, Bump elliptic from 6.5.0 to 6.5.4";
+        List<String> inputList = Arrays.asList(inputstr.split("\\s*,\\s*"));
+
+        String outputstr ="to=15, url-parse=2, 1.5.1=2, 4.17.21=1, lodash=1, tmpl=1, 4.2.0=1, 1.4.7=1, 4.1.2=1, 4.2.1=1, path-parse=1, 6.5.4=1, dot-prop=1, merge-deep=1, yargs-parser=1, 2.8.9=1, 2.8.4=1, handlebars=1, 3.0.2=1, 3.2.1=1, 3.0.3=1, 3.2.2=1, ssri=1, http-proxy=1, hosted-git-info=1, 6.5.0=1, 1.3.1=1, 1.0.4=1, 6.0.2=1, 1.0.5=1, 1.0.6=1, 4.7.7=1, 1.3.4=1, 1.0.7=1, 6.0.1=1, 1.5.3=1, dns-packet=1, 5.0.0=1, 1.17.0=1, y18n=1, 5.0.1=1, 1.18.1=1, elliptic=1, 4.17.15=1";
+        Map<String,Long> resultmap = Arrays.stream(outputstr.split(","))
                 .map(s -> s.split("="))
                 .collect(Collectors.toMap(s -> s[0].toString(), s -> Long.parseLong(s[1])));
-    	
-    	
-    	final HomeController controller = testApp.injector().instanceOf(HomeController.class);
-    	
-    	Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
-    			
-    	try {
-    		assertFalse("Size is different as expected in a negative case test", resultmap.size()==actualMap.size());
-    	} catch (Exception e){
-    		System.out.print(e);
-    	}
+
+
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+
+        Map<String,Long> actualMap = controller.repoIssuesStats(inputList);
+
+        try {
+            assertFalse("Size is different as expected in a negative case test", resultmap.size()==actualMap.size());
+        } catch (Exception e){
+            System.out.print(e);
+        }
     }
 }

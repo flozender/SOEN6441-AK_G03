@@ -47,10 +47,10 @@ import play.test.Helpers;
 import static org.junit.Assert.assertEquals;
 
 public class ViewTest {
-    
+
     /**
      * Test the index template
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -65,7 +65,7 @@ public class ViewTest {
 
     /**
      * Test the repo template
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -76,9 +76,9 @@ public class ViewTest {
         try {
             List<String> lines = Files.readAllLines(fileName, charset);
             for (String line : lines) {
-            jsonString += line;
+                jsonString += line;
             }
-        } 
+        }
         catch (IOException e) {
             System.out.println(e);
         }
@@ -125,9 +125,7 @@ public class ViewTest {
             Request request = requestBuilder.build();
             Content html = views.html.user.render(request);
             assertThat("text/html", is(html.contentType()));
-            assertThat(html.body(), containsString("https://justinw.me"));
-            assertThat(html.body(), containsString("https://avatars.githubusercontent.com/u/1384?v=4"));
-            assertThat(html.body(), containsString("Justin Williams"));
+            assertThat(html.body(), containsString("Gitterific!"));
         }
         catch (IOException e) {
             System.out.println(e);
