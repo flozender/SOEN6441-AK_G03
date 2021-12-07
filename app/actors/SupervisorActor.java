@@ -24,6 +24,7 @@ import services.github.GitHubApi;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import java.io.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,12 +38,13 @@ import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static akka.pattern.Patterns.ask;
+import akka.actor.ActorKilledException;
 
 import actors.GitHubActorProtocol.*;
-// import akka.actor.OneForOneStrategy;
-// import akka.actor.SupervisorStrategy;
-// import scala.concurrent.duration.Duration;
-// import scala.concurrent.duration.Deadline;
+import akka.actor.OneForOneStrategy;
+import akka.actor.SupervisorStrategy;
+import akka.japi.pf.DeciderBuilder;
+import scala.concurrent.duration.Duration;
 
 public class SupervisorActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
@@ -50,6 +52,20 @@ public class SupervisorActor extends AbstractActor {
     private final ActorRef userProfileActor;
     private final WSClient ws;
     private final GitHubApi ghImpl;
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        final SupervisorStrategy strategy = new OneForOneStrategy(
+        -1, Duration.Inf(),
+        DeciderBuilder
+            .match(ArithmeticException.class, e -> SupervisorStrategy.resume())
+            .match(NullPointerException.class, e -> SupervisorStrategy.restart())
+            .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
+            .matchAny(o -> SupervisorStrategy.escalate())
+            .build());
+        return strategy;
+    } 
+  
 
     public static Props props(WSClient ws, GitHubApi ghImpl) {
         return Props.create(SupervisorActor.class, ws, ghImpl);

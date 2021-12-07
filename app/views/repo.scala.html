@@ -432,7 +432,7 @@
     
     setUpDetails = (repository) => {
       $("#u-heading").text(`${repository.owner.login}/${repository.name}`).attr('href', `${repository.html_url}`)
-      $("#u-description").text(`${repository.description}`)
+      $("#u-description").text(`${repository.description ? repository.description: ""}`)
       $("#u-name").text(`Name: ${repository.name}`)
       $("#u-owner").text(`Owner: ${repository.owner.login}`)
       $("#u-language").text(`Language: ${repository.language}`)
