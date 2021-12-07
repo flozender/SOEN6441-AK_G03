@@ -194,17 +194,22 @@
                 document.getElementById('blog').innerText = data.blog;
                 document.getElementById('location').innerText = data.location;
                 document.getElementById('public_gists').innerText = data.public_gists;
-                document.getElementById('updated_at').innerText = data.updated_at;
+                document.getElementById('updated_at').innerText = parseDate(data.updated_at)
                 document.getElementById('login').innerText = data.login;
                 document.getElementById('company').innerText = data.company;
                 document.getElementById('bio').innerText = data.bio;
                 document.getElementById('name').innerText = data.name;
-                document.getElementById('created_at').innerText = data.created_at;
+                document.getElementById('created_at').innerText = parseDate(data.created_at)
                 document.getElementById('email').innerText = data.email;
                 document.getElementById('following').innerText = data.following;
                 document.getElementById('followers').innerText = data.followers;
 
             });
+
+            function parseDate(ms){
+                var date = new Date(ms);
+                return date;
+            }
 
             function repositoryButton() {
                 $.ajax({
