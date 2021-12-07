@@ -202,6 +202,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             }
         });
     }
+
+     /**
+     * It creates the WS connection for the repository profile page.
+     * <p>
+     * It will generate the results related to the repository name string
+     * The result will include the repository name, topics, etc.
+     * </p>
+     * @author Tayeeb Hasan
+     * @return ws connection contains search results (repositories)
+     * 
+     */
+    public WebSocket wsRepositoryProfile() {
+        return WebSocket.Text.accept(
+            request -> ActorFlow.actorRef((r)->RepositoryProfileActor.props(r, ws, ghImpl), system, materializer));
+    }
     
     /**
      * Method getRepositoryIssues returns a JSON with the 20 latest issues based on the username and repository 
