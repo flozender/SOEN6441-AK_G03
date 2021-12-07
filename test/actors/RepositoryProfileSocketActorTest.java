@@ -33,6 +33,8 @@ import static play.inject.Bindings.bind;
 import scala.compat.java8.FutureConverters;
 import play.libs.Json;
 import static akka.pattern.Patterns.ask;
+import scala.concurrent.duration.Duration;
+import java.util.concurrent.TimeUnit;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -80,19 +82,17 @@ public class RepositoryProfileSocketActorTest {
     @Test
     public void testRepositoryProfileSocket() {
         final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
-        final TestKit probe = new TestKit(system);
-        ActorRef probeRef = probe.getRef();
-        final ActorRef rpsActor = system.actorOf(RepositoryProfileSocketActor.props(probeRef, ws, gitHubApi));
-        CompletableFuture<String> search = FutureConverters.toJava(ask(rpsActor, "facebook/jest", 5000)).toCompletableFuture().thenApplyAsync(result -> (String) result);
-        try {
-            String jsonString = search.get();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(jsonString);
-            Repository repo = Json.fromJson(node, Repository.class);
-            assertEquals("jest", repo.getName());
-            assertEquals("facebook", repo.getOwner().getLogin());
-            assertEquals("Delightful JavaScript Testing.", repo.getDescription());
-        } catch (Exception e) {}
-  
+        new TestKit(system) {
+        {
+            final TestKit probe = new TestKit(system);
+            ActorRef probeRef = probe.getRef();
+            final ActorRef rpsActor = system.actorOf(RepositoryProfileSocketActor.props(probeRef, ws, gitHubApi));
+            rpsActor.tell("facebook/jest", probeRef);
+            awaitCond(probe::msgAvailable);
+            String response = probe.expectMsgClass(String.class);
+            assertThat(response, containsString("facebook/jest"));
+            assertThat(response, containsString("[Bug]: False negative (instanceof Float32Array)"));
+        }
+        };
     }
 }

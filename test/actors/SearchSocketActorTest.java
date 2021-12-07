@@ -80,24 +80,30 @@ public class SearchSocketActorTest {
     @Test
     public void testSearchSocketActor() {
         final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
-        final TestKit probe = new TestKit(system);
-        ActorRef probeRef = probe.getRef();
-        final ActorRef searchSocketActor = system.actorOf(SearchSocketActor.props(probeRef, ws, gitHubApi));
-        CompletableFuture<String> search = FutureConverters.toJava(ask(searchSocketActor, "facebook", 5000)).toCompletableFuture().thenApplyAsync(result -> (String) result);
-        try {
-            String jsonString = search.get();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(jsonString);
-            List<Repository> repoList = new ArrayList<>();
-            for (JsonNode repo : node){
-                Repository res = Json.fromJson(repo, Repository.class);
-                repoList.add(res);
+        new TestKit(system) {
+            {
+                final TestKit probe = new TestKit(system);
+                ActorRef probeRef = probe.getRef();
+                final ActorRef rpsActor = system.actorOf(SearchSocketActor.props(probeRef, ws, gitHubApi));
+                rpsActor.tell("facebook", probeRef);
+                awaitCond(probe::msgAvailable);
+                String jsonString = probe.expectMsgClass(String.class);
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode node = mapper.readTree(jsonString);
+                    List<Repository> repoList = new ArrayList<>();
+                    for (JsonNode repo : node){
+                        Repository res = Json.fromJson(repo, Repository.class);
+                        repoList.add(res);
+                    }
+                    assertEquals("facebook-tools-new", repoList.get(0).getName());
+                    assertEquals("thinhlx1993", repoList.get(0).getOwner().getLogin());
+                    assertEquals("rasa", repoList.get(1).getName());
+                    assertEquals("RasaHQ", repoList.get(1).getOwner().getLogin());
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-            assertEquals("facebook-tools-new", repoList.get(0).getName());
-            assertEquals("thinhlx1993", repoList.get(0).getOwner().getLogin());
-            assertEquals("rasa", repoList.get(1).getName());
-            assertEquals("RasaHQ", repoList.get(1).getOwner().getLogin());
-        } catch (Exception e) {}
-  
+        };
     }
 }
