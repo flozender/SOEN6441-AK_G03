@@ -3,19 +3,26 @@ package actors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import models.Owner;
 import models.Repository;
+import models.RepositoryIssues;
 import play.libs.ws.WSClient;
 import services.github.GitHubApi;
 
+/**
+ * Protocols for the various Actors
+ *
+ * @author Tayeeb Hasan
+ */
 public class GitHubActorProtocol {
-    public static class SayHello {
-        public final String name;
 
-        public SayHello(String name) {
-            this.name = name;
-        }
-    }   
-
+    /**
+     * Object used to perform a repository search
+     *
+     * @author Tayeeb Hasan
+     */
     public static class Search {
         public final String keywords;
 
@@ -24,6 +31,11 @@ public class GitHubActorProtocol {
         }
     } 
 
+    /**
+     * Object used to return the repository search results
+     *
+     * @author Tayeeb Hasan
+     */
     public static class SearchResults{
         public final ArrayList<List<Repository>> repositories;
         public final ArrayList<String> searchTerms;
@@ -37,32 +49,56 @@ public class GitHubActorProtocol {
             this.index = index;
         }
     }
+    
+    public static class UserProfile {
+        public final String username;
 
-    public static class StoreSearch{
-        public final String userId;
-        public final List<Repository> repositories;
-        public final String searchTerms;
-
-        public StoreSearch(String userId, List<Repository> repositories, String searchTerms){
-            this.userId = userId;
-            this.repositories = repositories;
-            this.searchTerms = searchTerms;
+        public UserProfile(String username) {
+            this.username = username;
         }
     }
 
-    public static class GetSearchResults{
-        public final String userId;
+    public static class UserRepository {
+        public final String username;
 
-        public GetSearchResults(String userId){
-            this.userId = userId;
+        public UserRepository(String username) {
+            this.username = username;
         }
     }
 
-    public static class AddedSearchResponse{
-        public final String userId;
+    /**
+     * Object used to request the repository information
+     *
+     * @author Tayeeb Hasan
+     */
+    public static class RepositoryProfile {
+        public final String username;
+        public final String repository;
 
-        public AddedSearchResponse(String userId){
+        public RepositoryProfile(String username, String repository) {
+            this.username = username;
+            this.repository = repository;
+        }
+    }
+
+    /**
+     * Object used to return the repository information
+     *
+     * @author Tayeeb Hasan
+     */
+    public static class RepositoryInformation{
+        public final String userId;
+        public final Repository repository;
+        public final JsonNode issues;
+        public final JsonNode commits;
+        public final JsonNode contributors;
+
+        public RepositoryInformation(String userId, Repository repository, JsonNode issues, JsonNode commits, JsonNode contributors){
             this.userId = userId;
+            this.repository = repository;
+            this.issues = issues;
+            this.commits = commits;
+            this.contributors = contributors;
         }
     }
 }

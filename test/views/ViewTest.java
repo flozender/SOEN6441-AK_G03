@@ -42,26 +42,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import play.test.Helpers;
 
 import static org.junit.Assert.assertEquals;
 
 public class ViewTest {
-    
+
     /**
      * Test the index template
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
     public void renderIndex() {
-        Content html = views.html.index.render(Arrays.asList(), Arrays.asList());
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        Content html = views.html.index.render(request);
         assertThat("text/html", is(html.contentType()));
         assertThat(html.body(), containsString("Welcome to Gitterific!"));
     }
 
     /**
      * Test the repo template
-     * 
+     *
      * @author Tayeeb Hasan
      */
     @Test
@@ -72,9 +76,9 @@ public class ViewTest {
         try {
             List<String> lines = Files.readAllLines(fileName, charset);
             for (String line : lines) {
-            jsonString += line;
+                jsonString += line;
             }
-        } 
+        }
         catch (IOException e) {
             System.out.println(e);
         }
@@ -116,11 +120,12 @@ public class ViewTest {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(jsonString);
             Owner user = Json.fromJson(node, Owner.class);
-            Content html = views.html.user.render(user);
+            Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+            RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+            Request request = requestBuilder.build();
+            Content html = views.html.user.render(request);
             assertThat("text/html", is(html.contentType()));
-            assertThat(html.body(), containsString("https://justinw.me"));
-            assertThat(html.body(), containsString("https://avatars.githubusercontent.com/u/1384?v=4"));
-            assertThat(html.body(), containsString("Justin Williams"));
+            assertThat(html.body(), containsString("Gitterific!"));
         }
         catch (IOException e) {
             System.out.println(e);

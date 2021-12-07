@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 import actors.GitHubActorProtocol.*;
 
-public class WebSocketActor extends AbstractActorWithTimers {
+public class SearchSocketActor extends AbstractActorWithTimers {
     private final ActorRef out;
     private final WSClient ws;
     private final ActorRef supervisorActor;
@@ -54,14 +54,14 @@ public class WebSocketActor extends AbstractActorWithTimers {
 
     @Override
     public void preStart() {
-        getTimers().startPeriodicTimer("Timer", new Tick(), Duration.create(10, TimeUnit.SECONDS));
+        getTimers().startPeriodicTimer("Timer", new Tick(), Duration.create(5, TimeUnit.SECONDS));
     }
 
     public static Props props(ActorRef out, WSClient ws, GitHubApi ghImpl) {
-        return Props.create(WebSocketActor.class, out, ws, ghImpl);
+        return Props.create(SearchSocketActor.class, out, ws, ghImpl);
     }    
 
-    public WebSocketActor(ActorRef out, WSClient ws, GitHubApi ghImpl) {
+    public SearchSocketActor(ActorRef out, WSClient ws, GitHubApi ghImpl) {
       this.out = out;
       this.ws = ws;
       this.ghImpl = ghImpl;
@@ -70,8 +70,7 @@ public class WebSocketActor extends AbstractActorWithTimers {
       this.searchTerms = new ArrayList<>();
     }
   
-    public static final class Tick{
-    }
+    public static final class Tick{}
 
     @Override
     public Receive createReceive() {
@@ -118,8 +117,5 @@ public class WebSocketActor extends AbstractActorWithTimers {
                 return null;
             });
         }
-        
-
     }
-
 }

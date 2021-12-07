@@ -43,35 +43,31 @@
   </head>
   <body class="text-center">
     <div class="form-signin" style="background-color: #eee">
-      <a href="@repository.getHtmlUrl()" class="h2 font-weight-normal"
+      <a href="@repository.getHtmlUrl()" class="h2 font-weight-normal" id="u-heading"
         >@username/@repository.getName()</a
       >
-      <h1 class="h4 mb-1 font-weight-normal">@repository.getDescription()</h1>
+      <h1 class="h4 mb-1 font-weight-normal" id="u-description">@repository.getDescription()</h1>
       <div class="d-flex flex-row">
         <div class="search-data d-flex flex-column">
-          <h1 class="h4">Name: @repository.getName()</h1>
-          <h1 class="h4">Owner: @repository.getOwner().getLogin()</h1>
-          <h1 class="h4">Created: @repository.getCreatedAt()</h1>
-          <h1 class="h4">Language: @repository.getLanguage()</h1>
-          <h1 class="h4">
+          <h1 class="h4" id="u-name">Name: @repository.getName()</h1>
+          <h1 class="h4" id="u-owner">Owner: @repository.getOwner().getLogin()</h1>
+          <h1 class="h4" id="u-createdAt">Created: @repository.getCreatedAt()</h1>
+          <h1 class="h4" id="u-language">Language: @repository.getLanguage()</h1>
+          <h1 class="h4" id="u-license">
             License: @if(repository.getLicense() !=
             null){@repository.getLicense().getName()}else{No license found}
           </h1>
-          <h1 class="h4">Stargazers Count: @repository.getStargazersCount()</h1>
-          <h1 class="h4">Forks Count: @repository.getForksCount()</h1>
-          <h1 class="h4">Open Issues: <a href="/reposissues/@repository.getOwner().getLogin()/@repository.getName()/issues">@repository.getOpenIssuesCount() (view statistics)</a></h1>
+          <h1 class="h4" id="u-stargazersCount">Stargazers Count: @repository.getStargazersCount()</h1>
+          <h1 class="h4" id="u-forksCount">Forks Count: @repository.getForksCount()</h1>
+          <h1 class="h4">Open Issues: <a href="/reposissues/@repository.getOwner().getLogin()/@repository.getName()/issues" id="u-openIssuesCount">@repository.getOpenIssuesCount() (view statistics)</a></h1>
               
           </h1>
           <h1 class="h4">Commits: <a id="commits">...</a></h1>
           <h1 class="h4">Contributors:</h1>
           <div class="h5" id="contributors"></div>
           <div class="h4 mb-3 font-weight-normal">Topics:</div>
-          <div class="h5">
-            @for(i <- 0 until repository.getTopics().size()){
-            <a href="/topic/@repository.getTopics().get(i)">@repository.getTopics().get(i)</a>, }
-            @if(repository.getTopics().size() == 0){
-            <p>N/A</p>
-            }
+          <div class="h5" id="topics">
+
           </div>
           <div class="h4" style="margin-top: 2rem">Issues:</div>
           <div id="issues">
@@ -416,13 +412,37 @@
     let address = window.location.pathname.split("/");
     let repository = address.pop();
     let username = address.pop();
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:9000/wsRepositoryProfile');
 
-    function getIssues() {
-      $.ajax({
-        type: "GET",
-        url: `/issues/${username}/${repository}`,
-        success: function (result) {
-          var table = $("<div>");
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+      socket.send(`${username}/${repository}`);
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        data = JSON.parse(event.data);
+        setUpIssues(data.issues);
+        setUpContributors(data.contributors);
+        setUpCommits(data.commits);
+        setUpTopics(data.repository);
+        setUpDetails(data.repository);
+    });
+    
+    setUpDetails = (repository) => {
+      $("#u-heading").text(`${repository.owner.login}/${repository.name}`).attr('href', `${repository.html_url}`)
+      $("#u-description").text(`${repository.description ? repository.description: ""}`)
+      $("#u-name").text(`Name: ${repository.name}`)
+      $("#u-owner").text(`Owner: ${repository.owner.login}`)
+      $("#u-language").text(`Language: ${repository.language}`)
+      $("#u-license").text(`License: ${repository.license ? repository.license.name : "No license found"}`)
+      $("#u-stargazersCount").text(`Stargazers Count: ${repository.stargazersCount}`)
+      $("#u-forksCount").text(`Forks Count: ${repository.forksCount}`)
+      $("#u-openIssuesCount").text(`${repository.openIssuesCount} (view statistics)`)
+    }
+    setUpIssues = (result) => {
+      var table = $("<div>");
           for (let i = 0; i < result.length; i++) {
             table.append(
               "<div class='h5'><b>#" +
@@ -440,46 +460,43 @@
           }
 
           $("#issues").html(table);
-        },
-      });
-    }
- 
- 
-    function getContributors() {
-      $.ajax({
-        type: "GET",
-        url: `/contributors/${username}/${repository}`,
-        success: function (result) {
-          var table = $("<div>");
-          for (let i = 0; i < result.length; i++) {
-            table.append(
-              "<a href='/users/" +
-                result[i]["login"] +
-                "'>" +
-                result[i]["login"] +
-                "</a>, "
-            );
-          }
-
-          table.append("</div>");
-
-          $("#contributors").html(table);
-        },
-      });
     }
 
-    function getCommits() {
-      $.ajax({
-        type: "GET",
-        url: `/commits/${username}/${repository}`,
-        success: function (result) {
-          $("a#commits").text(`${result.length >= 100 ? "100+" : result.length || 0} (view commits)`);
-        },
-      });
+    setUpContributors = (result) => {
+      var table = $("<div>");
+      if (result == null) {
+        table = $("<p>N/A</p>");
+      } else {
+        for (let i = 0; i < result.length; i++) {
+          table.append(
+          "<a href='/users/" +
+            result[i]["login"] +
+            "'>" +
+            result[i]["login"] +
+            "</a>, "
+          );
+        }
+        table.append("</div>");
+      }
+
+      $("#contributors").html(table);
     }
 
-    getIssues();
-    getContributors();
-    getCommits();
+    setUpCommits = (result) => {
+      $("a#commits").text(`${result.length >= 100 ? "100+" : result.length || 0} (view commits)`);
+    }
+
+    setUpTopics = (repository) => {
+      if (repository.topics.length == 0) {
+        $("#topics").text("N/A");
+      } else {
+        let list = [];
+        for(let i = 0; i < repository.topics.length; i++){
+          tl = $("<a>").text(`${repository.topics[i]}, `).prop("href", `/topic/${repository.topics[i]}`);
+          list.push(tl);
+        }
+        $("#topics").html(list);
+      }
+    }
   </script>
 </html>

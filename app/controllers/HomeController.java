@@ -107,10 +107,40 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * @return ws connection contains search results (repositories)
      * 
      */
-    public WebSocket ws() {
+    public WebSocket wsSearch() {
         return WebSocket.Text.accept(
-            request -> ActorFlow.actorRef((r)->WebSocketActor.props(r, ws, ghImpl), system, materializer));
-      }
+            request -> ActorFlow.actorRef((r)->SearchSocketActor.props(r, ws, ghImpl), system, materializer));
+    }
+
+    /**
+     * It creates the WS connection for the user profile page.
+     * <p>
+     * It will generate the results related to the specified user
+     * The result will include all the information of the user, along with his/her repositories.
+     * </p>
+     * @author Pedram Nouri
+     * @return ws connection contains user profile
+     *
+     */
+    public WebSocket wsUserProfile() {
+        return WebSocket.Text.accept(
+            request -> ActorFlow.actorRef((r)->UserProfileSocketActor.props(r, ws, ghImpl), system, materializer));
+    }
+
+    /**
+     * It creates the WS connection for the user repositories.
+     * <p>
+     * It will generate the results related to the specified user (his/her repositories)
+     * The result will include all user's repositories.
+     * </p>
+     * @author Pedram Nouri
+     * @return ws connection contains user repositories
+     *
+     */
+    public WebSocket wsUserRepositories() {
+        return WebSocket.Text.accept(
+                request -> ActorFlow.actorRef((r)->UserRepositorySocketActor.props(r, ws, ghImpl), system, materializer));
+    }
 
     /**
      * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
@@ -140,19 +170,16 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     /**
      * @author Pedram Nouri
      * @param username Contains the github username of the user
+     * @param request Contains the HTTP request
      * @return The user page containing all the information about the requested user
      */
-    public CompletionStage<Result> userProfile(String username) {
-        CompletableFuture<Owner> user = ghImpl.userProfile(username, ws);
-
-        return user.thenApplyAsync(response -> {
-            try {
-                return ok(views.html.user.render(response));
-            }catch (Exception e) {
-                System.out.println("CAUGHT EXCEPTION: " + e);
-                return badRequest(views.html.error.render());
-            }
-        });
+    public Result userProfile(String username, Http.Request request) {
+        try {
+            return ok(views.html.user.render(request));
+        }catch (Exception e) {
+            System.out.println("CAUGHT EXCEPTION: " + e);
+            return badRequest(views.html.error.render());
+        }
     }
     
     
@@ -204,6 +231,21 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
                 return badRequest(views.html.error.render());
             }
         });
+    }
+
+     /**
+     * It creates the WS connection for the repository profile page.
+     * <p>
+     * It will generate the results related to the repository name string
+     * The result will include the repository name, topics, etc.
+     * </p>
+     * @author Tayeeb Hasan
+     * @return ws connection contains search results (repositories)
+     * 
+     */
+    public WebSocket wsRepositoryProfile() {
+        return WebSocket.Text.accept(
+            request -> ActorFlow.actorRef((r)->RepositoryProfileSocketActor.props(r, ws, ghImpl), system, materializer));
     }
     
     /**
