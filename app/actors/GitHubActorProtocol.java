@@ -11,15 +11,45 @@ import models.RepositoryIssues;
 import play.libs.ws.WSClient;
 import services.github.GitHubApi;
 
+/**
+ * Protocols for the various Actors
+ *
+ * @author Tayeeb Hasan
+ */
 public class GitHubActorProtocol {
-    public static class SayHello {
-        public final String name;
 
-        public SayHello(String name) {
-            this.name = name;
+    /**
+     * Object used to perform a repository search
+     *
+     * @author Tayeeb Hasan
+     */
+    public static class Search {
+        public final String keywords;
+
+        public Search(String keywords) {
+            this.keywords = keywords;
+        }
+    } 
+
+    /**
+     * Object used to return the repository search results
+     *
+     * @author Tayeeb Hasan
+     */
+    public static class SearchResults{
+        public final ArrayList<List<Repository>> repositories;
+        public final ArrayList<String> searchTerms;
+        public final boolean update;
+        public final int index;
+
+        public SearchResults(ArrayList<List<Repository>> repositories, ArrayList<String> searchTerms, boolean update, int index){
+            this.repositories = repositories;
+            this.searchTerms = searchTerms;
+            this.update = update;
+            this.index = index;
         }
     }
-
+    
     public static class UserProfile {
         public final String username;
 
@@ -36,6 +66,11 @@ public class GitHubActorProtocol {
         }
     }
 
+    /**
+     * Object used to request the repository information
+     *
+     * @author Tayeeb Hasan
+     */
     public static class RepositoryProfile {
         public final String username;
         public final String repository;
@@ -46,56 +81,11 @@ public class GitHubActorProtocol {
         }
     }
 
-    public static class Search {
-        public final String keywords;
-
-        public Search(String keywords) {
-            this.keywords = keywords;
-        }
-    } 
-
-    public static class SearchResults{
-        public final ArrayList<List<Repository>> repositories;
-        public final ArrayList<String> searchTerms;
-        public final boolean update;
-        public final int index;
-
-        public SearchResults(ArrayList<List<Repository>> repositories, ArrayList<String> searchTerms, boolean update, int index){
-            this.repositories = repositories;
-            this.searchTerms = searchTerms;
-            this.update = update;
-            this.index = index;
-        }
-    }
-
-    public static class StoreSearch{
-        public final String userId;
-        public final List<Repository> repositories;
-        public final String searchTerms;
-
-        public StoreSearch(String userId, List<Repository> repositories, String searchTerms){
-            this.userId = userId;
-            this.repositories = repositories;
-            this.searchTerms = searchTerms;
-        }
-    }
-
-    public static class GetSearchResults{
-        public final String userId;
-
-        public GetSearchResults(String userId){
-            this.userId = userId;
-        }
-    }
-
-    public static class AddedSearchResponse{
-        public final String userId;
-
-        public AddedSearchResponse(String userId){
-            this.userId = userId;
-        }
-    }
-
+    /**
+     * Object used to return the repository information
+     *
+     * @author Tayeeb Hasan
+     */
     public static class RepositoryInformation{
         public final String userId;
         public final Repository repository;

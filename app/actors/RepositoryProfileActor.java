@@ -48,8 +48,6 @@ public class RepositoryProfileActor extends AbstractActor {
     private static GitHubApi ghImpl;
     private String username; 
     private String repository;
-    
-
 
     public static Props props(WSClient ws, GitHubApi ghImpl) {
         return Props.create(RepositoryProfileActor.class, ws, ghImpl);
@@ -61,8 +59,6 @@ public class RepositoryProfileActor extends AbstractActor {
         this.ghImpl = ghImpl;
     }
     
-    public static final class Tick{}
-
     @Override
     public Receive createReceive() {
         return receiveBuilder()
@@ -91,6 +87,5 @@ public class RepositoryProfileActor extends AbstractActor {
             });                
         });
         pipe(response, getContext().dispatcher()).to(sender());
-
     };
 }
