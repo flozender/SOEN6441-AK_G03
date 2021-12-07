@@ -1,7 +1,6 @@
 @import java.util
 @import com.fasterxml.jackson.databind.JsonNode;
-
-@(owner: Owner)
+@(request: play.mvc.Http.Request)
 
 <html>
     <head>
@@ -45,17 +44,14 @@
 
     <body class="text-center">
         <div class="form-signin" style="background-color: #eee;">
-            <a href="@owner.getHtml_url()" class="h2 font-weight-normal">@owner.getLogin()</a>
-            <h1 class="h4 mb-1 font-weight-normal">@owner.getCompany()</h1>
-            <h2 class="h4 mb-1 font-weight-normal">@owner.getBio()</h2>
+            <a id="login" href="" class="h2 font-weight-normal"></a>
+            <h1 id="company" class="h4 mb-1 font-weight-normal"></h1>
+            <h2 id="bio" class="h4 mb-1 font-weight-normal"></h2>
             <div class="d-flex flex-row">
                 <div class="search-data">
-                    <h1 class="h4">Name: @owner.getName()</h1>
-                    <h1 class="h4">Created: @owner.getCreated_at()</h1>
-                    <h1 class="h4">Following: @owner.getFollowing()</h1>
-                    <h1 class="h4">Followers: @owner.getFollowers()</h1>
-                    <h1 class="h4">Email: @owner.getEmail()</h1>
-                    <h1 class="h4">Public Repos Count: @owner.getPublic_repos()</h1>
+                    <h1 id="name" class="h4"></h1>
+                    <h1 id="created_at" class="h4"></h1>
+                    <h1 id="email" class="h4"></h1>
                     <div class="h5" id="repositories"></div>
 
                     <img id="loadingImage" src="/assets/images/loading.gif" style="height: 40px;"/>
@@ -67,87 +63,95 @@
                                 <th scope="col">Key</th>
                                 <th scope="col">Value</th>
                             </tr>
-                        </thead>
+                         </thead>
                         <tbody>
                             <tr>
                                 <th scope="row">id</th>
-                                <td>@owner.getId()</td>
+                                <td id="id"></td>
                             </tr>
                             <tr>
                                 <th scope="row">node_id</th>
-                                <td>@owner.getNode_id()</td>
+                                <td id="node_id"></td>
                             </tr>
                             <tr>
                                 <th scope="row">avatar_url</th>
-                                <td>@owner.getAvatar_url()</td>
+                                <td id="avatar_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">gravatar_id</th>
-                                <td>@owner.getGravatar_id()</td>
+                                <td id="gravatar_id"></td>
                             </tr>
                             <tr>
                                 <th scope="row">url (API)</th>
-                                <td>@owner.getUrl()</td>
+                                <td id="url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">followers_url</th>
-                                <td>@owner.getFollowers_url()</td>
+                                <td id="followers_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">following_url</th>
-                                <td>@owner.getFollowing_url()</td>
+                                <td id="following_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">gists_url</th>
-                                <td>@owner.getGists_url()</td>
+                                <td id="gists_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">starred_url</th>
-                                <td>@owner.getStarred_url()</td>
+                                <td id="starred_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">subscriptions_url</th>
-                                <td>@owner.getSubscriptions_url()</td>
+                                <td id="subscriptions_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">organizations_url</th>
-                                <td>@owner.getOrganizations_url()</td>
+                                <td id="organizations_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">repositories_url</th>
-                                <td>@owner.getRepos_url()</td>
+                                <td id="repositories_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">events_url</th>
-                                <td>@owner.getEvents_url()</td>
+                                <td id="events_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">received_events_url</th>
-                                <td>@owner.getReceived_events_url()</td>
+                                <td id="received_events_url"></td>
                             </tr>
                             <tr>
                                 <th scope="row">type</th>
-                                <td>@owner.getType()</td>
+                                <td id="type"></td>
                             </tr>
                             <tr>
                                 <th scope="row">is admin</th>
-                                <td>@owner.isSite_admin()</td>
+                                <td id="site_admin"></td>
                             </tr>
                             <tr>
                                 <th scope="row">blog</th>
-                                <td>@owner.getBlog()</td>
+                                <td id="blog"></td>
                             </tr>
                             <tr>
                                 <th scope="row">location</th>
-                                <td>@owner.getLocation()</td>
+                                <td id="location"></td>
                             </tr>
                             <tr>
                                 <th scope="row">public gists</th>
-                                <td>@owner.getPublic_gists()</td>
+                                <td id="public_gists"></td>
                             </tr>
                             <tr>
                                 <th scope="row">update date</th>
-                                <td>@owner.getUpdated_at()</td>
+                                <td id="updated_at"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">following</th>
+                                <td id="following"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">followers</th>
+                                <td id="followers"></td>
                             </tr>
 
                         </tbody>
@@ -160,6 +164,47 @@
 
     <script>
             let username = window.location.pathname.split("/").pop();
+
+            const socket = new WebSocket('ws://localhost:9000/wsUserProfile');
+
+            socket.addEventListener('open', function (event) {
+                socket.send(username);
+            });
+
+
+            socket.addEventListener('message', function (event) {
+                data = JSON.parse(event.data);
+                console.log(data);
+
+                document.getElementById('id').innerText = data.id;
+                document.getElementById('node_id').innerText = data.node_id;
+                document.getElementById('avatar_url').innerText = data.avatar_url;
+                document.getElementById('gravatar_id').innerText = data.gravatar_id;
+                document.getElementById('url').innerText = data.url;
+                document.getElementById('followers_url').innerText = data.followers_url;
+                document.getElementById('following_url').innerText = data.following_url;
+                document.getElementById('gists_url').innerText = data.gists_url;
+                document.getElementById('starred_url').innerText = data.starred_url;
+                document.getElementById('subscriptions_url').innerText = data.subscriptions_url;
+                document.getElementById('organizations_url').innerText = data.organizations_url;
+                document.getElementById('repositories_url').innerText = data.repositories_url;
+                document.getElementById('events_url').innerText = data.events_url;
+                document.getElementById('received_events_url').innerText = data.received_events_url;
+                document.getElementById('site_admin').innerText = data.site_admin;
+                document.getElementById('blog').innerText = data.blog;
+                document.getElementById('location').innerText = data.location;
+                document.getElementById('public_gists').innerText = data.public_gists;
+                document.getElementById('updated_at').innerText = data.updated_at;
+                document.getElementById('login').innerText = data.login;
+                document.getElementById('company').innerText = data.company;
+                document.getElementById('bio').innerText = data.bio;
+                document.getElementById('name').innerText = data.name;
+                document.getElementById('created_at').innerText = data.created_at;
+                document.getElementById('email').innerText = data.email;
+                document.getElementById('following').innerText = data.following;
+                document.getElementById('followers').innerText = data.followers;
+
+            });
 
             function repositoryButton() {
                 $.ajax({

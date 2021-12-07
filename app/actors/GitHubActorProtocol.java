@@ -18,7 +18,15 @@ public class GitHubActorProtocol {
         public SayHello(String name) {
             this.name = name;
         }
-    }   
+    }
+
+    public static class UserProfile {
+        public final String username;
+
+        public UserProfile(String username) {
+            this.username = username;
+        }
+    }
 
     public static class Search {
         public final String keywords;

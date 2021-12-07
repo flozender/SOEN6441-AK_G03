@@ -112,6 +112,11 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
             request -> ActorFlow.actorRef((r)->WebSocketActor.props(r, ws, ghImpl), system, materializer));
     }
 
+    public WebSocket wsUserProfile() {
+        return WebSocket.Text.accept(
+            request -> ActorFlow.actorRef((r)->UserProfileSocketActor.props(r, ws, ghImpl), system, materializer));
+    }
+
     /**
      * It searches for the repositories matching the string passed (topic) by the user's click from the topics.
      * <p>
@@ -140,19 +145,11 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     /**
      * @author Pedram Nouri
      * @param username Contains the github username of the user
+     * @param request Contains the HTTP request
      * @return The user page containing all the information about the requested user
      */
-    public CompletionStage<Result> userProfile(String username) {
-        CompletableFuture<Owner> user = ghImpl.userProfile(username, ws);
-
-        return user.thenApplyAsync(response -> {
-            try {
-                return ok(views.html.user.render(response));
-            }catch (Exception e) {
-                System.out.println("CAUGHT EXCEPTION: " + e);
-                return badRequest(views.html.error.render());
-            }
-        });
+    public Result userProfile(String username, Http.Request request) {
+        return ok(views.html.user.render(request));
     }
     
     
