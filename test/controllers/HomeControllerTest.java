@@ -253,6 +253,38 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
+     * Test the Websocket connection for User Profile
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public final void testWSUserProfile() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        WebSocket result = controller.wsUserProfile();
+
+        assertEquals("play.mvc.WebSocket$1", result.getClass().getName());
+    }
+
+    /**
+     * Test the Websocket connection for User Repository
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public final void testWSUserRepository() {
+        final HomeController controller = testApp.injector().instanceOf(HomeController.class);
+        Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
+        RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
+        Request request = requestBuilder.build();
+        WebSocket result = controller.wsUserRepositories();
+
+        assertEquals("play.mvc.WebSocket$1", result.getClass().getName());
+    }
+
+    /**
      * Test the index controller action
      *
      * @author Pedram Nouri
