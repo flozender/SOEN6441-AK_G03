@@ -12,7 +12,8 @@ GET    /reposissues/:username/:repository/issues   			controllers.HomeController
 GET    /issues/:username/:repository          controllers.HomeController.getRepositoryIssues(username: String, repository: String)
 GET    /contributors/:username/:repository    controllers.HomeController.getRepositoryContributors(username: String, repository: String)
 GET    /commits/:username/:repository         controllers.HomeController.getRepositoryCommits(username: String, repository: String)
-GET      /wsSearch                                  controllers.HomeController.wsSearch
+GET    /wsSearch                              controllers.HomeController.wsSearch
+GET    /wsRepositoryProfile                   controllers.HomeController.wsRepositoryProfile
 
 
 # Map static resources from the /public folder to the /assets URL path

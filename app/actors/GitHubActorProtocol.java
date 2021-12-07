@@ -3,7 +3,11 @@ package actors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import models.Owner;
 import models.Repository;
+import models.RepositoryIssues;
 import play.libs.ws.WSClient;
 import services.github.GitHubApi;
 
@@ -63,6 +67,22 @@ public class GitHubActorProtocol {
 
         public AddedSearchResponse(String userId){
             this.userId = userId;
+        }
+    }
+
+    public static class RepositoryInformation{
+        public final String userId;
+        public final Repository repository;
+        public final JsonNode issues;
+        public final JsonNode commits;
+        public final JsonNode contributors;
+
+        public RepositoryInformation(String userId, Repository repository, JsonNode issues, JsonNode commits, JsonNode contributors){
+            this.userId = userId;
+            this.repository = repository;
+            this.issues = issues;
+            this.commits = commits;
+            this.contributors = contributors;
         }
     }
 }

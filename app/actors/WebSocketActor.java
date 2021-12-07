@@ -70,8 +70,7 @@ public class WebSocketActor extends AbstractActorWithTimers {
       this.searchTerms = new ArrayList<>();
     }
   
-    public static final class Tick{
-    }
+    public static final class Tick{}
 
     @Override
     public Receive createReceive() {
