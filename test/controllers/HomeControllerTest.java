@@ -225,11 +225,10 @@ public class HomeControllerTest extends WithApplication {
         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
         Request request = requestBuilder.build();
-        CompletionStage<Result> csResult = controller.userProfile("justin");
+        Result csResult = controller.userProfile("justin", request);
         try{
-            Result result = csResult.toCompletableFuture().get();
-            String parsedResult = Helpers.contentAsString(result);
-            assertThat("Optional[text/html]", is(result.contentType().toString()));
+            String parsedResult = Helpers.contentAsString(csResult);
+            assertThat("Optional[text/html]", is(csResult.contentType().toString()));
             assertThat(parsedResult, containsString("Justin Williams"));
             assertThat(parsedResult, containsString("Mobile application developer located in sunny Denver, Colorado."));
 

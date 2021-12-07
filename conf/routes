@@ -15,6 +15,7 @@ GET    /commits/:username/:repository         controllers.HomeController.getRepo
 GET    /wsUserProfile                       controllers.HomeController.wsUserProfile
 GET    /wsSearch                              controllers.HomeController.wsSearch
 GET    /wsRepositoryProfile                   controllers.HomeController.wsRepositoryProfile
+GET    /wsUserRepos                           controllers.HomeController.wsUserRepositories
 
 
 # Map static resources from the /public folder to the /assets URL path
