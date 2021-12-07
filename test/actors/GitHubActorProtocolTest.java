@@ -63,7 +63,7 @@ public class GitHubActorProtocolTest {
     @Test
     public void testSearchProtocol() {
         GitHubActorProtocol.Search search = new GitHubActorProtocol.Search("facebook");
-        assertEquals(search.keywords, "facebook");
+        assertEquals("facebook", search.keywords);
     }
 
     /**
@@ -86,10 +86,10 @@ public class GitHubActorProtocolTest {
         searchTerms.add("searching");
 
         GitHubActorProtocol.SearchResults search = new GitHubActorProtocol.SearchResults(repoArray, searchTerms, update, 3);
-        assertEquals(search.repositories.get(0).get(0).getName(), "Repository 1");
-        assertEquals(search.searchTerms.get(0), "searching");
-        assertEquals(search.update, update);
-        assertEquals(search.index, index);
+        assertEquals("Repository 1", search.repositories.get(0).get(0).getName());
+        assertEquals("searching", search.searchTerms.get(0));
+        assertEquals(update, search.update);
+        assertEquals(index, search.index);
     }
 
     /**
@@ -100,8 +100,8 @@ public class GitHubActorProtocolTest {
     @Test
     public void testRepositoryProfileProtocol() {
         GitHubActorProtocol.RepositoryProfile repositoryProfile = new GitHubActorProtocol.RepositoryProfile("facebook", "jest");
-        assertEquals(repositoryProfile.username, "facebook");
-        assertEquals(repositoryProfile.repository, "jest");
+        assertEquals("facebook", repositoryProfile.username);
+        assertEquals("jest", repositoryProfile.repository);
     }
 
     /**
@@ -122,7 +122,7 @@ public class GitHubActorProtocolTest {
         JsonNode contributors = mapper.createObjectNode();
 
         GitHubActorProtocol.RepositoryInformation repositoryInformation = new GitHubActorProtocol.RepositoryInformation(userId, repository, issues, commits, contributors);
-        assertEquals(repositoryInformation.userId, "facebook");
-        assertEquals(repositoryInformation.repository.getName(), "jest");
+        assertEquals("facebook", repositoryInformation.userId);
+        assertEquals("jest", repositoryInformation.repository.getName());
     }
 }
