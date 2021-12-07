@@ -58,7 +58,6 @@ public class UserRepositorySocketActorTest {
         ActorRef probeRef = probe.getRef();
         final ActorRef ursActor = system.actorOf(UserRepositorySocketActor.props(probeRef, ws, gitHubApi));
         CompletableFuture<String> search = FutureConverters.toJava(ask(ursActor, "pedram", 5000)).toCompletableFuture().thenApplyAsync(result -> (String) result);
-        System.out.println("KIr");
         try {
             String jsonString = search.get();
             ObjectMapper mapper = new ObjectMapper();
