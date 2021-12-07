@@ -64,7 +64,12 @@ public class SupervisorActorTest {
         TestKit.shutdownActorSystem(system);
         system = null;
     }
-
+    
+    /**
+     * Test the Search Actor through the Supervisor Actor
+     *
+     * @author Tayeeb Hasan
+     */
     @Test
     public void testSearchActor() {
         final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
@@ -72,11 +77,29 @@ public class SupervisorActorTest {
         CompletableFuture<List<Repository>> search = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.Search("facebook"), 5000)).toCompletableFuture().thenApplyAsync(repos -> (List<Repository>) repos);
         try {
             List<Repository> repos = search.get();
-            System.out.println("REPOS>>>>>>>" + repos);
             assertEquals(repos.get(0).getName(),"facebook-tools-new");
             assertEquals(repos.get(0).getOwner().getLogin(),"thinhlx1993");
             assertEquals(repos.get(1).getName(),"rasa");
             assertEquals(repos.get(1).getOwner().getLogin(),"RasaHQ");
+        } catch (Exception e) {}
+  
+    }
+
+    /**
+     * Test the RepositoryProfile Actor through the Supervisor Actor
+     *
+     * @author Tayeeb Hasan
+     */
+    @Test
+    public void testRepositoryProfileActor() {
+        final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
+        final ActorRef supervisorActor = system.actorOf(SupervisorActor.props(ws, gitHubApi));
+        CompletableFuture<GitHubActorProtocol.RepositoryInformation> repositoryInformation = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.RepositoryProfile("facebook", "jest"), 5000)).toCompletableFuture().thenApplyAsync(repos -> (GitHubActorProtocol.RepositoryInformation) repos);
+        try {
+            GitHubActorProtocol.RepositoryInformation rf = repositoryInformation.get();
+            assertEquals(rf.repository.getName(), "jest");
+            assertEquals(rf.repository.getOwner().getLogin(), "facebook");
+            assertEquals(rf.commits.size(), 10);
         } catch (Exception e) {}
   
     }

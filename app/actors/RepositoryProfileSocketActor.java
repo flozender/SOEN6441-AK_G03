@@ -51,16 +51,12 @@ public class RepositoryProfileSocketActor extends AbstractActorWithTimers {
     }
 
     private void handleRepositoryProfile(String search) {
-        System.out.println("HITTING " + search);
         String[] data = search.split("/");
         if (this.repositoryProfile == null){
             this.repositoryProfile = new GitHubActorProtocol.RepositoryProfile(data[0], data[1]);
         }
         CompletableFuture<GitHubActorProtocol.RepositoryInformation> repositoryInformation = FutureConverters.toJava(ask(supervisorActor, this.repositoryProfile, 5000)).toCompletableFuture().thenApplyAsync(reply -> (GitHubActorProtocol.RepositoryInformation) reply);
-        System.out.println("REPOS _>>>" + repositoryInformation);
-        
         CompletableFuture<JsonNode> repo = repositoryInformation.thenApplyAsync((GitHubActorProtocol.RepositoryInformation rf) -> {
-            System.out.println("REPOS _>>>" + rf.repository);
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 String resp = mapper.writeValueAsString(rf);

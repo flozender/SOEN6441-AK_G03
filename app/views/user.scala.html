@@ -213,7 +213,6 @@
 
             socketUserRepos.addEventListener('message', function (event) {
                 data = JSON.parse(event.data);
-                console.log(data);
                 var table = $("<table><tr><th>Repositories Information</th></tr>");
                 for (let i = 0; i < data.length; i++) {
                     table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +data[i]["name"] + "'>" + data[i]["name"] + "</a>" + "</td></tr>")
