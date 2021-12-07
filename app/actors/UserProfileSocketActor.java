@@ -24,6 +24,7 @@ public class UserProfileSocketActor extends AbstractActorWithTimers {
     private final WSClient ws;
     private final ActorRef supervisorActor;
     private final GitHubApi ghImpl;
+    private String username = "";
 
 
     @Override
@@ -49,15 +50,26 @@ public class UserProfileSocketActor extends AbstractActorWithTimers {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(String.class, this::handleUserProfile)
-//                .match(WebSocketActor.Tick.class, (r)->updatePage())
+                .match(WebSocketActor.Tick.class, (r)->updatePage())
                 .build();
     }
 
     private void handleUserProfile(String username) {
+        this.username = username;
         CompletableFuture<Owner> user = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.UserProfile(username), 5000)).toCompletableFuture().thenApplyAsync(reply -> (Owner) reply);
         CompletableFuture<Owner> userResult = user.thenApplyAsync((Owner us) -> {
-            System.out.println(us);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String resp = mapper.writeValueAsString(us);
+                out.tell(resp, self());
+            } catch (Exception e) {}
+            return null;
+        });
+    }
 
+    private void updatePage() {
+        CompletableFuture<Owner> user = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.UserProfile(this.username), 5000)).toCompletableFuture().thenApplyAsync(reply -> (Owner) reply);
+        CompletableFuture<Owner> userResult = user.thenApplyAsync((Owner us) -> {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 String resp = mapper.writeValueAsString(us);
