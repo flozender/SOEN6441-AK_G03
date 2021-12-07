@@ -109,4 +109,38 @@ public class SupervisorActorTest {
   
     }
 
+    /**
+     * Test the UserProfile Actor through the Supervisor Actor
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public void testUserProfileActor() {
+        final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
+        final ActorRef supervisorActor = system.actorOf(SupervisorActor.props(ws, gitHubApi));
+        CompletableFuture<GitHubActorProtocol.UserProfile> userProfile = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.UserProfile("pedram"), 5000)).toCompletableFuture().thenApplyAsync(user -> (GitHubActorProtocol.UserProfile) user);
+        try {
+            GitHubActorProtocol.UserProfile userProfile1 = userProfile.get();
+            assertEquals(userProfile1.username, "pedram");
+        } catch (Exception e) {}
+
+    }
+
+    /**
+     * Test the UserRepository Actor through the Supervisor Actor
+     *
+     * @author Pedram Nouri
+     */
+    @Test
+    public void testUserRepositoriesActor() {
+        final GitHubApi gitHubApi = testApp.injector().instanceOf(GitHubApi.class);
+        final ActorRef supervisorActor = system.actorOf(SupervisorActor.props(ws, gitHubApi));
+        CompletableFuture<GitHubActorProtocol.UserRepository> userRepository = FutureConverters.toJava(ask(supervisorActor, new GitHubActorProtocol.UserRepository("justin"), 5000)).toCompletableFuture().thenApplyAsync(rep -> (GitHubActorProtocol.UserRepository) rep);
+        try {
+            GitHubActorProtocol.UserRepository userRepository1 = userRepository.get();
+            assertEquals(userRepository1.username, "justin");
+        } catch (Exception e) {}
+
+    }
+
 }
