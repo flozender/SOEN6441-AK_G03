@@ -166,15 +166,20 @@
             let username = window.location.pathname.split("/").pop();
 
             const socket = new WebSocket('ws://localhost:9000/wsUserProfile');
+            const socketUserRepos = new WebSocket('ws://localhost:9000/wsUserRepos');
+
 
             socket.addEventListener('open', function (event) {
                 socket.send(username);
             });
 
+            socketUserRepos.addEventListener('open', function (event) {
+                socketUserRepos.send(username);
+            });
+
 
             socket.addEventListener('message', function (event) {
                 data = JSON.parse(event.data);
-                console.log(data);
 
                 document.getElementById('id').innerText = data.id;
                 document.getElementById('node_id').innerText = data.node_id;
@@ -206,30 +211,23 @@
 
             });
 
+            socketUserRepos.addEventListener('message', function (event) {
+                data = JSON.parse(event.data);
+                console.log(data);
+                var table = $("<table><tr><th>Repositories Information</th></tr>");
+                for (let i = 0; i < data.length; i++) {
+                    table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +data[i]["name"] + "'>" + data[i]["name"] + "</a>" + "</td></tr>")
+                    table.append("<tr><td>Description:</td><td>" + data[i]["description"] + "</td></tr>")
+                }
+                table.append("</table>");
+                var img = document.getElementById('loadingImage');
+                img.style.visibility = 'hidden';
+                $("#repositories").html(table);
+            })
+
             function parseDate(ms){
                 var date = new Date(ms);
                 return date;
             }
-
-            function repositoryButton() {
-                $.ajax({
-                    type: "GET",
-                    url: "/users/repos/"+username,
-                    success: function (result) {
-                        var table = $("<table><tr><th>Repositories Information</th></tr>");
-                        for (let i = 0; i < result.length; i++) {
-                            // table.append("<tr><td>Name:</td><td>" +"<a onclick='repFunction(\"" + result[i]["name"] + "\");'>" +result[i]["name"] + "</a>" + "</td></tr>")
-                            table.append("<tr><td>Name:</td><td>" +"<a href='/repos/"+ username + "/" +result[i]["name"] + "'>" + result[i]["name"] + "</a>" + "</td></tr>")
-                            table.append("<tr><td>Description:</td><td>" + result[i]["description"] + "</td></tr>")
-                        }
-                        table.append("</table>")
-
-                        var img = document.getElementById('loadingImage');
-                        img.style.visibility = 'hidden';
-                        $("#repositories").html(table);
-                    }
-                })
-            }
-            repositoryButton();
     </script>
 </html>

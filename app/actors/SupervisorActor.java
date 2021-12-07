@@ -48,6 +48,7 @@ public class SupervisorActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
     private final ActorRef searchActor;
     private final ActorRef userProfileActor;
+    private final ActorRef userRepositoryActor;
     private final WSClient ws;
     private final GitHubApi ghImpl;
 
@@ -60,6 +61,7 @@ public class SupervisorActor extends AbstractActor {
         this.ghImpl = ghImpl;
         this.searchActor = getContext().actorOf(SearchActor.props(ws, ghImpl), "searchActor");
         this.userProfileActor = getContext().actorOf(UserProfileActor.props(ws, ghImpl), "userProfileActor");
+        this.userRepositoryActor = getContext().actorOf(UserRepositoryActor.props(ws, ghImpl), "userRepositoryActor");
       }
 
     @Override
@@ -78,6 +80,7 @@ public class SupervisorActor extends AbstractActor {
         return receiveBuilder()
         .match(GitHubActorProtocol.Search.class, this::Search)
         .match(GitHubActorProtocol.UserProfile.class, this::UserProfile)
+        .match(GitHubActorProtocol.UserRepository.class, this::UserRepository)
         .build();
     }
 
@@ -87,5 +90,9 @@ public class SupervisorActor extends AbstractActor {
 
     private void UserProfile(GitHubActorProtocol.UserProfile userProfile) {
         userProfileActor.forward(userProfile, getContext());
+    }
+
+    private void UserRepository(GitHubActorProtocol.UserRepository userRepository) {
+        userRepositoryActor.forward(userRepository, getContext());
     }
 }
