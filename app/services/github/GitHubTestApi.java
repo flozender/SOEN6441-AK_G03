@@ -381,7 +381,7 @@ public class GitHubTestApi implements GitHubApi{
     public CompletableFuture<JsonNode> getRepositoryIssuesTittles(String username, String repository, WSClient ws){
         CompletableFuture<JsonNode> futureIssues = new CompletableFuture<>();
         new Thread( () -> {
-            Path fileName = Paths.get("./app/services/github/resources/getRepositoryIssues.json");
+            Path fileName = Paths.get("./app/services/github/resources/getRepositoryIssuessTitles.json");
             Charset charset = Charset.forName("ISO-8859-1");
             String jsonString = "";
             try {
