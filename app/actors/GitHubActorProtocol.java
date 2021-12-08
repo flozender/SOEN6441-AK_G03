@@ -101,4 +101,35 @@ public class GitHubActorProtocol {
             this.contributors = contributors;
         }
     }
+<<<<<<< Updated upstream
+=======
+    
+    /**
+     * Object used to request the repository information
+     *
+     * @author Nazanin
+     */
+    public static class RepoIssuesTitlereq {
+        public final String username;
+        public final String repository;
+
+        public RepoIssuesTitlereq(String username, String repository) {
+            this.username = username;
+            this.repository = repository;
+        }
+    }
+    
+    /**
+     * Object used to return the issues titles information
+     *
+     * @author Nazanin
+     */
+    public static class RepoIssuesTitle {
+        public final JsonNode titles;
+
+        public RepoIssuesTitle(JsonNode titles) {
+            this.titles = titles;
+        }
+    }
+>>>>>>> Stashed changes
 }
