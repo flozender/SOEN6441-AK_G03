@@ -126,6 +126,25 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
         return WebSocket.Text.accept(
             request -> ActorFlow.actorRef((r)->UserProfileSocketActor.props(r, ws, ghImpl), system, materializer));
     }
+    
+    
+    
+    /**
+     * It creates the WS connection for the user profile page.
+     * <p>
+     * It will generate the results related to the specified user
+     * The result will include all the information of the user, along with his/her repositories.
+     * </p>
+     * @author Nazanin
+     * @return ws connection contains user profile
+     *
+     */
+    public WebSocket wsRepositoryIssuesTittles() {
+        return WebSocket.Text.accept(
+            request -> ActorFlow.actorRef((r)->RepoIssuesTitleActor.props(r, ws, ghImpl), system, materializer));
+    }
+    
+    
 
     /**
      * It creates the WS connection for the user repositories.
@@ -319,7 +338,7 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
     
     /**
      * @author Nazanin
-     * @version 1.1.5
+     * @version 1.1.7
      * @since 1.1.3
      * @param username
      * @return
@@ -332,23 +351,18 @@ public class HomeController extends Controller implements WSBodyReadables, WSBod
      * 
      */
     public CompletionStage<Result> getRepositoryIssuesTittles(String username, String repository) {
-        String clientSecret = "fc2fc9c20d3586664dd0d3e0799b0f5be456a462";
-        String url = "https://bb94d78479b70367def7:"+clientSecret+"@api.github.com/repos/" + username + "/" + repository + "/issues?state=all";
-        
-        return ws.url(url).get().thenApplyAsync(response -> {
+        CompletableFuture<JsonNode> res = ghImpl.getRepositoryIssuesTittles(username, repository, ws);
+        return res.thenApplyAsync(response -> {
             try {
-                JsonNode tempResponse = response.asJson();
+                JsonNode tempResponse = response;
                 ArrayList<String> issuetitles = new ArrayList<>();
                 tempResponse.forEach(item -> {
                     issuetitles.add(item.get("title").textValue());
                 });
-                
-                
-                
                 return ok(views.html.repoissues.render(this.repoIssuesStats(issuetitles).toString().replace("{", "").replace("}", "").replace("=", "      =      ")));
             } catch (Exception e) {
                 System.out.println("CAUGHT EXCEPTION: " + e);
-                return ok(views.html.error.render());
+                return badRequest("Invalid request!");
             }
         });
         

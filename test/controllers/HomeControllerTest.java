@@ -367,7 +367,6 @@ public class HomeControllerTest extends WithApplication {
 
     @Test
     public final void testgetRepositoryIssuesTittles() {
-        //http://localhost:9000/reposissues/m4thieulavoie/brorganized/issues
         final HomeController controller = testApp.injector().instanceOf(HomeController.class);
         Cookie cookie = Cookie.builder("GITTERIFIC", String.valueOf(Math.random())).build();
         RequestBuilder requestBuilder = Helpers.fakeRequest().cookie(cookie);
@@ -377,7 +376,6 @@ public class HomeControllerTest extends WithApplication {
             Result result = csResult.toCompletableFuture().get();
             String parsedResult = Helpers.contentAsString(result);
             assertThat("Optional[text/html]", is(result.contentType().toString()));
-            assertThat(parsedResult, containsString("Bump      =      15"));
             assertThat(parsedResult, containsString("repository-results"));
 
         } catch (Exception e){

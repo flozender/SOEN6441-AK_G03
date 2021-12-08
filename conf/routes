@@ -16,6 +16,8 @@ GET    /wsUserProfile                       controllers.HomeController.wsUserPro
 GET    /wsSearch                              controllers.HomeController.wsSearch
 GET    /wsRepositoryProfile                   controllers.HomeController.wsRepositoryProfile
 GET    /wsUserRepos                           controllers.HomeController.wsUserRepositories
+GET    /wsRepositoryIssuesTittles                   controllers.HomeController.wsRepositoryIssuesTittles
+
 
 
 # Map static resources from the /public folder to the /assets URL path

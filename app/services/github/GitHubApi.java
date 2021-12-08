@@ -10,8 +10,8 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Interface for the GitHubApi Service
- * @author Tayeeb Hasan & Pedram Nouri & Vedasree Reddy Sapatapu
- * @version 1.0.0
+ * @author Tayeeb Hasan & Pedram Nouri & Vedasree Reddy Sapatapu & Nazanin
+ * @version 1.2.0
  */
 public interface GitHubApi {
     public CompletableFuture<List<Repository>> searchRepositories(String keywords, WSClient ws);
@@ -22,4 +22,6 @@ public interface GitHubApi {
     public CompletableFuture<JsonNode> getRepositoryIssues(String username, String repository, WSClient ws);
     public CompletableFuture<JsonNode> getRepositoryContributors(String username, String repository, WSClient ws);
     public CompletableFuture<JsonNode> getRepositoryCommits(String username, String repository, WSClient ws);
+    public CompletableFuture<JsonNode> getRepositoryIssuesTittles(String username, String repository, WSClient ws);
+    
 }

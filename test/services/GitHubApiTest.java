@@ -178,4 +178,18 @@ public class GitHubApiTest extends WithApplication {
             System.out.println(e);
         }
     }
+    
+    @Test
+    public final void getRepositoryIssuesTittles() {
+        GitHubApi testGitHub = testApp.injector().instanceOf(GitHubApi.class);
+        CompletableFuture<JsonNode> res = testGitHub.getRepositoryIssuesTittles("m4thieulavoie", "brorganized", ws);
+        try{
+            JsonNode commits = res.get().get(0);
+            assertEquals("7bb400c373a6f90ba956dd25fe24ee4d4788f41e", commits.get("sha").textValue());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
 }

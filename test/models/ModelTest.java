@@ -118,4 +118,21 @@ public class ModelTest extends WithApplication {
         assertEquals("MIT License", l1.getName());
         assertEquals("MIT", l1.getKey());
     }
+    
+    
+    /**
+     * Tests the Repos Issues class.
+     * 
+     * @author Nazanin
+     * @version 1.0.0
+     */
+    @Test
+    public final void RepositoryIssuesTest() throws Exception{
+    	RepositoryIssues t1 = new RepositoryIssues();
+        t1.setTitle("Bug Found");
+        t1.setRepo("HTML");
+
+        assertEquals("Bug Found", t1.getTitle());
+        assertEquals("HTML", t1.getRepo());
+    }  
 }
